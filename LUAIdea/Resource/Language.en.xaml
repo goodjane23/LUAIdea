@@ -1,0 +1,38 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:system="clr-namespace:System;assembly=mscorlib">
+
+    <system:String x:Key="FileMenuItem">File</system:String>
+    <system:String x:Key="EditMenuItem">Edit</system:String>
+    <system:String x:Key="ViewMenuItem">View</system:String>
+    <system:String x:Key="DesignMenuItem">Design</system:String>
+    <system:String x:Key="HelpMenuItem">Help</system:String>
+
+    <system:String x:Key="FileNewMenuItem">New</system:String>
+    <system:String x:Key="FileOpenMenuItem">Open</system:String>
+    <system:String x:Key="FileCloseMenuItem">Close</system:String>
+    <system:String x:Key="FileSaveMenuItem">Save</system:String>
+    <system:String x:Key="FileSaveAsMenuItem">Save as</system:String>
+    <system:String x:Key="FileSaveAllMenuItem">Save all</system:String>
+    <system:String x:Key="FileRecentMenuItem">Recent</system:String>
+
+    <system:String x:Key="EditCopyMenuItem">Copy</system:String>
+    <system:String x:Key="EditPastMenuItem">Past</system:String>
+    <system:String x:Key="EditCutMenuItem">Cut</system:String>
+    <system:String x:Key="EditDeleteMenuItem">Delete</system:String>
+    <system:String x:Key="EditSelectAllMenuItem">Select All</system:String>
+
+    <system:String x:Key="ViewMacroMenuItem">Macro commands</system:String>
+    <system:String x:Key="ViewBOMenuItem">Background commands</system:String>
+    <system:String x:Key="ViewHelpMenuItem">Help view</system:String>
+    <system:String x:Key="ViewSettingsMenuItem">Settings</system:String>
+    <system:String x:Key="ViewUpdateDBCommandsMenuItem">Update commands</system:String>
+
+    <system:String x:Key="HelpSupportMenuItem">Technical support</system:String>
+    <system:String x:Key="HelpAboutMenuItem">About</system:String>
+    <system:String x:Key="HelpViewMenuItem">View help</system:String>
+
+    <system:String x:Key="NewFileHeader">New</system:String>
+
+
+</ResourceDictionary>

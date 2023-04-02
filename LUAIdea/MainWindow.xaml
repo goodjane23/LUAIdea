@@ -1,0 +1,78 @@
+﻿<Window x:Class="LUAIdea.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:LUAIdea"
+        mc:Ignorable="d"
+        Title="LuaIdea" 
+        WindowState="Normal"
+        WindowStyle="SingleBorderWindow"
+        WindowStartupLocation="CenterScreen"
+        Width="800"
+        Height="800">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        
+        <Menu Grid.Row="0" VerticalAlignment="Top">
+            <MenuItem Header="{DynamicResource FileMenuItem}">
+                <MenuItem Header="{DynamicResource FileNewMenuItem}" Command="{Binding NewFileCommand}"/>
+                <MenuItem Header="{DynamicResource FileOpenMenuItem}" Command="{Binding OpenFileCommand}"/>
+                <MenuItem Header="{DynamicResource FileSaveMenuItem}" Command="{Binding SaveCommand}"/>
+                <MenuItem Header="{DynamicResource FileSaveAsMenuItem}" Command="{Binding SaveAsCommand}"/>
+                <MenuItem Header="{DynamicResource FileSaveAllMenuItem}" Command="{Binding SaveAllCommand}"/>
+                <MenuItem Header="{DynamicResource FileCloseMenuItem}" Command="{Binding CloseCommand}"/>
+                <MenuItem Header="{DynamicResource FileRecentMenuItem}" />
+            </MenuItem>
+            <MenuItem Header="{DynamicResource EditMenuItem}">
+                <MenuItem Header="{DynamicResource EditCopyMenuItem}"/>
+                <MenuItem Header="{DynamicResource EditPastMenuItem}"/>
+                <MenuItem Header="{DynamicResource EditCutMenuItem}"/>
+                <MenuItem Header="{DynamicResource EditDeleteMenuItem}"/>
+                <MenuItem Header="{DynamicResource EditSelectAllMenuItem}"/>
+            </MenuItem>
+            <MenuItem Header="{DynamicResource ViewMenuItem}">
+                <MenuItem Header="{DynamicResource ViewMacroMenuItem}"/>
+                <MenuItem Header="{DynamicResource ViewBOMenuItem}"/>
+                <MenuItem Header="{DynamicResource ViewHelpMenuItem}"/>               
+            </MenuItem>
+            <MenuItem Header="{DynamicResource HelpMenuItem}">
+                <MenuItem Header="{DynamicResource HelpSupportMenuItem}"/>
+                <MenuItem Header="{DynamicResource HelpAboutMenuItem}"/>
+                <MenuItem Header="{DynamicResource HelpViewMenuItem}"/>               
+            </MenuItem>
+
+        </Menu>
+        <TabControl
+            Grid.Row="1"
+            ItemsSource="{Binding Files, Mode=OneWay}"
+            SelectedItem="{Binding SelectedFile, Mode=TwoWay}">
+            <TabControl.ItemTemplate>
+                <DataTemplate>
+                    <TextBlock>
+                        <TextBlock.Text>
+                            <Binding Path="Name" />                            
+                        </TextBlock.Text>
+                    </TextBlock>
+                </DataTemplate>
+            </TabControl.ItemTemplate>
+            <TabControl.ContentTemplate>
+                <DataTemplate>
+                    <RichTextBox>
+                        <FlowDocument>
+                            <Paragraph>
+                                <Run Text="{Binding Path=Content}"/>
+                            </Paragraph> 
+                        </FlowDocument>
+                    </RichTextBox>
+                </DataTemplate>
+            </TabControl.ContentTemplate>
+
+        </TabControl>
+     
+
+    </Grid>
+</Window>
