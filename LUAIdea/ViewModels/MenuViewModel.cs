@@ -10,6 +10,8 @@ using System.Windows.Documents;
 using System.Security.Cryptography;
 using System.Windows;
 using CommunityToolkit.Mvvm.ComponentModel;
+using System.ComponentModel;
+using LUAIdea.Services;
 
 namespace LUAIdea.ViewModels;
 
@@ -32,6 +34,9 @@ public partial class MenuViewModel : ObservableObject
     public IRelayCommand SaveAllCommand { get; }
     public IRelayCommand CloseCommand { get; }
 
+    public IRelayCommand GetMacroDescriptionCommand { get; }
+    public IRelayCommand GetBackgroundDescriptionCommand { get; }
+
     public MenuViewModel()
     {
         NewFileCommand = new RelayCommand(CreateNewFile);
@@ -40,9 +45,18 @@ public partial class MenuViewModel : ObservableObject
         SaveAsCommand = new RelayCommand(SaveAs);
         SaveAllCommand = new RelayCommand(SaveAll);
         CloseCommand = new RelayCommand(Close);
+        GetMacroDescriptionCommand = new RelayCommand(GetMacroDescription);
+
 
         Files = new ObservableCollection<MacroModel>();
         flowDocument = new FlowDocument();
+    }
+
+    private void GetMacroDescription()
+    {
+        ApiCommandServices.GetAlldescriptionFromHttp();
+
+
     }
 
     private void OpenFile()
