@@ -23,9 +23,12 @@ public partial class MenuViewModel : ObservableObject
     private string textContent;
 
     [ObservableProperty]
-    private MacroModel selectedFile;
+    private MacroFileModel selectedFile;
 
-    public ObservableCollection<MacroModel> Files { get; private set; }    
+    public ObservableCollection<MacroFileModel> Files { get; private set; }
+
+    [ObservableProperty]
+    private bool isMacroViewOpen = false;
 
     public IRelayCommand NewFileCommand { get; }
     public IRelayCommand OpenFileCommand { get; }
@@ -34,6 +37,7 @@ public partial class MenuViewModel : ObservableObject
     public IRelayCommand SaveAllCommand { get; }
     public IRelayCommand CloseCommand { get; }
 
+    public IRelayCommand ShowMacroHelpCommand { get; }
     public IRelayCommand GetMacroDescriptionCommand { get; }
     public IRelayCommand GetBackgroundDescriptionCommand { get; }
 
@@ -45,20 +49,20 @@ public partial class MenuViewModel : ObservableObject
         SaveAsCommand = new RelayCommand(SaveAs);
         SaveAllCommand = new RelayCommand(SaveAll);
         CloseCommand = new RelayCommand(Close);
-        GetMacroDescriptionCommand = new RelayCommand(GetMacroDescription);
+        ShowMacroHelpCommand = new RelayCommand(ShowMacroHelp);
+       
 
-
-        Files = new ObservableCollection<MacroModel>();
+        Files = new ObservableCollection<MacroFileModel>();
         flowDocument = new FlowDocument();
     }
 
-    private void GetMacroDescription()
+    private void ShowMacroHelp()
     {
+        IsMacroViewOpen = true;
         ApiCommandServices.GetAlldescriptionFromHttp();
 
-
     }
-
+   
     private void OpenFile()
     {
         try
@@ -79,7 +83,7 @@ public partial class MenuViewModel : ObservableObject
                 var path = dialog.FileName;                
                
                 var text = File.ReadAllText(path);
-                var macro = new MacroModel(name, path, text);
+                var macro = new MacroFileModel(name, path, text);
 
                 Files.Add(macro);
                 selectedFile = Files.FirstOrDefault();
@@ -109,7 +113,7 @@ public partial class MenuViewModel : ObservableObject
             var name = Application.Current.TryFindResource("NewFileHeader").ToString();           
             var content = "";
             
-            var macroModel = new MacroModel(name,path,content);
+            var macroModel = new MacroFileModel(name,path,content);
             Files.Add(macroModel);
             selectedFile = macroModel;
 

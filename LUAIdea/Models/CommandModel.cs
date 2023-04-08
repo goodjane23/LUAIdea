@@ -6,9 +6,14 @@ using System.Threading.Tasks;
 
 namespace LUAIdea.Models
 {
-    class CommandModel
+    class FunctionModel : IFunctionModel
     {
-        public string ?Name { get; set; }
-        public string ?Description { get; set; }
+        public string? Name { get; set; }
+
+        public string? Desription { get; set; }
+
+        public string? Function { get; set; }
+
+        public bool IsMacroFunction { get; set; }
     }
 }

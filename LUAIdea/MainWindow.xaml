@@ -35,7 +35,7 @@
                 <MenuItem Header="{DynamicResource EditSelectAllMenuItem}"/>
             </MenuItem>
             <MenuItem Header="{DynamicResource ViewMenuItem}">
-                <MenuItem Header="{DynamicResource ViewMacroMenuItem}"/>
+                <MenuItem Header="{DynamicResource ViewMacroMenuItem}" Command="{Binding ShowMacroHelpCommand}"/>
                 <MenuItem Header="{DynamicResource ViewBOMenuItem}"/>
                 <MenuItem Header="{DynamicResource ViewSettingsMenuItem}"/>
                 <MenuItem Header="{DynamicResource ViewHelpMenuItem}"/>
@@ -79,9 +79,12 @@
                 </TabControl.ContentTemplate>
 
             </TabControl>
-            <TreeView>
+            <ContentControl
+                Grid.Column="1"
+                Width="120"
+                Visibility="{Binding IsMacroViewOpen, Converter={StaticResource BoolToVisibility}}">
                 
-            </TreeView>
+            </ContentControl>
         </Grid>
         
      

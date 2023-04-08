@@ -1,4 +1,5 @@
-﻿using System;
+﻿using LUAIdea.Models;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
@@ -6,6 +7,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Documents;
+using System.Windows.Media.Animation;
 
 namespace LUAIdea.Services
 {
@@ -55,6 +57,10 @@ namespace LUAIdea.Services
 
             await using var f_new_base = new StreamWriter("f_new_base.txt");
 
+            try
+            {
+
+            
             for (var i = 0; i < mas_base_http.Length; i++)
             {
                 var http_page = await NetLoadHttp(mas_base_http[i]);
@@ -96,9 +102,115 @@ namespace LUAIdea.Services
                     }
                 }
             }
-
+            }
+            catch (Exception ex)
+            {
+                var ttemp = ex.Data;
+                throw;
+            }
             f_new_base.Close();
-            //await LoadFromFile();
+            await FillMacroNode();
         }
+
+        private static async Task FillMacroNode()
+        {
+            using var reader = new StreamReader("f_new_base.txt");
+            Dictionary<string, FunctionNodeModel> keyValuePairs = new Dictionary<string, FunctionNodeModel>();        
+            
+            while (!reader.EndOfStream)
+            {               
+                var s = await reader.ReadLineAsync();
+
+                if (s == null) continue;
+                var dataArray = s.Split('@');
+
+                var funcModel = CreateFunction(dataArray);
+               
+                keyValuePairs.TryGetValue(dataArray[0], out var functionNode);
+
+                if (functionNode is null)
+                {
+                    functionNode = new FunctionNodeModel();
+                    keyValuePairs.Add(dataArray[0], functionNode);                   
+                }
+
+                if (dataArray[0][0] == '5') 
+                {
+                    switch (dataArray[0])
+                    {
+                        case "5180768":
+                            functionNode.Header = "Входы и выходы";
+                            break;
+                        case "5180766":
+                            functionNode.Header = "Оси";
+                            break;
+                        case "5180780":
+                            functionNode.Header = "Базирование";
+                            break;
+                        case "5180770":
+                            functionNode.Header = "Смена инструмента";
+                            break;
+                        case "5180778":
+                            functionNode.Header = "Шпиндель";
+                            break;
+                        case "5180775":
+                            functionNode.Header = "Плазма";
+                            break;
+                        case "5180773":
+                            functionNode.Header = "Газокислород";
+                            break;
+                        case "5182663":
+                            functionNode.Header = "ModBus";
+                            break;
+                        case "5180782":
+                            functionNode.Header = "Другое";
+                            break;
+
+                        default:
+                            break;
+                    }
+                    functionNode.Functions.Add(funcModel);
+                }
+                
+                if (dataArray[0][0] == '4')
+                {
+                    switch (dataArray[0])
+                    {
+                        case "42959110":
+                            functionNode.Header = "Входы и выходы";
+                            break;
+                        case "43843590":
+                            functionNode.Header = "Оси";
+                            break;
+                        case "43843598":
+                            functionNode.Header = "Шпиндель";
+                            break;
+                        case "43843603":
+                            functionNode.Header = "Плазма";
+                            break;
+                        case "43843606":
+                            functionNode.Header = "Газокислород";
+                            break;
+                        case "43843608":
+                            functionNode.Header = "ModBus";
+                            break;
+                        case "43843610":
+                            functionNode.Header = "Другие";
+                            break;
+                    }
+                    functionNode.Functions.Add(funcModel);
+                }
+            }
+        }
+
+        private static MacroFunctionModel CreateFunction(string[] temp)
+        {
+            MacroFunctionModel fm = new MacroFunctionModel();
+            fm.Desription = temp[2];
+            fm.Name = temp[1];
+            fm.Function = temp[1].Substring(0, temp[1].IndexOf('('));
+            return fm;
+        }
+        
     }
 }
