@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace LUAIdea.Models;
-internal class FunctionNodeModel
+public class FunctionNodeModel
 {
     public string Header { get; set; }
 

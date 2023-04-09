@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
+using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Windows;
@@ -13,7 +14,12 @@ namespace LUAIdea.Services
 {
     class ApiCommandServices
     {
-        //ObservableCollection<> list;
+        private Dictionary<string, FunctionNodeModel> keyValuePairs;
+
+        public ApiCommandServices()
+        {
+            keyValuePairs = new Dictionary<string, FunctionNodeModel>();
+        }
         internal static async Task<string> NetLoadHttp(string s)
         {
             var rez = string.Empty;
@@ -59,63 +65,62 @@ namespace LUAIdea.Services
 
             try
             {
-
-            
-            for (var i = 0; i < mas_base_http.Length; i++)
-            {
-                var http_page = await NetLoadHttp(mas_base_http[i]);
-                var http_page_strings = http_page.Replace("<", "@").Split('@');
-
-                for (var j = 0; j <= http_page_strings.Length - 1; j++)
+                for (var i = 0; i < mas_base_http.Length; i++)
                 {
-                    var s = http_page_strings[j];
-
-                    if ((s.Contains(">bool") ||
-                         s.Contains(">void") ||
-                         s.Contains(">number") ||
-                         s.Contains(">string") ||
-                         s.Contains(">int")) &&
-                         s.Contains("(") &&
-                         s.Contains(")"))
+                    var http_page = await NetLoadHttp(mas_base_http[i]);
+                    var http_page_strings = http_page.Replace("<", "@").Split('@');
+                    
+                    for (var j = 0; j <= http_page_strings.Length - 1; j++)
                     {
-                        var func = s.Substring(s.IndexOf(">")) + "\r";
+                        var s = http_page_strings[j];
 
-                        var func_name = func.Replace(">bool", "")
-                            .Replace(">void", "")
-                            .Replace(">number", "")
-                            .Replace(">string", "")
-                            .Replace(">int", "");
-
-                        func_name = func_name.Substring(1);
-
-                        if (http_page_strings[j + 2].Contains("p>"))
+                        if ((s.Contains(">bool") ||
+                             s.Contains(">void") ||
+                             s.Contains(">number") ||
+                             s.Contains(">string") ||
+                             s.Contains(">int")) &&
+                             s.Contains("(") &&
+                             s.Contains(")"))
                         {
-                            var func_note = http_page_strings[j + 2];
-                            func_note = func_note.Substring(func_note.IndexOf(">") + 1);
+                            var func = s.Substring(s.IndexOf(">")) + "\r";
 
-                            var func_out = $"{func_name.Replace("\r", "")}@{func_note}";
-                            var name_type = mas_base_http[i].Substring(mas_base_http[i].LastIndexOf("=") + 1);
+                            var func_name = func.Replace(">bool", "")
+                                .Replace(">void", "")
+                                .Replace(">number", "")
+                                .Replace(">string", "")
+                                .Replace(">int", "");
 
-                            func_out = $"{name_type}@{func_out}";
-                            await f_new_base.WriteLineAsync(func_out);
+                            func_name = func_name.Substring(1);
+
+                            if (http_page_strings[j + 2].Contains("p>"))
+                            {
+                                var func_note = http_page_strings[j + 2];
+                                func_note = func_note.Substring(func_note.IndexOf(">") + 1);
+
+                                var func_out = $"{func_name.Replace("\r", "")}@{func_note}";
+                                var name_type = mas_base_http[i].Substring(mas_base_http[i].LastIndexOf("=") + 1);
+
+                                func_out = $"{name_type}@{func_out}";
+                                await f_new_base.WriteLineAsync(func_out);
+                            }
                         }
                     }
                 }
-            }
             }
             catch (Exception ex)
             {
                 var ttemp = ex.Data;
                 throw;
             }
+
             f_new_base.Close();
+            
             await FillMacroNode();
         }
 
-        private static async Task FillMacroNode()
+        private async Task FillMacroNode()
         {
-            using var reader = new StreamReader("f_new_base.txt");
-            Dictionary<string, FunctionNodeModel> keyValuePairs = new Dictionary<string, FunctionNodeModel>();        
+            using var reader = new StreamReader("f_new_base.txt");            
             
             while (!reader.EndOfStream)
             {               
@@ -201,6 +206,28 @@ namespace LUAIdea.Services
                     functionNode.Functions.Add(funcModel);
                 }
             }
+        }
+
+        public List<FunctionNodeModel> GetMacroFunctionNode()
+        {
+            List<FunctionNodeModel> result = new List<FunctionNodeModel>();
+            foreach (var item in keyValuePairs)
+            {
+                if (item.Key.StartsWith("5"))
+                    result.Add(item.Value);
+            }
+            return result;
+        }
+
+        public List<FunctionNodeModel> GetBackgoundOpFunctionNode()
+        {
+            List<FunctionNodeModel> result = new List<FunctionNodeModel>();
+            foreach (var item in keyValuePairs)
+            {
+                if (item.Key.StartsWith("4"))
+                    result.Add(item.Value);
+            }
+            return result;
         }
 
         private static MacroFunctionModel CreateFunction(string[] temp)

@@ -59,8 +59,6 @@ public partial class MenuViewModel : ObservableObject
     private void ShowMacroHelp()
     {
         IsMacroViewOpen = true;
-        ApiCommandServices.GetAlldescriptionFromHttp();
-
     }
    
     private void OpenFile()

@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace LUAIdea.Models;
-internal interface IFunctionModel
+public interface IFunctionModel
 {
     public string? Name { get; set; }
 
