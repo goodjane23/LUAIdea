@@ -52,6 +52,7 @@
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
             <TabControl
                 Grid.Column="0"
@@ -82,9 +83,10 @@
             <ContentControl
                 Grid.Column="1"
                 Width="120"
-                Visibility="{Binding IsMacroViewOpen, Converter={StaticResource BoolToVisibility}}">
-                
+                Visibility="{Binding IsMacroViewOpen, Converter={StaticResource BoolToVisibility}}"
+                ContentTemplate="{StaticResource MacroView}">                
             </ContentControl>
+         
         </Grid>
         
      

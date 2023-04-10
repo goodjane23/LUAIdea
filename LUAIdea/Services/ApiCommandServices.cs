@@ -19,6 +19,8 @@ namespace LUAIdea.Services
         public ApiCommandServices()
         {
             keyValuePairs = new Dictionary<string, FunctionNodeModel>();
+            GetAlldescriptionFromHttp();
+            FillFunctionNode();
         }
         internal static async Task<string> NetLoadHttp(string s)
         {
@@ -114,11 +116,9 @@ namespace LUAIdea.Services
             }
 
             f_new_base.Close();
-            
-            await FillMacroNode();
         }
 
-        private async Task FillMacroNode()
+        private async Task FillFunctionNode()
         {
             using var reader = new StreamReader("f_new_base.txt");            
             

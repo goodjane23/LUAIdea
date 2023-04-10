@@ -12,8 +12,9 @@ namespace LUAIdea.ViewModels;
 public class FunctionControlViewModel
 {
     public FunctionModel CurrentModel { get; set; }
+    //must be observable collection
     public List<FunctionNodeModel> MacroNodes { get; private set; }
-
+    //must be observable collection
     public List<FunctionNodeModel> BacgroundOpNodes { get; private set; }
     IRelayCommand CloseCommand { get; set; }
 
@@ -26,6 +27,6 @@ public class FunctionControlViewModel
         ApiCommandServices apiCommandServices = new ApiCommandServices();
         MacroNodes = apiCommandServices.GetMacroFunctionNode();
         BacgroundOpNodes = apiCommandServices.GetBackgoundOpFunctionNode();
-        ApiCommandServices.GetAlldescriptionFromHttp();
     }
+
 }
