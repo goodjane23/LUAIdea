@@ -99,7 +99,7 @@
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
-                        <TextBlock Grid.Column="0"  Text="Команды макросов"/>
+                        <TextBlock Grid.Column="0" Text="Команды макросов"/>
                         <Button Grid.Column="1" Content="P" Command="{Binding HideCommand}" HorizontalAlignment="Right" HorizontalContentAlignment="Right"/>
                         <Button Grid.Column="2" Content="Х" Command="{Binding CloseCommand}" HorizontalAlignment="Right" HorizontalContentAlignment="Right"/>
                     </Grid>
@@ -108,8 +108,7 @@
                         BorderBrush="Gray"
                         BorderThickness="3"
                         CornerRadius="5">
-                        <TreeView ItemsSource="{Binding MacroNodes}" SelectedValuePath="{Binding SelectedMacroModel}">
-                            
+                        <TreeView ItemsSource="{Binding MacroNodes}" SelectedValuePath="{Binding SelectedMacroModel}">                            
                             <TreeView.ItemTemplate>
                                 <HierarchicalDataTemplate ItemsSource="{Binding Functions}" >
                                     <TextBlock Text="{Binding Header}" />
@@ -127,9 +126,9 @@
                         Grid.Row="2"
                         Text="{Binding SelectedMacroModel.Description}"/>
                     <Button
-            Grid.Row="3"
-            Content="Update"
-            Command="{Binding UpadateFunctionsCommand}"/>
+                        Grid.Row="3"
+                        Content="Update"
+                        Command="{Binding UpadateFunctionsCommand}"/>
                 </Grid>
             </ContentControl>
            
