@@ -12,12 +12,15 @@ using System.Windows;
 using CommunityToolkit.Mvvm.ComponentModel;
 using System.ComponentModel;
 using LUAIdea.Services;
+using System.Threading.Tasks;
+using System.Data;
 
 namespace LUAIdea.ViewModels;
 
 public partial class MenuViewModel : ObservableObject
 {
     private FlowDocument flowDocument;
+    private readonly ApiCommandServices apiCommandServices;
 
     [ObservableProperty]
     private string textContent;
@@ -25,10 +28,17 @@ public partial class MenuViewModel : ObservableObject
     [ObservableProperty]
     private MacroFileModel selectedFile;
 
-    public ObservableCollection<MacroFileModel> Files { get; private set; }
+    [ObservableProperty] 
+    private FunctionNodeModel selectedMacroModel;
 
     [ObservableProperty]
     private bool isMacroViewOpen = false;
+
+    public ObservableCollection<FunctionNodeModel> MacroNodes { get; private set; }
+ 
+    public ObservableCollection<FunctionNodeModel> BacgroundOpNodes { get; private set; }
+
+    public ObservableCollection<MacroFileModel> Files { get; private set; }   
 
     public IRelayCommand NewFileCommand { get; }
     public IRelayCommand OpenFileCommand { get; }
@@ -36,10 +46,13 @@ public partial class MenuViewModel : ObservableObject
     public IRelayCommand SaveAsCommand { get; }
     public IRelayCommand SaveAllCommand { get; }
     public IRelayCommand CloseCommand { get; }
-
     public IRelayCommand ShowMacroHelpCommand { get; }
     public IRelayCommand GetMacroDescriptionCommand { get; }
     public IRelayCommand GetBackgroundDescriptionCommand { get; }
+    public IRelayCommand CloseMacroHelpCommand { get; set; }
+    public IRelayCommand HideCommand { get; set; }
+    public IRelayCommand DoubleClick { get; set; }
+    public IRelayCommand UpadateFunctionsCommand { get; set; }
 
     public MenuViewModel()
     {
@@ -50,8 +63,15 @@ public partial class MenuViewModel : ObservableObject
         SaveAllCommand = new RelayCommand(SaveAll);
         CloseCommand = new RelayCommand(Close);
         ShowMacroHelpCommand = new RelayCommand(ShowMacroHelp);
-       
 
+        apiCommandServices = new ApiCommandServices();
+
+        CloseMacroHelpCommand = new RelayCommand(CloseMacroHelp);
+        HideCommand = new RelayCommand(Hide);
+        UpadateFunctionsCommand = new AsyncRelayCommand(UpadateFunctions);      
+
+        MacroNodes = new ObservableCollection<FunctionNodeModel>();
+        BacgroundOpNodes = new ObservableCollection<FunctionNodeModel>();
         Files = new ObservableCollection<MacroFileModel>();
         flowDocument = new FlowDocument();
     }
@@ -59,8 +79,7 @@ public partial class MenuViewModel : ObservableObject
     private void ShowMacroHelp()
     {
         IsMacroViewOpen = true;
-    }
-   
+    }   
     private void OpenFile()
     {
         try
@@ -167,5 +186,25 @@ public partial class MenuViewModel : ObservableObject
         {
             selectedFile = Files.FirstOrDefault();
         }
+    }
+
+    private async Task UpadateFunctions()
+    {
+        var collection = await apiCommandServices.GetFunctionNode(5);
+
+        foreach (FunctionNodeModel node in collection)
+        {
+            MacroNodes.Add(node);
+        }
+    }
+
+    private void Hide()
+    {
+        IsMacroViewOpen = false;
+    }
+
+    private void CloseMacroHelp()
+    {
+        IsMacroViewOpen = false;
     }
 }

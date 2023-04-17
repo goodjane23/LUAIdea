@@ -8,7 +8,5 @@
     <DataTemplate x:Key="MacroView">
         <controls:MacroViewControl />
     </DataTemplate>
-   
-
 
 </ResourceDictionary>

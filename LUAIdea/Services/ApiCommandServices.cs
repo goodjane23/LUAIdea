@@ -3,24 +3,18 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
-using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Documents;
-using System.Windows.Media.Animation;
 
 namespace LUAIdea.Services
 {
     class ApiCommandServices
     {
-        private Dictionary<string, FunctionNodeModel> keyValuePairs;
+        private Dictionary<string, FunctionNodeModel> idFuncNodePairs;
 
         public ApiCommandServices()
         {
-            keyValuePairs = new Dictionary<string, FunctionNodeModel>();
-            GetAlldescriptionFromHttp();
-            FillFunctionNode();
+            idFuncNodePairs = new Dictionary<string, FunctionNodeModel>();
         }
         internal static async Task<string> NetLoadHttp(string s)
         {
@@ -30,16 +24,13 @@ namespace LUAIdea.Services
             {
                 using var client = new HttpClient();
                 rez = await client.GetStringAsync(s);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message, "Error");
-            }
+            }            
+            catch { }
 
             return rez;
         }
 
-        internal static async Task GetAlldescriptionFromHttp()
+        private static async Task GetAllDescriptionFromHttp()
         {
             var base_http = @"http://doc.pumotix.ru/pages/viewpage.action?pageId=";
 
@@ -120,6 +111,7 @@ namespace LUAIdea.Services
 
         private async Task FillFunctionNode()
         {
+
             using var reader = new StreamReader("f_new_base.txt");            
             
             while (!reader.EndOfStream)
@@ -131,12 +123,12 @@ namespace LUAIdea.Services
 
                 var funcModel = CreateFunction(dataArray);
                
-                keyValuePairs.TryGetValue(dataArray[0], out var functionNode);
+                idFuncNodePairs.TryGetValue(dataArray[0], out var functionNode);
 
                 if (functionNode is null)
                 {
                     functionNode = new FunctionNodeModel();
-                    keyValuePairs.Add(dataArray[0], functionNode);                   
+                    idFuncNodePairs.Add(dataArray[0], functionNode);                   
                 }
 
                 if (dataArray[0][0] == '5') 
@@ -208,26 +200,21 @@ namespace LUAIdea.Services
             }
         }
 
-        public List<FunctionNodeModel> GetMacroFunctionNode()
+        public async Task<IEnumerable<FunctionNodeModel>> GetFunctionNode(int num)
         {
-            List<FunctionNodeModel> result = new List<FunctionNodeModel>();
-            foreach (var item in keyValuePairs)
-            {
-                if (item.Key.StartsWith("5"))
-                    result.Add(item.Value);
-            }
-            return result;
-        }
+            if (num !=5 && num !=4) return null;
 
-        public List<FunctionNodeModel> GetBackgoundOpFunctionNode()
-        {
-            List<FunctionNodeModel> result = new List<FunctionNodeModel>();
-            foreach (var item in keyValuePairs)
+            var resultNode = new ObservableCollection<FunctionNodeModel>();
+            await GetAllDescriptionFromHttp();
+            await FillFunctionNode();            
+
+            foreach (var item in idFuncNodePairs)
             {
-                if (item.Key.StartsWith("4"))
-                    result.Add(item.Value);
+                if (item.Key.StartsWith($"{num}"))
+                    resultNode.Add(item.Value);
             }
-            return result;
+
+            return resultNode;
         }
 
         private static MacroFunctionModel CreateFunction(string[] temp)

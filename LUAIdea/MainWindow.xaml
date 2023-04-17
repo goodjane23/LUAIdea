@@ -52,7 +52,6 @@
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
             <TabControl
                 Grid.Column="0"
@@ -80,16 +79,61 @@
                 </TabControl.ContentTemplate>
 
             </TabControl>
+            
             <ContentControl
+                x:Name="macroControl"
                 Grid.Column="1"
-                Width="120"
-                Visibility="{Binding IsMacroViewOpen, Converter={StaticResource BoolToVisibility}}"
-                ContentTemplate="{StaticResource MacroView}">                
+                Width="150"
+                Visibility="{Binding IsMacroViewOpen, Converter={StaticResource BoolToVisibility}}">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="3*"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <Grid
+                        Grid.Row="0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Column="0"  Text="Команды макросов"/>
+                        <Button Grid.Column="1" Content="P" Command="{Binding HideCommand}" HorizontalAlignment="Right" HorizontalContentAlignment="Right"/>
+                        <Button Grid.Column="2" Content="Х" Command="{Binding CloseCommand}" HorizontalAlignment="Right" HorizontalContentAlignment="Right"/>
+                    </Grid>
+                    <Border
+                        Grid.Row="1"
+                        BorderBrush="Gray"
+                        BorderThickness="3"
+                        CornerRadius="5">
+                        <TreeView ItemsSource="{Binding MacroNodes}" SelectedValuePath="{Binding SelectedMacroModel}">
+                            
+                            <TreeView.ItemTemplate>
+                                <HierarchicalDataTemplate ItemsSource="{Binding Functions}" >
+                                    <TextBlock Text="{Binding Header}" />
+                                    <HierarchicalDataTemplate.ItemTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding Name}" />
+                                        </DataTemplate>
+                                    </HierarchicalDataTemplate.ItemTemplate>
+                                </HierarchicalDataTemplate>
+                            </TreeView.ItemTemplate>
+                        </TreeView>
+                    </Border>
+
+                    <TextBlock
+                        Grid.Row="2"
+                        Text="{Binding SelectedMacroModel.Description}"/>
+                    <Button
+            Grid.Row="3"
+            Content="Update"
+            Command="{Binding UpadateFunctionsCommand}"/>
+                </Grid>
             </ContentControl>
-         
+           
         </Grid>
-        
-     
 
     </Grid>
 </Window>

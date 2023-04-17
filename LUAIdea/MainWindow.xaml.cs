@@ -25,5 +25,6 @@ public partial class MainWindow : Window
         InitializeComponent();
         MenuViewModel menuVM = new MenuViewModel();
         DataContext = menuVM;
+        macroControl.DataContext = menuVM;
     }
 }
