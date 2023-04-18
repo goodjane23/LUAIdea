@@ -1,29 +1,26 @@
 ﻿using CommunityToolkit.Mvvm.Input;
 using Microsoft.Win32;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using LUAIdea.Models;
 using System.Collections.ObjectModel;
 using System.Windows.Documents;
-using System.Security.Cryptography;
 using System.Windows;
 using CommunityToolkit.Mvvm.ComponentModel;
-using System.ComponentModel;
 using LUAIdea.Services;
 using System.Threading.Tasks;
-using System.Data;
 
 namespace LUAIdea.ViewModels;
 
-public partial class MenuViewModel : ObservableObject
+public partial class MainWindowViewModel : ObservableObject
 {
     private FlowDocument flowDocument;
     private readonly ApiCommandServices apiCommandServices;
 
     [ObservableProperty]
     private string textContent;
+    
     [ObservableProperty]
     private string testProperty;
 
@@ -37,12 +34,10 @@ public partial class MenuViewModel : ObservableObject
     private bool isMacroViewOpen;
 
     [ObservableProperty]
-    private FunctionModel currentFunction;
+    private CommandModel selectedCommand;
 
     public ObservableCollection<FunctionNodeModel> MacroNodes { get; private set; }
- 
-    public ObservableCollection<FunctionNodeModel> BacgroundOpNodes { get; private set; }
-
+    public ObservableCollection<FunctionNodeModel> BackgroundOpNodes { get; private set; }
     public ObservableCollection<MacroFileModel> Files { get; private set; }   
 
     public IRelayCommand NewFileCommand { get; }
@@ -57,11 +52,10 @@ public partial class MenuViewModel : ObservableObject
     public IRelayCommand CloseMacroHelpCommand { get; set; }
     public IRelayCommand HideCommand { get; set; }
     public IRelayCommand DoubleClick { get; set; }
-    public IRelayCommand UpadateFunctionsCommand { get; set; }
-
+    public IRelayCommand UpdateFunctionsCommand { get; set; }
     public IRelayCommand DoubleClickTVCommand { get; set; }
 
-    public MenuViewModel()
+    public MainWindowViewModel()
     {
         NewFileCommand = new RelayCommand(CreateNewFile);
         OpenFileCommand = new RelayCommand(OpenFile);
@@ -75,67 +69,73 @@ public partial class MenuViewModel : ObservableObject
 
         CloseMacroHelpCommand = new RelayCommand(CloseMacroHelp);
         HideCommand = new RelayCommand(Hide);
-        UpadateFunctionsCommand = new AsyncRelayCommand(UpadateFunctions);      
+        UpdateFunctionsCommand = new AsyncRelayCommand(UpdateFunctions);      
 
         MacroNodes = new ObservableCollection<FunctionNodeModel>();
-        BacgroundOpNodes = new ObservableCollection<FunctionNodeModel>();
+        BackgroundOpNodes = new ObservableCollection<FunctionNodeModel>();
         Files = new ObservableCollection<MacroFileModel>();
         flowDocument = new FlowDocument();
     }
 
     private void DoubleClickTV()
     {
-     
         var temp = TestProperty;
-        textContent += currentFunction.Name;        
+        TextContent += SelectedCommand.Name;        
     }
 
     private void ShowMacroHelp()
     {
         IsMacroViewOpen = true;
-    }   
+    }
+    
     private void OpenFile()
     {
         try
         {           
             var dialog = new OpenFileDialog();
-            dialog.DefaultExt = ".pm"; // Default file extension
-            dialog.Filter = "Файлы макросов (.pm)|*.pm"; // Filter files by extension
+            
+            dialog.DefaultExt = ".pm";
+            dialog.Filter = "Файлы макросов (.pm)|*.pm";
 
             // Show open file dialog box
-            bool? result = dialog.ShowDialog();
+            var result = dialog.ShowDialog();
 
             // Process open file dialog box results
-            if (result == true)
-            {
-                var separate = dialog.FileName.Split('\\');
-                var name = separate.Last();
+            if (result == false)
+                return;
+            
+            var separate = dialog.FileName.Split('\\');
+            var name = separate.Last();
                 
-                var path = dialog.FileName;                
+            var path = dialog.FileName;                
                
-                var text = File.ReadAllText(path);
-                var macro = new MacroFileModel(name, path, text);
+            var text = File.ReadAllText(path);
+            var macro = new MacroFileModel()
+            {
+                Name = name,
+                Path = path,
+                Content = text
+            };
 
-                Files.Add(macro);
-                selectedFile = Files.FirstOrDefault();
+            Files.Add(macro);
+                
+            SelectedFile = Files.FirstOrDefault();
 
-                TextRange doc = new TextRange(flowDocument.ContentStart, flowDocument.ContentEnd);
-                using (FileStream fs = new FileStream(dialog.FileName, FileMode.Open))
-                {
-                    doc.Load(fs, DataFormats.Text);                   
-                }
-
-                textContent = doc.Text;
-
+            var doc = new TextRange(flowDocument.ContentStart, flowDocument.ContentEnd);
+                
+            using (var fs = new FileStream(dialog.FileName, FileMode.Open))
+            {
+                doc.Load(fs, DataFormats.Text);                   
             }
-        }
-        catch (Exception)
-        {
 
-            throw;
+            TextContent = doc.Text;
         }
-       
+        catch (Exception ex)
+        {
+            MessageBox.Show(ex.Message);
+        }
     }
+    
     private void CreateNewFile()
     {
         try
@@ -144,69 +144,78 @@ public partial class MenuViewModel : ObservableObject
             var name = Application.Current.TryFindResource("NewFileHeader").ToString();           
             var content = "";
             
-            var macroModel = new MacroFileModel(name,path,content);
+            var macroModel = new MacroFileModel()
+            {
+                Name = name,
+                Path = path,
+                Content = content
+            };
+            
             Files.Add(macroModel);
-            selectedFile = macroModel;
-
+            SelectedFile = macroModel;
         }
-        catch (Exception)
+        catch (Exception ex)
         {
-
-            throw;
+            MessageBox.Show(ex.Message);
         }
-        
     }
+    
     private void SaveFile()
     {       
-        if (string.IsNullOrWhiteSpace(selectedFile.Path))
+        if (string.IsNullOrWhiteSpace(SelectedFile.Path))
         {
             SaveAs();
             return;
         }
-        File.WriteAllText(selectedFile.Path, selectedFile.Content);       
+        
+        File.WriteAllText(SelectedFile.Path, SelectedFile.Content);       
     }
+    
     private void SaveAs()
     {
         // Configure save file dialog box
         var dialog = new SaveFileDialog();
-        dialog.FileName = "M"; // Default file name
-        dialog.DefaultExt = ".pm"; // Default file extension
-        dialog.Filter = "Файлы макросов (.pm)|*.pm"; // Filter files by extension
+        
+        dialog.FileName = "M";
+        dialog.DefaultExt = ".pm";
+        dialog.Filter = "Файлы макросов (.pm)|*.pm";
 
         // Show save file dialog box
-        bool? result = dialog.ShowDialog();
+        var result = dialog.ShowDialog();
 
         // Process save file dialog box results
-        if (result == true)
-        {
-            // Save document
-            string filename = dialog.FileName;
-            File.WriteAllText(filename, selectedFile.Content);
-        }
-       
+        if (result == false)
+            return;
+        
+        var filename = dialog.FileName;
+        File.WriteAllText(filename, SelectedFile.Content);
+
     }
+    
     private void SaveAll() 
     {
         foreach (var file in Files)
         {
-            selectedFile = file;
+            SelectedFile = file;
             SaveFile();
         }
     }
+    
     private void Close()
     {
         Files.Remove(selectedFile);
-        if (Files.Count>0)
+        
+        if (Files.Count > 0)
         {
-            selectedFile = Files.FirstOrDefault();
+            SelectedFile = Files.FirstOrDefault();
         }
     }
 
-    private async Task UpadateFunctions()
+    private async Task UpdateFunctions()
     {
         var collection = await apiCommandServices.GetFunctionNode(5);
 
-        foreach (FunctionNodeModel node in collection)
+        foreach (var node in collection)
         {
             MacroNodes.Add(node);
         }

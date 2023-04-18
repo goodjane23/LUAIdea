@@ -1,12 +1,7 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                    xmlns:helper="clr-namespace:LUAIdea.Helpers"
-                    xmlns:controls="clr-namespace:LUAIdea.Controls">
+                    xmlns:helper="clr-namespace:LUAIdea.Helpers">
 
     <helper:BoolToVisibilityConverter x:Key="BoolToVisibility"/>
-
-    <DataTemplate x:Key="MacroView">
-        <controls:MacroViewControl />
-    </DataTemplate>
-
+    
 </ResourceDictionary>

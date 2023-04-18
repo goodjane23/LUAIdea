@@ -1,14 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace LUAIdea.Models;
+
 public class FunctionNodeModel
 {    
     public string? Header { get; set; }
 
-    public ICollection<FunctionModel> Functions { get; set; }
-   
+    public ICollection<CommandModel> Functions { get; set; }
 }

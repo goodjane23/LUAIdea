@@ -5,227 +5,234 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Net.Http;
 using System.Threading.Tasks;
+using System.Windows;
 
-namespace LUAIdea.Services
+namespace LUAIdea.Services;
+
+public class ApiCommandServices
 {
-    class ApiCommandServices
+    private readonly Dictionary<string, FunctionNodeModel> idFuncNodePairs;
+
+    public ApiCommandServices()
     {
-        private Dictionary<string, FunctionNodeModel> idFuncNodePairs;
+        idFuncNodePairs = new Dictionary<string, FunctionNodeModel>();
+    }
+        
+    public static async Task<string> NetLoadHttp(string s)
+    {
+        var rez = string.Empty;
 
-        public ApiCommandServices()
+        try
         {
-            idFuncNodePairs = new Dictionary<string, FunctionNodeModel>();
-        }
-        internal static async Task<string> NetLoadHttp(string s)
+            using var client = new HttpClient();
+            rez = await client.GetStringAsync(s);
+        }            
+        catch { }
+
+        return rez;
+    }
+
+    private static async Task GetAllDescriptionFromHttp()
+    {
+        var base_http = @"http://doc.pumotix.ru/pages/viewpage.action?pageId=";
+
+        var mas_base_http = new[]
         {
-            var rez = string.Empty;
+            base_http + "5180768", //in_out
+            base_http + "5180766", //axis
+            base_http + "5180780", //homing
+            base_http + "5180770", //m6
+            base_http + "5180778", //spindle
+            base_http + "5180775", //plasma
+            base_http + "5180773", //oxy
+            base_http + "5182663", //modbus
+            base_http + "5180782", //other
+            base_http + "42959110", //in_out_fo
+            base_http + "43843590", //axis_fo
+            base_http + "43843598", //spindle_fo
+            base_http + "43843603", //plasma_fo
+            base_http + "43843606", //oxy_fo
+            base_http + "43843608", //modbus_fo
+            base_http + "43843610" //other_fo           
+        };
 
-            try
-            {
-                using var client = new HttpClient();
-                rez = await client.GetStringAsync(s);
-            }            
-            catch { }
+        await using var f_new_base = new StreamWriter("f_new_base.txt");
 
-            return rez;
-        }
-
-        private static async Task GetAllDescriptionFromHttp()
+        try
         {
-            var base_http = @"http://doc.pumotix.ru/pages/viewpage.action?pageId=";
-
-            var mas_base_http = new[]
+            for (var i = 0; i < mas_base_http.Length; i++)
             {
-                base_http + "5180768", //in_out
-                base_http + "5180766", //axis
-                base_http + "5180780", //homing
-                base_http + "5180770", //m6
-                base_http + "5180778", //spindle
-                base_http + "5180775", //plasma
-                base_http + "5180773", //oxy
-                base_http + "5182663", //modbus
-                base_http + "5180782", //other
-                base_http + "42959110", //in_out_fo
-                base_http + "43843590", //axis_fo
-                base_http + "43843598", //spindle_fo
-                base_http + "43843603", //plasma_fo
-                base_http + "43843606", //oxy_fo
-                base_http + "43843608", //modbus_fo
-                base_http + "43843610" //other_fo           
-            };
-
-            await using var f_new_base = new StreamWriter("f_new_base.txt");
-
-            try
-            {
-                for (var i = 0; i < mas_base_http.Length; i++)
-                {
-                    var http_page = await NetLoadHttp(mas_base_http[i]);
-                    var http_page_strings = http_page.Replace("<", "@").Split('@');
+                var http_page = await NetLoadHttp(mas_base_http[i]);
+                var http_page_strings = http_page.Replace("<", "@").Split('@');
                     
-                    for (var j = 0; j <= http_page_strings.Length - 1; j++)
+                for (var j = 0; j <= http_page_strings.Length - 1; j++)
+                {
+                    var s = http_page_strings[j];
+
+                    if ((s.Contains(">bool") ||
+                         s.Contains(">void") ||
+                         s.Contains(">number") ||
+                         s.Contains(">string") ||
+                         s.Contains(">int")) &&
+                        s.Contains('(') &&
+                        s.Contains(')'))
                     {
-                        var s = http_page_strings[j];
+                        var func = s.Substring(s.IndexOf(">")) + "\r";
 
-                        if ((s.Contains(">bool") ||
-                             s.Contains(">void") ||
-                             s.Contains(">number") ||
-                             s.Contains(">string") ||
-                             s.Contains(">int")) &&
-                             s.Contains("(") &&
-                             s.Contains(")"))
+                        var func_name = func.Replace(">bool", "")
+                            .Replace(">void", "")
+                            .Replace(">number", "")
+                            .Replace(">string", "")
+                            .Replace(">int", "");
+
+                        func_name = func_name.Substring(1);
+
+                        if (http_page_strings[j + 2].Contains("p>"))
                         {
-                            var func = s.Substring(s.IndexOf(">")) + "\r";
+                            var func_note = http_page_strings[j + 2];
+                            func_note = func_note.Substring(func_note.IndexOf(">") + 1);
 
-                            var func_name = func.Replace(">bool", "")
-                                .Replace(">void", "")
-                                .Replace(">number", "")
-                                .Replace(">string", "")
-                                .Replace(">int", "");
+                            var func_out = $"{func_name.Replace("\r", "")}@{func_note}";
+                            var name_type = mas_base_http[i].Substring(mas_base_http[i].LastIndexOf("=") + 1);
 
-                            func_name = func_name.Substring(1);
-
-                            if (http_page_strings[j + 2].Contains("p>"))
-                            {
-                                var func_note = http_page_strings[j + 2];
-                                func_note = func_note.Substring(func_note.IndexOf(">") + 1);
-
-                                var func_out = $"{func_name.Replace("\r", "")}@{func_note}";
-                                var name_type = mas_base_http[i].Substring(mas_base_http[i].LastIndexOf("=") + 1);
-
-                                func_out = $"{name_type}@{func_out}";
-                                await f_new_base.WriteLineAsync(func_out);
-                            }
+                            func_out = $"{name_type}@{func_out}";
+                            await f_new_base.WriteLineAsync(func_out);
                         }
                     }
                 }
             }
-            catch (Exception ex)
-            {
-                var ttemp = ex.Data;
-                throw;
-            }
-
-            f_new_base.Close();
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show(ex.Message);
         }
 
-        private async Task FillFunctionNode()
-        {
+        f_new_base.Close();
+    }
 
-            using var reader = new StreamReader("f_new_base.txt");            
+    private async Task FillFunctionNode()
+    {
+        using var reader = new StreamReader("f_new_base.txt");            
             
-            while (!reader.EndOfStream)
-            {               
-                var s = await reader.ReadLineAsync();
+        while (!reader.EndOfStream)
+        {               
+            var s = await reader.ReadLineAsync();
 
-                if (s == null) continue;
-                var dataArray = s.Split('@');
-
-                var funcModel = CreateFunction(dataArray);
+            if (s == null)
+                continue;
+            
+            var dataArray = s.Split('@');
+            var funcModel = CreateFunction(dataArray);
                
-                idFuncNodePairs.TryGetValue(dataArray[0], out var functionNode);
+            idFuncNodePairs.TryGetValue(dataArray[0], out var functionNode);
 
-                if (functionNode is null)
+            if (functionNode is null)
+            {
+                functionNode = new FunctionNodeModel
                 {
-                    functionNode = new FunctionNodeModel();
-                    functionNode.Functions = new ObservableCollection<FunctionModel>();
-                    idFuncNodePairs.Add(dataArray[0], functionNode);                   
-                }
+                    Functions = new ObservableCollection<CommandModel>()
+                };
+                
+                idFuncNodePairs.Add(dataArray[0], functionNode);                   
+            }
 
-                if (dataArray[0][0] == '5') 
+            if (dataArray[0][0] == '5') 
+            {
+                switch (dataArray[0])
                 {
-                    switch (dataArray[0])
-                    {
-                        case "5180768":
-                            functionNode.Header = "Входы и выходы";
-                            break;
-                        case "5180766":
-                            functionNode.Header = "Оси";
-                            break;
-                        case "5180780":
-                            functionNode.Header = "Базирование";
-                            break;
-                        case "5180770":
-                            functionNode.Header = "Смена инструмента";
-                            break;
-                        case "5180778":
-                            functionNode.Header = "Шпиндель";
-                            break;
-                        case "5180775":
-                            functionNode.Header = "Плазма";
-                            break;
-                        case "5180773":
-                            functionNode.Header = "Газокислород";
-                            break;
-                        case "5182663":
-                            functionNode.Header = "ModBus";
-                            break;
-                        case "5180782":
-                            functionNode.Header = "Другое";
-                            break;
-
-                        default:
-                            break;
-                    }
-                    functionNode.Functions.Add(funcModel);
+                    case "5180768":
+                        functionNode.Header = "Входы и выходы";
+                        break;
+                    case "5180766":
+                        functionNode.Header = "Оси";
+                        break;
+                    case "5180780":
+                        functionNode.Header = "Базирование";
+                        break;
+                    case "5180770":
+                        functionNode.Header = "Смена инструмента";
+                        break;
+                    case "5180778":
+                        functionNode.Header = "Шпиндель";
+                        break;
+                    case "5180775":
+                        functionNode.Header = "Плазма";
+                        break;
+                    case "5180773":
+                        functionNode.Header = "Газокислород";
+                        break;
+                    case "5182663":
+                        functionNode.Header = "ModBus";
+                        break;
+                    case "5180782":
+                        functionNode.Header = "Другое";
+                        break;
+                    default:
+                        break;
                 }
                 
-                if (dataArray[0][0] == '4')
-                {
-                    switch (dataArray[0])
-                    {
-                        case "42959110":
-                            functionNode.Header = "Входы и выходы";
-                            break;
-                        case "43843590":
-                            functionNode.Header = "Оси";
-                            break;
-                        case "43843598":
-                            functionNode.Header = "Шпиндель";
-                            break;
-                        case "43843603":
-                            functionNode.Header = "Плазма";
-                            break;
-                        case "43843606":
-                            functionNode.Header = "Газокислород";
-                            break;
-                        case "43843608":
-                            functionNode.Header = "ModBus";
-                            break;
-                        case "43843610":
-                            functionNode.Header = "Другие";
-                            break;
-                    }
-                    functionNode.Functions.Add(funcModel);
-                }
+                functionNode.Functions.Add(funcModel);
             }
-        }
-
-        public async Task<IEnumerable<FunctionNodeModel>> GetFunctionNode(int num)
-        {
-            if (num !=5 && num !=4) return null;
-
-            var resultNode = new ObservableCollection<FunctionNodeModel>();
-            await GetAllDescriptionFromHttp();
-            await FillFunctionNode();            
-
-            foreach (var item in idFuncNodePairs)
+                
+            if (dataArray[0][0] == '4')
             {
-                if (item.Key.StartsWith($"{num}"))
-                    resultNode.Add(item.Value);
+                switch (dataArray[0])
+                {
+                    case "42959110":
+                        functionNode.Header = "Входы и выходы";
+                        break;
+                    case "43843590":
+                        functionNode.Header = "Оси";
+                        break;
+                    case "43843598":
+                        functionNode.Header = "Шпиндель";
+                        break;
+                    case "43843603":
+                        functionNode.Header = "Плазма";
+                        break;
+                    case "43843606":
+                        functionNode.Header = "Газокислород";
+                        break;
+                    case "43843608":
+                        functionNode.Header = "ModBus";
+                        break;
+                    case "43843610":
+                        functionNode.Header = "Другие";
+                        break;
+                }
+                functionNode.Functions.Add(funcModel);
             }
-
-            return resultNode;
         }
+    }
 
-        private static FunctionModel CreateFunction(string[] temp)
-        {
-            FunctionModel fm = new FunctionModel();
-            fm.Desription = temp[2];
-            fm.Name = temp[1];
-            fm.Function = temp[1].Substring(0, temp[1].IndexOf('('));
-            return fm;
-        }
+    public async Task<IEnumerable<FunctionNodeModel>> GetFunctionNode(int num)
+    {
+        if (num != 5 && num != 4)
+            return null;
+
+        var resultNode = new List<FunctionNodeModel>();
         
+        await GetAllDescriptionFromHttp();
+        await FillFunctionNode();            
+
+        foreach (var item in idFuncNodePairs)
+        {
+            if (item.Key.StartsWith(num.ToString()))
+                resultNode.Add(item.Value);
+        }
+
+        return resultNode;
+    }
+
+    private static CommandModel CreateFunction(string[] temp)
+    {
+        var fm = new CommandModel
+        {
+            Description = temp[2],
+            Name = temp[1],
+            Function = temp[1].Substring(0, temp[1].IndexOf('('))
+        };
+
+        return fm;
     }
 }
