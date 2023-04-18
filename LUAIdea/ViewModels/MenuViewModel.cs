@@ -24,6 +24,8 @@ public partial class MenuViewModel : ObservableObject
 
     [ObservableProperty]
     private string textContent;
+    [ObservableProperty]
+    private string testProperty;
 
     [ObservableProperty]
     private MacroFileModel selectedFile;
@@ -32,7 +34,10 @@ public partial class MenuViewModel : ObservableObject
     private FunctionNodeModel selectedMacroModel;
 
     [ObservableProperty]
-    private bool isMacroViewOpen = false;
+    private bool isMacroViewOpen;
+
+    [ObservableProperty]
+    private FunctionModel currentFunction;
 
     public ObservableCollection<FunctionNodeModel> MacroNodes { get; private set; }
  
@@ -54,6 +59,8 @@ public partial class MenuViewModel : ObservableObject
     public IRelayCommand DoubleClick { get; set; }
     public IRelayCommand UpadateFunctionsCommand { get; set; }
 
+    public IRelayCommand DoubleClickTVCommand { get; set; }
+
     public MenuViewModel()
     {
         NewFileCommand = new RelayCommand(CreateNewFile);
@@ -63,7 +70,7 @@ public partial class MenuViewModel : ObservableObject
         SaveAllCommand = new RelayCommand(SaveAll);
         CloseCommand = new RelayCommand(Close);
         ShowMacroHelpCommand = new RelayCommand(ShowMacroHelp);
-
+        DoubleClickTVCommand = new RelayCommand(DoubleClickTV);
         apiCommandServices = new ApiCommandServices();
 
         CloseMacroHelpCommand = new RelayCommand(CloseMacroHelp);
@@ -74,6 +81,13 @@ public partial class MenuViewModel : ObservableObject
         BacgroundOpNodes = new ObservableCollection<FunctionNodeModel>();
         Files = new ObservableCollection<MacroFileModel>();
         flowDocument = new FlowDocument();
+    }
+
+    private void DoubleClickTV()
+    {
+     
+        var temp = TestProperty;
+        textContent += currentFunction.Name;        
     }
 
     private void ShowMacroHelp()

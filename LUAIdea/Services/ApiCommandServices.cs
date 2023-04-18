@@ -128,6 +128,7 @@ namespace LUAIdea.Services
                 if (functionNode is null)
                 {
                     functionNode = new FunctionNodeModel();
+                    functionNode.Functions = new ObservableCollection<FunctionModel>();
                     idFuncNodePairs.Add(dataArray[0], functionNode);                   
                 }
 
@@ -217,9 +218,9 @@ namespace LUAIdea.Services
             return resultNode;
         }
 
-        private static MacroFunctionModel CreateFunction(string[] temp)
+        private static FunctionModel CreateFunction(string[] temp)
         {
-            MacroFunctionModel fm = new MacroFunctionModel();
+            FunctionModel fm = new FunctionModel();
             fm.Desription = temp[2];
             fm.Name = temp[1];
             fm.Function = temp[1].Substring(0, temp[1].IndexOf('('));

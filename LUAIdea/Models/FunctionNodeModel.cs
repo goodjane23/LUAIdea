@@ -6,12 +6,9 @@ using System.Threading.Tasks;
 
 namespace LUAIdea.Models;
 public class FunctionNodeModel
-{
-    public string Header { get; set; }
+{    
+    public string? Header { get; set; }
 
-    public List<IFunctionModel> Functions { get; set; }
-    public FunctionNodeModel()
-    {
-        Functions = new List<IFunctionModel>();        
-    }
+    public ICollection<FunctionModel> Functions { get; set; }
+   
 }

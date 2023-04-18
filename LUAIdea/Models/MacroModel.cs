@@ -13,6 +13,10 @@ public class MacroFileModel
     public string? Path { get; set; }
 
     public string? Content { get; set; }
+    public MacroFileModel()
+    {
+        
+    }
     public MacroFileModel(string name, string path, string text)
     {
         Name = name;
