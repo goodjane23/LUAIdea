@@ -5,11 +5,14 @@ using System.IO;
 using System.Linq;
 using LUAIdea.Models;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Windows.Documents;
 using System.Windows;
 using CommunityToolkit.Mvvm.ComponentModel;
 using LUAIdea.Services;
 using System.Threading.Tasks;
+using System.Windows.Controls;
+using LUAIdea.Views;
 
 namespace LUAIdea.ViewModels;
 
@@ -20,9 +23,6 @@ public partial class MainWindowViewModel : ObservableObject
 
     [ObservableProperty]
     private string textContent;
-    
-    [ObservableProperty]
-    private string testProperty;
 
     [ObservableProperty]
     private MacroFileModel selectedFile;
@@ -53,7 +53,7 @@ public partial class MainWindowViewModel : ObservableObject
     public IRelayCommand HideCommand { get; set; }
     public IRelayCommand DoubleClick { get; set; }
     public IRelayCommand UpdateFunctionsCommand { get; set; }
-    public IRelayCommand DoubleClickTVCommand { get; set; }
+    public IRelayCommand<CommandModel> DoubleClickTVCommand { get; set; }
 
     public MainWindowViewModel()
     {
@@ -64,7 +64,7 @@ public partial class MainWindowViewModel : ObservableObject
         SaveAllCommand = new RelayCommand(SaveAll);
         CloseCommand = new RelayCommand(Close);
         ShowMacroHelpCommand = new RelayCommand(ShowMacroHelp);
-        DoubleClickTVCommand = new RelayCommand(DoubleClickTV);
+        DoubleClickTVCommand = new RelayCommand<CommandModel>(DoubleClickTV);
         apiCommandServices = new ApiCommandServices();
 
         CloseMacroHelpCommand = new RelayCommand(CloseMacroHelp);
@@ -77,10 +77,10 @@ public partial class MainWindowViewModel : ObservableObject
         flowDocument = new FlowDocument();
     }
 
-    private void DoubleClickTV()
+    private void DoubleClickTV(CommandModel command)
     {
-        var temp = TestProperty;
-        TextContent += SelectedCommand.Name;        
+        SelectedFile.Content += command?.Name;
+        OnPropertyChanged(new PropertyChangedEventArgs(nameof(SelectedFile)));
     }
 
     private void ShowMacroHelp()
@@ -118,7 +118,6 @@ public partial class MainWindowViewModel : ObservableObject
             };
 
             Files.Add(macro);
-                
             SelectedFile = Files.FirstOrDefault();
 
             var doc = new TextRange(flowDocument.ContentStart, flowDocument.ContentEnd);
@@ -148,7 +147,8 @@ public partial class MainWindowViewModel : ObservableObject
             {
                 Name = name,
                 Path = path,
-                Content = content
+                Content = content,
+                OpenedPage = new EditFilePage()
             };
             
             Files.Add(macroModel);

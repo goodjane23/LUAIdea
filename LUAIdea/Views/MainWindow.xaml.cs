@@ -1,7 +1,7 @@
 ﻿using LUAIdea.ViewModels;
 using System.Windows;
 
-namespace LUAIdea;
+namespace LUAIdea.Views;
 
 public partial class MainWindow : Window
 {
