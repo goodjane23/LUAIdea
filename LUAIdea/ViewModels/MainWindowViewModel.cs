@@ -152,7 +152,6 @@ public partial class MainWindowViewModel : ObservableObject
             };
             
             Files.Add(macroModel);
-            SelectedFile = macroModel;
         }
         catch (Exception ex)
         {
