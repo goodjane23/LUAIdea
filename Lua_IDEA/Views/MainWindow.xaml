@@ -18,6 +18,8 @@
             <MenuBarItem Title="File">
                 <MenuFlyoutItem Text="New" Command="{x:Bind viewModel.AddFileCommand}"/>
                 <MenuFlyoutItem Text="Open" Command="{x:Bind viewModel.OpenFileCommand}"/>
+                <MenuFlyoutItem Text="Save" Command="{x:Bind viewModel.SaveFileCommand}"/>
+                <MenuFlyoutItem Text="SaveAll" Command="{x:Bind viewModel.SaveAllFileCommand}"/>
             </MenuBarItem>
         </MenuBar>
 
@@ -33,7 +35,7 @@
                      AddTabButtonClick="TabView_AddTabButtonClick"
                      TabCloseRequested="TabView_TabCloseRequested">
                 <TabView.TabItemTemplate>
-                    <DataTemplate x:DataType="entities:File">
+                    <DataTemplate x:DataType="entities:LuaFile">
                         <TabViewItem Header="{Binding Name}">
                             <TextBox Margin="8" Text="{x:Bind Content, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
                         </TabViewItem>

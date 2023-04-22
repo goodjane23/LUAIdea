@@ -2,7 +2,7 @@
 
 namespace Lua_IDEA.Entities;
 
-public partial class File : ObservableObject
+public partial class LuaFile : ObservableObject
 {
     [ObservableProperty]
     public string name;
