@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Microsoft Corporation and Contributors.
 // Licensed under the MIT License.
 
+using Lua_IDEA.Views;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;

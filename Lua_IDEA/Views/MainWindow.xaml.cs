@@ -1,6 +1,6 @@
 using Microsoft.UI.Xaml;
 
-namespace Lua_IDEA;
+namespace Lua_IDEA.Views;
 
 public sealed partial class MainWindow : Window
 {
@@ -9,10 +9,5 @@ public sealed partial class MainWindow : Window
     public MainWindow()
     {
         this.InitializeComponent();
-    }
-
-    private void myButton_Click(object sender, RoutedEventArgs e)
-    {
-        myButton.Content = $"Clicked {++clicksCount} times";
     }
 }
