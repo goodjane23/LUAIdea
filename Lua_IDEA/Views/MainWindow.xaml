@@ -1,6 +1,3 @@
-<!-- Copyright (c) Microsoft Corporation and Contributors. -->
-<!-- Licensed under the MIT License. -->
-
 <Window
     x:Class="Lua_IDEA.Views.MainWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
@@ -8,7 +5,68 @@
     xmlns:local="using:Lua_IDEA"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:entities="using:Lua_IDEA.Entities"
     mc:Ignorable="d">
 
-  
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <MenuBar Grid.Row="0">
+            <MenuBarItem Title="File">
+                <MenuFlyoutItem Text="New" Command="{x:Bind viewModel.AddFileCommand}"/>
+                <MenuFlyoutItem Text="Open" Command="{x:Bind viewModel.OpenFileCommand}"/>
+            </MenuBarItem>
+        </MenuBar>
+
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
+            <TabView Grid.Column="0"
+                     TabItemsSource="{x:Bind viewModel.Tabs}"
+                     SelectedItem="{x:Bind viewModel.SelectedTab, Mode=TwoWay}"
+                     AddTabButtonClick="TabView_AddTabButtonClick"
+                     TabCloseRequested="TabView_TabCloseRequested">
+                <TabView.TabItemTemplate>
+                    <DataTemplate x:DataType="entities:File">
+                        <TabViewItem Header="{Binding Name}">
+                            <TextBox Margin="8" Text="{x:Bind Content, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                        </TabViewItem>
+                    </DataTemplate>
+                </TabView.TabItemTemplate>
+            </TabView>
+
+            <Grid Grid.Column="1" Width="400">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <StackPanel Grid.Row="0" Orientation="Vertical">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="Макросы" />
+                        <Button Content="Huynya"/>
+                    </StackPanel>
+
+                    <TreeView ItemsSource="{x:Bind viewModel.Categories}"
+                              SelectedItem="{x:Bind viewModel.SelectedCommand, Mode=TwoWay}">
+                        <TreeView.ItemTemplate>
+                            <DataTemplate x:DataType="entities:CommandCategory">
+                                <TreeViewItem ItemsSource="{Binding Commands}"
+                                              Content="{Binding Name}"
+                                              DoubleTapped="TreeViewItem_DoubleTapped"/>
+                            </DataTemplate>
+                        </TreeView.ItemTemplate>
+                    </TreeView>
+                </StackPanel>
+
+                <Button Margin="8" Grid.Row="1" Content="Update" Command="{x:Bind viewModel.LoadCommandsCommand}"/>
+            </Grid>
+        </Grid>
+    </Grid>
 </Window>
