@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "Lua_IDEA (Package)": {
+      "commandName": "MsixPackage"
+    },
+    "Lua_IDEA (Unpackaged)": {
+      "commandName": "Project"
+    }
+  }
+}
