@@ -6,6 +6,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:entities="using:Lua_IDEA.Entities"
+    xmlns:i="using:Microsoft.Xaml.Behaviors"
     mc:Ignorable="d">
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
@@ -26,12 +27,15 @@
                 <MenuFlyoutItem Text="New" Command="{x:Bind viewModel.AddFileCommand}"/>
                 <MenuFlyoutItem Text="Open" Command="{x:Bind viewModel.OpenFileCommand}"/>
                 <MenuFlyoutSeparator />
-                <MenuFlyoutItem Text="Save" Command="{x:Bind viewModel.SaveFileCommand}"/>
+                <MenuFlyoutItem Text="Save" Command="{x:Bind viewModel.SaveFileCommand}" />
+                <MenuFlyoutItem Text="SaveAs" Command="{x:Bind viewModel.SaveFileAsCommand}" />
                 <MenuFlyoutItem Text="Save All" Command="{x:Bind viewModel.SaveAllFileCommand}"/>
+                <MenuFlyoutSeparator />
+                <MenuFlyoutItem Text="Close" Command="{x:Bind viewModel.CloseFileCommand}" />
             </MenuBarItem>
 
             <MenuBarItem Title="View">
-                <ToggleMenuFlyoutItem Text="Панель макросов" IsChecked="{x:Bind viewModel.IsMacrosPanelVisible, Mode=TwoWay}"/>
+                <ToggleMenuFlyoutItem Text="Панель макросов" IsChecked="{x:Bind viewModel.IsMacrosPanelVisible, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
                 <MenuFlyoutSeparator/>
                 <MenuFlyoutItem Text="Настройки"/>
             </MenuBarItem>
@@ -62,11 +66,11 @@
                                      AcceptsReturn="True"/>
                         </TabViewItem>
                     </DataTemplate>
-                </TabView.TabItemTemplate>
+                </TabView.TabItemTemplate>                
             </TabView>
 
             <!-- Панель макросов -->
-            <Grid Grid.Column="1" Width="400" Visibility="{x:Bind viewModel.IsMacrosPanelVisible}">
+            <Grid Grid.Column="1" Width="400" Visibility="{x:Bind viewModel.IsMacrosPanelVisible, Mode=OneWay}">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*"/>
                     <RowDefinition Height="Auto"/>
@@ -81,33 +85,45 @@
 
                     <Grid Grid.Row="0" Margin="8">
                         <TextBlock Text="Список макросов" VerticalAlignment="Center" HorizontalAlignment="Left"/>
-
-                        <Button Style="{StaticResource AccentButtonStyle}"
-                                Command="{x:Bind viewModel.LoadCommandsCommand}"
-                                VerticalAlignment="Center"
-                                HorizontalAlignment="Right">
+                        <Button 
+                            Content="X"
+                            VerticalAlignment="Center"
+                            HorizontalAlignment="Right"
+                            Command="{x:Bind viewModel.CloseMacroPanelCommand}"/>
+                    </Grid>
+                    
+                    <TreeView Grid.Row="1"
+                              ItemsSource="{x:Bind viewModel.Categories}" >
+                        <TreeView.ItemTemplate>
+                            <DataTemplate x:DataType="entities:CommandCategory">
+                                <TreeViewItem ItemsSource="{Binding Commands}"
+                                              Content="{Binding Name}"/>
+                            </DataTemplate>
+                        </TreeView.ItemTemplate>
+                        
+                    </TreeView>                    
+                    <Grid
+                        Grid.Row="2">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <TextBlock
+                            Grid.Row="0"
+                            Text="Описание выбранной функции"/>
+                        <Button 
+                            Grid.Row="1"
+                            Style="{StaticResource AccentButtonStyle}"
+                            Command="{x:Bind viewModel.LoadCommandsCommand}"
+                            VerticalAlignment="Center"
+                            HorizontalAlignment="Right">
                             <StackPanel Orientation="Horizontal">
                                 <FontIcon Glyph="&#xE72C;"/>
                                 <TextBlock Margin="8,0,0,0" Text="Обновить"/>
                             </StackPanel>
                         </Button>
+
                     </Grid>
-
-                    <RadioButtons Grid.Row="1" Margin="8">
-                        <RadioButton Content="Background" IsChecked="True"/>
-                        <RadioButton Content="Operation"/>
-                    </RadioButtons>
-
-                    <TreeView Grid.Row="2"
-                              ItemsSource="{x:Bind viewModel.Categories}">
-                        <TreeView.ItemTemplate>
-                            <DataTemplate x:DataType="entities:CommandCategory">
-                                <TreeViewItem ItemsSource="{Binding Commands}"
-                                              Content="{Binding Name}" 
-                                              DoubleTapped="TreeViewItem_DoubleTapped"/>
-                            </DataTemplate>
-                        </TreeView.ItemTemplate>
-                    </TreeView>
                 </Grid>
             </Grid>
         </Grid>

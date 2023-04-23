@@ -91,7 +91,8 @@ public class CommandService
                                 resultCommand.Commands.Add(new Command()
                                 {
                                     Name = commandName,
-                                    Description = commandDescription
+                                    Description = commandDescription,
+                                    IsMacroCommand = func_out.StartsWith("5")
                                 });
 
                                 continue;
@@ -102,7 +103,8 @@ public class CommandService
                                 new Command()
                                 {
                                     Name = commandName,
-                                    Description = commandDescription
+                                    Description = commandDescription,
+                                    IsMacroCommand = func_out.StartsWith("5")
                                 }
                             };
 
@@ -117,7 +119,9 @@ public class CommandService
                                 new Command()
                                 {
                                     Name = commandName,
-                                    Description = commandDescription
+                                    Description = commandDescription,
+                                    IsMacroCommand = func_out.StartsWith("5")
+
                                 }
                             }
                         });

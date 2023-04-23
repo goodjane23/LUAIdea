@@ -22,6 +22,7 @@ public sealed partial class MainWindow : Window
 
     private void TreeViewItem_DoubleTapped(object sender, DoubleTappedRoutedEventArgs e)
     {
+        
         var textBlock = e.OriginalSource as TextBlock;
 
         if (textBlock is null)
@@ -32,6 +33,6 @@ public sealed partial class MainWindow : Window
 
     private void TabView_TabCloseRequested(TabView sender, TabViewTabCloseRequestedEventArgs args)
     {
-        viewModel.CloseFileCommand.Execute(args.Item);
+        viewModel.CloseFileCommand.Execute(null);
     }
 }

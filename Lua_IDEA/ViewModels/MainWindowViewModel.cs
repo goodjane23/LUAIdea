@@ -24,14 +24,17 @@ public partial class MainWindowViewModel : ObservableObject
     public LuaFile selectedTab;
 
     [ObservableProperty]
-    private bool isMacrosPanelVisible = true;
+    private bool isMacrosPanelVisible;
 
     public IRelayCommand AddFileCommand { get; set; }
     public IRelayCommand OpenFileCommand { get; set; }
     public IRelayCommand SaveFileCommand { get; set; }
+    public IRelayCommand SaveFileAsCommand { get; set; }
     public IRelayCommand SaveAllFileCommand { get; set; }
-    public IRelayCommand<LuaFile> CloseFileCommand { get; set; }
+    public IRelayCommand CloseFileCommand { get; set; }
     public IRelayCommand LoadCommandsCommand { get; set; }
+    public IRelayCommand CloseMacroPanelCommand { get; set; }
+    
     public IRelayCommand<string> PasteCommand { get; set; }
 
     private readonly CommandService commandService;
@@ -45,29 +48,38 @@ public partial class MainWindowViewModel : ObservableObject
 
         AddFileCommand = new RelayCommand(CreateNewFile);
         OpenFileCommand = new AsyncRelayCommand(OpenFile);
-        SaveFileCommand = new AsyncRelayCommand(SaveFile);
+        SaveFileCommand = new AsyncRelayCommand<LuaFile>(SaveFile);
+        SaveFileAsCommand = new AsyncRelayCommand(SaveFileAs);
         SaveAllFileCommand = new AsyncRelayCommand(SaveAllFiles);
-        CloseFileCommand = new AsyncRelayCommand<LuaFile>(CloseFile);
+        CloseFileCommand = new AsyncRelayCommand(CloseFile);
+        CloseMacroPanelCommand = new RelayCommand(() => IsMacrosPanelVisible = false);
         LoadCommandsCommand = new AsyncRelayCommand(LoadCommands);
         PasteCommand = new RelayCommand<string>(Paste);
 
         CreateNewFile();
     }
 
+    private async Task SaveFileAs()
+    {
+        await SaveDialog(SelectedTab);
+    }
     private async Task SaveAllFiles()
     {
         foreach (var tab in Tabs)
-            await SaveFile();
-    }
-
-    private async Task SaveFile()
+            await SaveFile(tab);
+    }   
+    private async Task SaveFile(LuaFile luafile)
     {
-        if (SelectedTab is null)
-            return;
+        if (luafile.IsSaved) return;
 
-        if (SelectedTab.IsSaved)
-            return;
+        if (luafile is null && SelectedTab is not null)
+            SaveDialog(SelectedTab);
 
+        if (luafile is not null && SelectedTab is  null)
+            SaveDialog(luafile);
+    }
+    private async Task SaveDialog(LuaFile luaFile)
+    {
         var savePicker = new FileSavePicker();
 
         var hWnd = WindowNative.GetWindowHandle(App.Current);
@@ -87,12 +99,12 @@ public partial class MainWindowViewModel : ObservableObject
 
             using (var tw = new StreamWriter(stream))
             {
-                tw.WriteLine(SelectedTab.Content);
+                tw.WriteLine(luaFile.Content);
             }
 
-            SelectedTab.Path = storageFile.Path;
-            SelectedTab.Name = storageFile.Name;
-            SelectedTab.IsSaved = true;
+            luaFile.Path = storageFile.Path;
+            luaFile.Name = storageFile.Name;
+            luaFile.IsSaved = true;
         }
     }
 
@@ -109,12 +121,12 @@ public partial class MainWindowViewModel : ObservableObject
         Tabs.Add(file);
     }
 
-    private async Task CloseFile(LuaFile file)
+    private async Task CloseFile()
     {
-        if (file is null)
+        if (SelectedTab is null)
             return;
 
-        if (!file.IsSaved)
+        if (!SelectedTab.IsSaved)
         {
             var dialog = new ContentDialog();
 
@@ -128,7 +140,7 @@ public partial class MainWindowViewModel : ObservableObject
             await dialog.ShowAsync();
         }
 
-        Tabs.Remove(file);
+        Tabs.Remove(SelectedTab);
     }
 
     private void Paste(string commandText)
