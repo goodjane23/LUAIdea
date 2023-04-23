@@ -141,6 +141,8 @@ public partial class MainWindowViewModel : ObservableObject
 
     private async Task LoadCommands()
     {
+        Categories.Clear();
+
         var result = await commandService.LoadCommands();
 
         foreach (var command in result)

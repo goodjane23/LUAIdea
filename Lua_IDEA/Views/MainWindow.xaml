@@ -75,15 +75,30 @@
                 <Grid Grid.Row="0">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="*"/>
                         <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
-                    
-                    <StackPanel Grid.Row="0" Margin="8" Orientation="Horizontal">
-                        <TextBlock Text="Список макросов" />
-                    </StackPanel>
 
-                    <TreeView Grid.Row="1"
+                    <Grid Grid.Row="0" Margin="8">
+                        <TextBlock Text="Список макросов" VerticalAlignment="Center" HorizontalAlignment="Left"/>
+
+                        <Button Style="{StaticResource AccentButtonStyle}"
+                                Command="{x:Bind viewModel.LoadCommandsCommand}"
+                                VerticalAlignment="Center"
+                                HorizontalAlignment="Right">
+                            <StackPanel Orientation="Horizontal">
+                                <FontIcon Glyph="&#xE72C;"/>
+                                <TextBlock Margin="8,0,0,0" Text="Обновить"/>
+                            </StackPanel>
+                        </Button>
+                    </Grid>
+
+                    <RadioButtons Grid.Row="1" Margin="8">
+                        <RadioButton Content="Background" IsChecked="True"/>
+                        <RadioButton Content="Operation"/>
+                    </RadioButtons>
+
+                    <TreeView Grid.Row="2"
                               ItemsSource="{x:Bind viewModel.Categories}">
                         <TreeView.ItemTemplate>
                             <DataTemplate x:DataType="entities:CommandCategory">
@@ -94,12 +109,6 @@
                         </TreeView.ItemTemplate>
                     </TreeView>
                 </Grid>
-
-                <Button Grid.Row="1"
-                        Margin="8"
-                        Content="Update"
-                        HorizontalAlignment="Stretch"
-                        Command="{x:Bind viewModel.LoadCommandsCommand}"/>
             </Grid>
         </Grid>
     </Grid>
