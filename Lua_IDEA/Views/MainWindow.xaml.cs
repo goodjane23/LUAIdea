@@ -1,6 +1,8 @@
+using Lua_IDEA.Entities;
 using Lua_IDEA.ViewModels;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Input;
 
 namespace Lua_IDEA.Views;
 
@@ -10,23 +12,22 @@ public sealed partial class MainWindow : Window
 
     public MainWindow()
     {
-        this.InitializeComponent();
+        InitializeComponent();
+
+        ExtendsContentIntoTitleBar = true;
+        SetTitleBar(titleBar);
 
         viewModel = new MainWindowViewModel();
-
-        //var window = WindowHelper.GetWindowForElement();
-        var hWnd = WinRT.Interop.WindowNative.GetWindowHandle(this);
-
     }
 
-    private void TabView_AddTabButtonClick(TabView sender, object args)
+    private void TreeViewItem_DoubleTapped(object sender, DoubleTappedRoutedEventArgs e)
     {
-        viewModel.AddFileCommand.Execute(null);
-    }
+        var textBlock = e.OriginalSource as TextBlock;
 
-    private void TreeViewItem_DoubleTapped(object sender, Microsoft.UI.Xaml.Input.DoubleTappedRoutedEventArgs e)
-    {
-        viewModel.PasteCommand.Execute(null);
+        if (textBlock is null)
+            return;
+
+        viewModel.PasteCommand.Execute(textBlock.Text);
     }
 
     private void TabView_TabCloseRequested(TabView sender, TabViewTabCloseRequestedEventArgs args)

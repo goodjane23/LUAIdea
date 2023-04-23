@@ -66,7 +66,8 @@ public class CommandService
                         .Replace(">void", "")
                         .Replace(">number", "")
                         .Replace(">string", "")
-                        .Replace(">int", "");
+                        .Replace(">int", "")
+                        .Replace("\r", "");
 
                     commandName = commandName.Substring(1);
 
@@ -75,20 +76,19 @@ public class CommandService
                         var commandDescription = pageStrings[j + 2];
                         commandDescription = commandDescription.Substring(commandDescription.IndexOf(">") + 1);
 
-                        var func_out = $"{commandName.Replace("\r", "")}@{commandDescription}";
+                        var func_out = $"{commandName}@{commandDescription}";
                         var commandId = address.Substring(address.LastIndexOf("=") + 1);
 
                         func_out = $"{commandId}@{func_out}";
 
                         var header = CommandCategories[commandId];
+                        var resultCommand = result.FirstOrDefault(x => x.Name == header);
 
-                        var commandCategory = result.FirstOrDefault(x => x.Name == header);
-
-                        if (commandCategory != null)
+                        if (resultCommand is not null)
                         {
-                            if (commandCategory.Commands?.Count > 0)
+                            if (resultCommand.Commands?.Count > 0)
                             {
-                                commandCategory.Commands.Add(new Command()
+                                resultCommand.Commands.Add(new Command()
                                 {
                                     Name = commandName,
                                     Description = commandDescription
@@ -97,7 +97,7 @@ public class CommandService
                                 continue;
                             }
 
-                            commandCategory.Commands = new List<Command>()
+                            resultCommand.Commands = new List<Command>()
                             {
                                 new Command()
                                 {

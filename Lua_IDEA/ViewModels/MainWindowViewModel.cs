@@ -3,7 +3,6 @@ using CommunityToolkit.Mvvm.Input;
 using Lua_IDEA.Entities;
 using Lua_IDEA.Services;
 using Lua_IDEA.Views;
-using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using System;
 using System.Collections.Generic;
@@ -12,7 +11,6 @@ using System.IO;
 using System.Threading.Tasks;
 using Windows.Storage;
 using Windows.Storage.Pickers;
-using Windows.Storage.Provider;
 using WinRT.Interop;
 
 namespace Lua_IDEA.ViewModels;
@@ -26,15 +24,15 @@ public partial class MainWindowViewModel : ObservableObject
     public LuaFile selectedTab;
 
     [ObservableProperty]
-    public Command selectedCommand;
+    private bool isMacrosPanelVisible = true;
 
     public IRelayCommand AddFileCommand { get; set; }
     public IRelayCommand OpenFileCommand { get; set; }
     public IRelayCommand SaveFileCommand { get; set; }
-    public IRelayCommand SaveAllFileCommand { get; set; }    
+    public IRelayCommand SaveAllFileCommand { get; set; }
     public IRelayCommand<LuaFile> CloseFileCommand { get; set; }
     public IRelayCommand LoadCommandsCommand { get; set; }
-    public IRelayCommand PasteCommand { get; set; }
+    public IRelayCommand<string> PasteCommand { get; set; }
 
     private readonly CommandService commandService;
 
@@ -51,7 +49,9 @@ public partial class MainWindowViewModel : ObservableObject
         SaveAllFileCommand = new AsyncRelayCommand(SaveAllFiles);
         CloseFileCommand = new AsyncRelayCommand<LuaFile>(CloseFile);
         LoadCommandsCommand = new AsyncRelayCommand(LoadCommands);
-        PasteCommand = new RelayCommand(Paste);
+        PasteCommand = new RelayCommand<string>(Paste);
+
+        CreateNewFile();
     }
 
     private async Task SaveAllFiles()
@@ -62,65 +62,54 @@ public partial class MainWindowViewModel : ObservableObject
 
     private async Task SaveFile()
     {
-        if (!String.IsNullOrWhiteSpace(selectedTab.Path))
+        if (SelectedTab is null)
+            return;
+
+        if (SelectedTab.IsSaved)
+            return;
+
+        var savePicker = new FileSavePicker();
+
+        var hWnd = WindowNative.GetWindowHandle(App.Current);
+        InitializeWithWindow.Initialize(savePicker, hWnd);
+
+        savePicker.SuggestedStartLocation = PickerLocationId.DocumentsLibrary;
+        savePicker.FileTypeChoices.Add("Plain Text", new List<string>() { ".pm", ".bo", ".txt" });
+
+        savePicker.SuggestedFileName = "file";
+
+        var storageFile = await savePicker.PickSaveFileAsync();
+
+        if (storageFile is not null)
         {
-            if (!selectedTab.IsSaved)
-            {
-                var dialog = new ContentDialog();
+            CachedFileManager.DeferUpdates(storageFile);
+            using var stream = await storageFile.OpenStreamForWriteAsync();
 
-                dialog.XamlRoot = (App.Current as MainWindow).Content.XamlRoot;
-                dialog.Title = "Save your work?";
-                dialog.PrimaryButtonText = "Save";
-                dialog.SecondaryButtonText = "Don't Save";
-                dialog.CloseButtonText = "Cancel";
-                dialog.DefaultButton = ContentDialogButton.Primary;
-
-                var result = await dialog.ShowAsync();                
-            }
-            else
+            using (var tw = new StreamWriter(stream))
             {
-                return;
+                tw.WriteLine(SelectedTab.Content);
             }
+
+            SelectedTab.Path = storageFile.Path;
+            SelectedTab.Name = storageFile.Name;
+            SelectedTab.IsSaved = true;
         }
-        else
-        {
-            FileSavePicker savePicker = new FileSavePicker();
-            var hWnd = WindowNative.GetWindowHandle(App.Current);
-            InitializeWithWindow.Initialize(savePicker, hWnd);
-
-            savePicker.SuggestedStartLocation = PickerLocationId.DocumentsLibrary;
-            savePicker.FileTypeChoices.Add("Plain Text", new List<string>() { ".pm", ".bo", ".txt" });
-
-            savePicker.SuggestedFileName = "m";
-            StorageFile storageFile = await savePicker.PickSaveFileAsync();
-            if (storageFile is not null)
-            {
-                CachedFileManager.DeferUpdates(storageFile);
-                using (var stream = await storageFile.OpenStreamForWriteAsync())
-                {
-                    using (var tw = new System.IO.StreamWriter(stream))
-                    {
-                        tw.WriteLine(selectedTab.content);
-                    }
-                }
-                selectedTab.path = storageFile.Path;
-                selectedTab.name = storageFile.Name;
-            }
-        }      
     }
 
     private void CreateNewFile()
     {
-        Tabs.Add(new LuaFile()
+        var file = new LuaFile()
         {
             Name = "New file",
             Path = "",
             Content = "",
             IsSaved = false
-        });
+        };
+
+        Tabs.Add(file);
     }
 
-    private async Task CloseFile(Entities.LuaFile file)
+    private async Task CloseFile(LuaFile file)
     {
         if (file is null)
             return;
@@ -142,15 +131,12 @@ public partial class MainWindowViewModel : ObservableObject
         Tabs.Remove(file);
     }
 
-    private void Paste()
+    private void Paste(string commandText)
     {
-        if (SelectedCommand is null)
-            return;
-
         if (SelectedTab is null)
             return;
 
-        SelectedTab.Content += SelectedCommand.Name;
+        SelectedTab.Content += commandText;
     }
 
     private async Task LoadCommands()
