@@ -5,7 +5,7 @@ namespace Lua_IDEA;
 
 public partial class App : Application
 {
-    public static Window Current { get; private set; }
+    public static Window MainWindow { get; private set; }
 
     private Window m_window;
 
@@ -17,7 +17,7 @@ public partial class App : Application
     protected override void OnLaunched(LaunchActivatedEventArgs args)
     {
         m_window = new MainWindow();
-        Current = m_window;
+        MainWindow = m_window;
         m_window.Activate();
     }
 }

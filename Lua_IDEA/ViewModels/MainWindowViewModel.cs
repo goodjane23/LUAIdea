@@ -17,8 +17,8 @@ namespace Lua_IDEA.ViewModels;
 
 public partial class MainWindowViewModel : ObservableObject
 {
-    public ObservableCollection<LuaFile> Tabs { get; set; }
-    public ObservableCollection<CommandCategory> Categories { get; set; }
+    public ObservableCollection<LuaFile> Tabs { get; }
+    public ObservableCollection<CommandCategory> Categories { get; }
 
     [ObservableProperty]
     public LuaFile selectedTab;
@@ -26,16 +26,18 @@ public partial class MainWindowViewModel : ObservableObject
     [ObservableProperty]
     private bool isMacrosPanelVisible;
 
-    public IRelayCommand AddFileCommand { get; set; }
-    public IRelayCommand OpenFileCommand { get; set; }
-    public IRelayCommand SaveFileCommand { get; set; }
-    public IRelayCommand SaveFileAsCommand { get; set; }
-    public IRelayCommand SaveAllFileCommand { get; set; }
-    public IRelayCommand CloseFileCommand { get; set; }
-    public IRelayCommand LoadCommandsCommand { get; set; }
-    public IRelayCommand CloseMacroPanelCommand { get; set; }
-    
-    public IRelayCommand<string> PasteCommand { get; set; }
+    [ObservableProperty]
+    private object selectedCommand;
+
+    public IRelayCommand AddFileCommand { get; }
+    public IRelayCommand OpenFileCommand { get; }
+    public IRelayCommand SaveFileCommand { get; }
+    public IRelayCommand SaveFileAsCommand { get; }
+    public IRelayCommand SaveAllFileCommand { get; }
+    public IRelayCommand CloseFileCommand { get; }
+    public IRelayCommand LoadCommandsCommand { get; }
+    public IRelayCommand CloseMacroPanelCommand { get; }
+    public IRelayCommand PasteCommand { get; }
 
     private readonly CommandService commandService;
 
@@ -54,7 +56,7 @@ public partial class MainWindowViewModel : ObservableObject
         CloseFileCommand = new AsyncRelayCommand(CloseFile);
         CloseMacroPanelCommand = new RelayCommand(() => IsMacrosPanelVisible = false);
         LoadCommandsCommand = new AsyncRelayCommand(LoadCommands);
-        PasteCommand = new RelayCommand<string>(Paste);
+        PasteCommand = new RelayCommand(Paste);
 
         CreateNewFile();
     }
@@ -63,26 +65,29 @@ public partial class MainWindowViewModel : ObservableObject
     {
         await SaveDialog(SelectedTab);
     }
+
     private async Task SaveAllFiles()
     {
         foreach (var tab in Tabs)
             await SaveFile(tab);
-    }   
+    }
+    
     private async Task SaveFile(LuaFile luafile)
     {
         if (luafile.IsSaved) return;
 
         if (luafile is null && SelectedTab is not null)
-            SaveDialog(SelectedTab);
+            await SaveDialog(SelectedTab);
 
         if (luafile is not null && SelectedTab is  null)
-            SaveDialog(luafile);
+            await SaveDialog(luafile);
     }
+
     private async Task SaveDialog(LuaFile luaFile)
     {
         var savePicker = new FileSavePicker();
 
-        var hWnd = WindowNative.GetWindowHandle(App.Current);
+        var hWnd = WindowNative.GetWindowHandle(App.MainWindow);
         InitializeWithWindow.Initialize(savePicker, hWnd);
 
         savePicker.SuggestedStartLocation = PickerLocationId.DocumentsLibrary;
@@ -130,7 +135,7 @@ public partial class MainWindowViewModel : ObservableObject
         {
             var dialog = new ContentDialog();
 
-            dialog.XamlRoot = (App.Current as MainWindow).Content.XamlRoot;
+            dialog.XamlRoot = (App.MainWindow as MainWindow).Content.XamlRoot;
             dialog.Title = "Save your work?";
             dialog.PrimaryButtonText = "Save";
             dialog.SecondaryButtonText = "Don't Save";
@@ -143,12 +148,15 @@ public partial class MainWindowViewModel : ObservableObject
         Tabs.Remove(SelectedTab);
     }
 
-    private void Paste(string commandText)
+    private void Paste()
     {
         if (SelectedTab is null)
             return;
 
-        SelectedTab.Content += commandText;
+        if (SelectedCommand is not Command command)
+            return;
+
+        SelectedTab.Content += command.Name;
     }
 
     private async Task LoadCommands()
@@ -167,7 +175,7 @@ public partial class MainWindowViewModel : ObservableObject
     {
         var openPicker = new FileOpenPicker();
 
-        var hWnd = WindowNative.GetWindowHandle(App.Current);
+        var hWnd = WindowNative.GetWindowHandle(App.MainWindow);
         InitializeWithWindow.Initialize(openPicker, hWnd);
 
         openPicker.ViewMode = PickerViewMode.Thumbnail;

@@ -1,4 +1,3 @@
-using Lua_IDEA.Entities;
 using Lua_IDEA.ViewModels;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -22,13 +21,7 @@ public sealed partial class MainWindow : Window
 
     private void TreeViewItem_DoubleTapped(object sender, DoubleTappedRoutedEventArgs e)
     {
-        
-        var textBlock = e.OriginalSource as TextBlock;
-
-        if (textBlock is null)
-            return;
-
-        viewModel.PasteCommand.Execute(textBlock.Text);
+        viewModel.PasteCommand.Execute(null);
     }
 
     private void TabView_TabCloseRequested(TabView sender, TabViewTabCloseRequestedEventArgs args)
