@@ -58,10 +58,11 @@
                 <TabView.TabItemTemplate>
                     <DataTemplate x:DataType="entities:LuaFile">
                         <TabViewItem Header="{x:Bind Name}">
-                            <TextBox Text="{x:Bind Content, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                     Margin="4"
-                                     TextWrapping="Wrap"
-                                     AcceptsReturn="True"/>
+                            <TextBox
+                                Text="{x:Bind Content, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                Margin="4"
+                                TextWrapping="Wrap"
+                                AcceptsReturn="True"/>
                         </TabViewItem>
                     </DataTemplate>
                 </TabView.TabItemTemplate>
@@ -79,8 +80,8 @@
                 <Grid Grid.Row="0">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="2*"/>
                         <RowDefinition Height="*"/>
-                        <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
 
                     <Grid Grid.Row="0" Margin="8">
@@ -112,8 +113,10 @@
                             <RowDefinition Height="Auto"/>
                         </Grid.RowDefinitions>
 
-                        <TextBlock Grid.Row="0"
-                                   Text="{Binding viewModel.SelectedCommand.Description}"/>
+                        <TextBlock 
+                            Grid.Row="0"
+                            Text="{Binding Path=SelectedCommand.Description,
+                            UpdateSourceTrigger=PropertyChanged}"/>
 
                         <Button Grid.Row="1"
                                 Style="{StaticResource AccentButtonStyle}"

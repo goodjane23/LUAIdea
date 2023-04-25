@@ -74,7 +74,6 @@ public partial class MainWindowViewModel : ObservableObject
     
     private async Task SaveFile(LuaFile luafile)
     {
-        if (luafile.IsSaved) return;
 
         if (luafile is null && SelectedTab is not null)
             await SaveDialog(SelectedTab);

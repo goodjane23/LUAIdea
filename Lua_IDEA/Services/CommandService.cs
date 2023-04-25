@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+using Windows.Networking.Connectivity;
 
 namespace Lua_IDEA.Services;
 
@@ -35,6 +36,12 @@ public class CommandService
             { "43843608", "ModBus" },
             { "43843610", "Другие" },
         };
+        var isInternetHere = NetworkInformation.GetInternetConnectionProfile() != null;
+
+        if (isInternetHere)
+            LoadCommands();
+        else
+            LoadCommandsFromFile();
     }
 
     public async Task<IEnumerable<CommandCategory>> LoadCommands()
@@ -131,5 +138,10 @@ public class CommandService
         }
 
         return result;
+    }
+
+    public async Task<IEnumerable<CommandCategory>> LoadCommandsFromFile()
+    {
+        return null;
     }
 }
