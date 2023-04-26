@@ -29,7 +29,7 @@ public sealed partial class MainWindow : Window
         viewModel.CloseFileCommand.Execute(null);
     }
 
-    private void Window_Activated(object sender, WindowActivatedEventArgs args)
+    private void Grid_Loaded(object sender, RoutedEventArgs e)
     {
         viewModel.LoadCommandsCommand.Execute(null);
     }

@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
+using Windows.Networking.Connectivity;
 
 namespace Lua_IDEA.Services;
 
@@ -39,8 +40,18 @@ public class CommandService
 
     public async Task<IEnumerable<CommandCategory>> LoadCommands()
     {
+        var isInternetHere = NetworkInformation.GetInternetConnectionProfile() != null;
+
+        if (isInternetHere)
+            return await LoadCommandsFromWeb();
+        else
+            return await LoadCommandsFromDb();
+    }
+
+    private async Task<IEnumerable<CommandCategory>> LoadCommandsFromWeb()
+    {
         await using var appContext = new AppDbContext();
-        appContext.CommandCategory.RemoveRange(appContext.CommandCategory);
+       // appContext.CommandCategory.RemoveRange(appContext.CommandCategory);
         await appContext.SaveChangesAsync();
 
         var result = new List<CommandCategory>();
@@ -140,7 +151,7 @@ public class CommandService
         return result;
     }
 
-    public async Task<IEnumerable<CommandCategory>> LoadCommandsFromFile()
+    private async Task<IEnumerable<CommandCategory>> LoadCommandsFromDb()
     {
         await using var appDbContext = new AppDbContext();
 
@@ -150,6 +161,4 @@ public class CommandService
 
         return result;       
     }
-
-
 }

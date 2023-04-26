@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Threading.Tasks;
+using Windows.Networking.Connectivity;
 using Windows.Storage;
 using Windows.Storage.Pickers;
 using WinRT.Interop;
@@ -159,8 +160,6 @@ public partial class MainWindowViewModel : ObservableObject
 
     private async Task LoadCommands()
     {
-        Categories.Clear();
-
         var result = await commandService.LoadCommands();
 
         foreach (var command in result)
