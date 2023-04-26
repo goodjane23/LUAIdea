@@ -28,4 +28,9 @@ public sealed partial class MainWindow : Window
     {
         viewModel.CloseFileCommand.Execute(null);
     }
+
+    private void Window_Activated(object sender, WindowActivatedEventArgs args)
+    {
+        viewModel.LoadCommandsCommand.Execute(null);
+    }
 }

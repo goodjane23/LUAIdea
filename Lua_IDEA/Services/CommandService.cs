@@ -1,11 +1,10 @@
-﻿using Lua_IDEA.Entities;
-using System;
+﻿using Lua_IDEA.Data;
+using Lua_IDEA.Entities;
+using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
-using System.Text;
 using System.Threading.Tasks;
-using Windows.Networking.Connectivity;
 
 namespace Lua_IDEA.Services;
 
@@ -14,7 +13,7 @@ public class CommandService
     private const string BaseUrl = "http://doc.pumotix.ru/pages/viewpage.action?pageId=";
 
     private readonly Dictionary<string, string> CommandCategories;
-
+   
     public CommandService()
     {
         CommandCategories = new Dictionary<string, string>()
@@ -36,16 +35,14 @@ public class CommandService
             { "43843608", "ModBus" },
             { "43843610", "Другие" },
         };
-        var isInternetHere = NetworkInformation.GetInternetConnectionProfile() != null;
-
-        if (isInternetHere)
-            LoadCommands();
-        else
-            LoadCommandsFromFile();
     }
 
     public async Task<IEnumerable<CommandCategory>> LoadCommands()
     {
+        await using var appContext = new AppDbContext();
+        appContext.CommandCategory.RemoveRange(appContext.CommandCategory);
+        await appContext.SaveChangesAsync();
+
         var result = new List<CommandCategory>();
 
         using var client = new HttpClient();
@@ -128,20 +125,31 @@ public class CommandService
                                     Name = commandName,
                                     Description = commandDescription,
                                     IsMacroCommand = func_out.StartsWith("5")
-
                                 }
                             }
+                            
                         });
                     }
                 }
             }
         }
 
+        await appContext.CommandCategory.AddRangeAsync(result);
+        await appContext.SaveChangesAsync();
+
         return result;
     }
 
     public async Task<IEnumerable<CommandCategory>> LoadCommandsFromFile()
     {
-        return null;
+        await using var appDbContext = new AppDbContext();
+
+        var result = await appDbContext.CommandCategory
+            .Include(x => x.Commands)
+            .ToListAsync();
+
+        return result;       
     }
+
+
 }
