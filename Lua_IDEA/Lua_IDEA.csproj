@@ -22,6 +22,7 @@
     <PackageCertificateThumbprint>5AEDA8EACA8C8595C8028BF5027145CBC9790ACB</PackageCertificateThumbprint>
     <AppxPackageSigningTimestampDigestAlgorithm>SHA256</AppxPackageSigningTimestampDigestAlgorithm>
     <WindowsPackageType>None</WindowsPackageType>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <ItemGroup>

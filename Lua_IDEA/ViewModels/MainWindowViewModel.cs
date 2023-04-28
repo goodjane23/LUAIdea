@@ -8,8 +8,8 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
-using Windows.Networking.Connectivity;
 using Windows.Storage;
 using Windows.Storage.Pickers;
 using WinRT.Interop;
@@ -18,9 +18,10 @@ namespace Lua_IDEA.ViewModels;
 
 public partial class MainWindowViewModel : ObservableObject
 {
-    public ObservableCollection<LuaFile> Tabs { get; }
-    public ObservableCollection<CommandCategory> Categories { get; }
-    public ObservableCollection<LuaFile> FavoritesMacros { get; }
+    public ObservableCollection<LuaFile> Tabs { get; } = new();
+    public ObservableCollection<LuaFile> FavoritesMacros { get; } = new();
+    public ObservableCollection<CommandCategory> Macros { get; } = new();
+    public ObservableCollection<CommandCategory> BackgroudOperations { get; } = new();
 
     [ObservableProperty]
     public LuaFile selectedTab;
@@ -33,15 +34,14 @@ public partial class MainWindowViewModel : ObservableObject
 
     [ObservableProperty]
     private string errorText;
+
     private readonly CommandService commandService;
+    private readonly SyntaxCheckerService syntaxChecker;
 
     public MainWindowViewModel()
     {
         commandService = new CommandService();
-
-        Tabs = new ObservableCollection<LuaFile>();
-        Categories = new ObservableCollection<CommandCategory>();
-        FavoritesMacros = new ObservableCollection<LuaFile>();
+        syntaxChecker = new SyntaxCheckerService();
 
         CreateNewFile();
     }
@@ -52,11 +52,10 @@ public partial class MainWindowViewModel : ObservableObject
         IsMacrosPanelVisible = false;
     }
 
-    
+    [RelayCommand]
     private void TextChanging()
     {
-        ErrorText = SyntaxCheckService.SyntaxCheck(SelectedTab.Content);    
-        
+        ErrorText = syntaxChecker.CheckSyntax(SelectedTab.Content);    
     }
 
     [RelayCommand]
@@ -121,19 +120,21 @@ public partial class MainWindowViewModel : ObservableObject
             Path = "",
             Content = "",
             IsSaved = false,
-            isFavorite = false,
+            IsFavorite = false,
         };
 
         Tabs.Add(file);
     }
 
     [RelayCommand]
-    private async Task CloseFile()
+    private async Task CloseFile(LuaFile? file)
     {
-        if (SelectedTab is null)
+        file ??= SelectedTab;
+
+        if (file is null)
             return;
 
-        if (!SelectedTab.IsSaved)
+        if (!file.IsSaved)
         {
             var dialog = new ContentDialog();
 
@@ -147,7 +148,7 @@ public partial class MainWindowViewModel : ObservableObject
             await dialog.ShowAsync();
         }
         
-        Tabs.Remove(SelectedTab);
+        Tabs.Remove(file);
     }
 
     [RelayCommand]
@@ -163,14 +164,18 @@ public partial class MainWindowViewModel : ObservableObject
     }
 
     [RelayCommand]
-    private async Task LoadCommands()
+    private async Task UpdateCommands()
     {
+        Macros.Clear();
+        BackgroudOperations.Clear();
+
         var result = await commandService.LoadCommands();
 
-        foreach (var command in result)
-        {
-            Categories.Add(command);
-        }
+        foreach (var command in result.Where(x => x.Name.StartsWith('5')))
+            Macros.Add(command);
+
+        foreach (var command in result.Where(x => x.Name.StartsWith('4')))
+            BackgroudOperations.Add(command);
     }
 
     [RelayCommand]
@@ -198,18 +203,5 @@ public partial class MainWindowViewModel : ObservableObject
         };
 
         Tabs.Add(file);
-    }
-
-    private async void AddToFavorites()
-    {
-        if (SelectedTab.Path is null)
-            await SaveFile(SelectedTab);
-        SelectedTab.IsFavorite = true;
-        FavoritesMacros.Add(SelectedTab);
-    }
-
-    private void RemoveToFavorites()
-    {
-        FavoritesMacros.Remove(SelectedTab);
     }
 }
