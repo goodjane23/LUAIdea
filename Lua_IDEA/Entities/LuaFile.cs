@@ -15,4 +15,7 @@ public partial class LuaFile : ObservableObject
 
     [ObservableProperty]
     public bool isSaved;
+
+    [ObservableProperty]
+    public bool isFavorite;
 }

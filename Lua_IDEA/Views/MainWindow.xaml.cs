@@ -33,4 +33,9 @@ public sealed partial class MainWindow : Window
     {
         viewModel.LoadCommandsCommand.Execute(null);
     }
+
+    private void TextBox_TextChanging(TextBox sender, TextBoxTextChangingEventArgs args)
+    {
+        viewModel.TextChangingCommand.Execute(null);
+    }
 }

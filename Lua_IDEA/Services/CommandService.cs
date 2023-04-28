@@ -42,7 +42,7 @@ public class CommandService
     {
         var isInternetHere = NetworkInformation.GetInternetConnectionProfile() != null;
 
-        if (isInternetHere)
+        if (false)
             return await LoadCommandsFromWeb();
         else
             return await LoadCommandsFromDb();

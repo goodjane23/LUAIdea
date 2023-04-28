@@ -38,8 +38,9 @@ public partial class MainWindowViewModel : ObservableObject
 
     public ObservableCollection<FunctionNodeModel> MacroNodes { get; private set; }
     public ObservableCollection<FunctionNodeModel> BackgroundOpNodes { get; private set; }
-    public ObservableCollection<MacroFileModel> Files { get; private set; }   
+    public ObservableCollection<MacroFileModel> Files { get; private set; }
 
+    #region Commands
     public IRelayCommand NewFileCommand { get; }
     public IRelayCommand OpenFileCommand { get; }
     public IRelayCommand SaveCommand { get; }
@@ -54,6 +55,8 @@ public partial class MainWindowViewModel : ObservableObject
     public IRelayCommand DoubleClick { get; set; }
     public IRelayCommand UpdateFunctionsCommand { get; set; }
     public IRelayCommand<CommandModel> DoubleClickTVCommand { get; set; }
+
+    #endregion
 
     public MainWindowViewModel()
     {

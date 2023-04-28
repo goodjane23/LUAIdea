@@ -20,6 +20,7 @@ public partial class MainWindowViewModel : ObservableObject
 {
     public ObservableCollection<LuaFile> Tabs { get; }
     public ObservableCollection<CommandCategory> Categories { get; }
+    public ObservableCollection<LuaFile> FavoritesMacros { get; }
 
     [ObservableProperty]
     public LuaFile selectedTab;
@@ -30,6 +31,9 @@ public partial class MainWindowViewModel : ObservableObject
     [ObservableProperty]
     private object selectedCommand;
 
+    [ObservableProperty]
+    private string errorText;
+
     public IRelayCommand AddFileCommand { get; }
     public IRelayCommand OpenFileCommand { get; }
     public IRelayCommand SaveFileCommand { get; }
@@ -39,6 +43,10 @@ public partial class MainWindowViewModel : ObservableObject
     public IRelayCommand LoadCommandsCommand { get; }
     public IRelayCommand CloseMacroPanelCommand { get; }
     public IRelayCommand PasteCommand { get; }
+    public IRelayCommand AddToFavoritesCommand { get; }
+    public IRelayCommand RemoveToFavoritesCommand { get; }
+
+    public IRelayCommand TextChangingCommand { get; }
 
     private readonly CommandService commandService;
 
@@ -48,6 +56,7 @@ public partial class MainWindowViewModel : ObservableObject
 
         Tabs = new ObservableCollection<LuaFile>();
         Categories = new ObservableCollection<CommandCategory>();
+        FavoritesMacros = new ObservableCollection<LuaFile>();
 
         AddFileCommand = new RelayCommand(CreateNewFile);
         OpenFileCommand = new AsyncRelayCommand(OpenFile);
@@ -55,11 +64,20 @@ public partial class MainWindowViewModel : ObservableObject
         SaveFileAsCommand = new AsyncRelayCommand(SaveFileAs);
         SaveAllFileCommand = new AsyncRelayCommand(SaveAllFiles);
         CloseFileCommand = new AsyncRelayCommand(CloseFile);
+        TextChangingCommand = new RelayCommand(TextChanging);
         CloseMacroPanelCommand = new RelayCommand(() => IsMacrosPanelVisible = false);
         LoadCommandsCommand = new AsyncRelayCommand(LoadCommands);
+        AddToFavoritesCommand = new RelayCommand(AddToFavorites);
+        RemoveToFavoritesCommand = new RelayCommand(RemoveToFavorites);
         PasteCommand = new RelayCommand(Paste);
 
         CreateNewFile();
+    }
+
+    private void TextChanging()
+    {
+        ErrorText = SyntaxCheckService.SyntaxCheck(SelectedTab.Content);    
+        
     }
 
     private async Task SaveFileAs()
@@ -119,7 +137,8 @@ public partial class MainWindowViewModel : ObservableObject
             Name = "New file",
             Path = "",
             Content = "",
-            IsSaved = false
+            IsSaved = false,
+            isFavorite = false,
         };
 
         Tabs.Add(file);
@@ -143,7 +162,7 @@ public partial class MainWindowViewModel : ObservableObject
 
             await dialog.ShowAsync();
         }
-
+        
         Tabs.Remove(SelectedTab);
     }
 
@@ -155,7 +174,7 @@ public partial class MainWindowViewModel : ObservableObject
         if (SelectedCommand is not Command command)
             return;
 
-        SelectedTab.Content += command.Name;
+        SelectedTab.Content += $"{command.Name}\n";
     }
 
     private async Task LoadCommands()
@@ -192,5 +211,18 @@ public partial class MainWindowViewModel : ObservableObject
         };
 
         Tabs.Add(file);
+    }
+
+    private async void AddToFavorites()
+    {
+        if (SelectedTab.Path is null)
+            await SaveFile(SelectedTab);
+        SelectedTab.IsFavorite = true;
+        FavoritesMacros.Add(SelectedTab);
+    }
+
+    private void RemoveToFavorites()
+    {
+        FavoritesMacros.Remove(SelectedTab);
     }
 }
