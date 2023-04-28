@@ -33,21 +33,6 @@ public partial class MainWindowViewModel : ObservableObject
 
     [ObservableProperty]
     private string errorText;
-
-    public IRelayCommand AddFileCommand { get; }
-    public IRelayCommand OpenFileCommand { get; }
-    public IRelayCommand SaveFileCommand { get; }
-    public IRelayCommand SaveFileAsCommand { get; }
-    public IRelayCommand SaveAllFileCommand { get; }
-    public IRelayCommand CloseFileCommand { get; }
-    public IRelayCommand LoadCommandsCommand { get; }
-    public IRelayCommand CloseMacroPanelCommand { get; }
-    public IRelayCommand PasteCommand { get; }
-    public IRelayCommand AddToFavoritesCommand { get; }
-    public IRelayCommand RemoveToFavoritesCommand { get; }
-
-    public IRelayCommand TextChangingCommand { get; }
-
     private readonly CommandService commandService;
 
     public MainWindowViewModel()
@@ -58,39 +43,36 @@ public partial class MainWindowViewModel : ObservableObject
         Categories = new ObservableCollection<CommandCategory>();
         FavoritesMacros = new ObservableCollection<LuaFile>();
 
-        AddFileCommand = new RelayCommand(CreateNewFile);
-        OpenFileCommand = new AsyncRelayCommand(OpenFile);
-        SaveFileCommand = new AsyncRelayCommand<LuaFile>(SaveFile);
-        SaveFileAsCommand = new AsyncRelayCommand(SaveFileAs);
-        SaveAllFileCommand = new AsyncRelayCommand(SaveAllFiles);
-        CloseFileCommand = new AsyncRelayCommand(CloseFile);
-        TextChangingCommand = new RelayCommand(TextChanging);
-        CloseMacroPanelCommand = new RelayCommand(() => IsMacrosPanelVisible = false);
-        LoadCommandsCommand = new AsyncRelayCommand(LoadCommands);
-        AddToFavoritesCommand = new RelayCommand(AddToFavorites);
-        RemoveToFavoritesCommand = new RelayCommand(RemoveToFavorites);
-        PasteCommand = new RelayCommand(Paste);
-
         CreateNewFile();
     }
 
+    [RelayCommand]
+    private void CloseMacroPanel()
+    {
+        IsMacrosPanelVisible = false;
+    }
+
+    
     private void TextChanging()
     {
         ErrorText = SyntaxCheckService.SyntaxCheck(SelectedTab.Content);    
         
     }
 
+    [RelayCommand]
     private async Task SaveFileAs()
     {
         await SaveDialog(SelectedTab);
     }
 
+    [RelayCommand]
     private async Task SaveAllFiles()
     {
         foreach (var tab in Tabs)
             await SaveFile(tab);
     }
-    
+
+    [RelayCommand]
     private async Task SaveFile(LuaFile luafile)
     {
         if (luafile is null && SelectedTab is not null)
@@ -130,6 +112,7 @@ public partial class MainWindowViewModel : ObservableObject
         }
     }
 
+    [RelayCommand]
     private void CreateNewFile()
     {
         var file = new LuaFile()
@@ -144,6 +127,7 @@ public partial class MainWindowViewModel : ObservableObject
         Tabs.Add(file);
     }
 
+    [RelayCommand]
     private async Task CloseFile()
     {
         if (SelectedTab is null)
@@ -166,6 +150,7 @@ public partial class MainWindowViewModel : ObservableObject
         Tabs.Remove(SelectedTab);
     }
 
+    [RelayCommand]
     private void Paste()
     {
         if (SelectedTab is null)
@@ -177,6 +162,7 @@ public partial class MainWindowViewModel : ObservableObject
         SelectedTab.Content += $"{command.Name}\n";
     }
 
+    [RelayCommand]
     private async Task LoadCommands()
     {
         var result = await commandService.LoadCommands();
@@ -187,6 +173,7 @@ public partial class MainWindowViewModel : ObservableObject
         }
     }
 
+    [RelayCommand]
     private async Task OpenFile()
     {
         var openPicker = new FileOpenPicker();

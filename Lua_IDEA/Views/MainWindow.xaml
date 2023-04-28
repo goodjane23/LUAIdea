@@ -24,12 +24,12 @@
         <!-- Menu -->
         <MenuBar Grid.Row="1">
             <MenuBarItem Title="File">
-                <MenuFlyoutItem Text="New" Command="{x:Bind viewModel.AddFileCommand}"/>
+                <MenuFlyoutItem Text="New" Command="{x:Bind viewModel.CreateNewFileCommand}"/>
                 <MenuFlyoutItem Text="Open" Command="{x:Bind viewModel.OpenFileCommand}"/>
                 <MenuFlyoutSeparator />
                 <MenuFlyoutItem Text="Save" Command="{x:Bind viewModel.SaveFileCommand}"/>
                 <MenuFlyoutItem Text="Save As" Command="{x:Bind viewModel.SaveFileAsCommand}"/>
-                <MenuFlyoutItem Text="Save All" Command="{x:Bind viewModel.SaveAllFileCommand}"/>
+                <MenuFlyoutItem Text="Save All" Command="{x:Bind viewModel.SaveAllFilesCommand}"/>
                 <MenuFlyoutSeparator />
                 <MenuFlyoutItem Text="Close" Command="{x:Bind viewModel.CloseFileCommand}"/>
             </MenuBarItem>
@@ -61,40 +61,16 @@
                      x:Name="TabMacroTextBox"
                      TabItemsSource="{x:Bind viewModel.Tabs}"
                      SelectedItem="{x:Bind viewModel.SelectedTab, Mode=TwoWay}"
-                     AddTabButtonCommand="{x:Bind viewModel.AddFileCommand}"                     
+                     AddTabButtonCommand="{x:Bind viewModel.CreateNewFileCommand}"
                      TabCloseRequested="TabView_TabCloseRequested">
                 
                 <TabView.TabItemTemplate>
                     <DataTemplate x:DataType="entities:LuaFile">
-                        <TabViewItem>
-                            <TabViewItem.Header>
-                                <ContentControl>
-                                    <Grid>
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="Auto"/>
-                                            <ColumnDefinition Width="*"/>                                            
-                                        </Grid.ColumnDefinitions>
-                                        <TextBlock 
-                                            Grid.Column="1"
-                                            VerticalAlignment="Center"
-                                            Text="{x:Bind Name}"/>
-                                        <Button
-                                            Visibility="{x:Bind IsFavorite, Mode=OneWay}"
-                                            BorderBrush="Transparent"
-                                            Background="Transparent">
-                                            <FontIcon Glyph="&#xE734;" />
-                                        </Button>
-                                           
-                                    </Grid>
-                                </ContentControl>
-                            </TabViewItem.Header>
-                        <TextBox
-                                MinHeight="{Binding ElementName=TabMacroTextBox, Path=ActualHeight}" 
-                                Text="{x:Bind Content, Mode=TwoWay}"
-                                Margin="4"
-                                TextChanging="TextBox_TextChanging"
-                                TextWrapping="Wrap"
-                                AcceptsReturn="True"/>
+                        <TabViewItem Header="{x:Bind Name}">
+                            <TextBox Margin="4"
+                                     Text="{x:Bind Content, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                     TextWrapping="Wrap"
+                                     AcceptsReturn="True"/>
                         </TabViewItem>
                     </DataTemplate>
                 </TabView.TabItemTemplate>
@@ -145,10 +121,8 @@
                             <RowDefinition Height="Auto"/>
                         </Grid.RowDefinitions>
 
-                        <TextBlock 
-                            Grid.Row="0"
-                            Text="{Binding Path=SelectedCommand.Description,
-                            UpdateSourceTrigger=PropertyChanged}"/>
+                        <TextBlock Grid.Row="0"
+                                   Text="{Binding Path=SelectedCommand.Description}"/>
 
                         <Button Grid.Row="1"
                                 Style="{StaticResource AccentButtonStyle}"
