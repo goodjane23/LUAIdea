@@ -35,7 +35,8 @@
             </MenuBarItem>
 
             <MenuBarItem Title="Edit">
-                <ToggleMenuFlyoutItem Text="В Избранное" IsChecked="{x:Bind viewModel.SelectedTab.IsFavorite, Mode=TwoWay}"/>
+                <ToggleMenuFlyoutItem Text="В Избранное" Command="{x:Bind viewModel.ChangeFavoriteStatusCommand}" IsChecked="{x:Bind viewModel.SelectedTab.IsFavorite, Mode=TwoWay}"/>
+                <MenuFlyoutSeparator />              
             </MenuBarItem>
 
             <MenuBarItem Title="View">
@@ -64,7 +65,29 @@
                      TabCloseRequested="TabView_TabCloseRequested">
                 <TabView.TabItemTemplate>
                     <DataTemplate x:DataType="entities:LuaFile">
-                        <TabViewItem Header="{x:Bind Name}">
+                        <TabViewItem>
+                            <TabViewItem.Header>
+                                <ContentControl>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        <FontIcon Grid.Column="0"
+                                                  HorizontalAlignment="Right"
+                                                  VerticalAlignment="Center"
+                                                  FontSize="12"                                                  
+                                                  Visibility="{x:Bind IsFavorite, Mode=OneWay}"
+                                                  Glyph="&#xE735;" />
+                                        
+                                        <TextBlock Grid.Column="1"
+                                                   VerticalAlignment="Center"
+                                                   HorizontalAlignment="Left"
+                                                   Margin="8,0,0,0"
+                                                   Text="{x:Bind Name}"/>                                       
+                                    </Grid>
+                                </ContentControl>
+                            </TabViewItem.Header>
                             <Grid>
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="*"/>
@@ -77,8 +100,7 @@
                                          AcceptsReturn="True"/>
 
                                 <TextBlock Grid.Row="1" Margin="4"
-                                           VerticalAlignment="Bottom"
-                                           Text="Error text" />
+                                           VerticalAlignment="Bottom"/>
                             </Grid>
                         </TabViewItem>
                     </DataTemplate>

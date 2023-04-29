@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Lua_IDEA.Entities;
+namespace Lua_IDEA.Data.Entities;
 
 public class CommandCategory
 {

@@ -1,6 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 
-namespace Lua_IDEA.Entities;
+namespace Lua_IDEA.Models;
 
 public partial class LuaFile : ObservableObject
 {

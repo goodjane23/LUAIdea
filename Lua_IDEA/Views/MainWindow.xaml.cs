@@ -1,4 +1,4 @@
-using Lua_IDEA.Entities;
+using Lua_IDEA.Models;
 using Lua_IDEA.ViewModels;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;

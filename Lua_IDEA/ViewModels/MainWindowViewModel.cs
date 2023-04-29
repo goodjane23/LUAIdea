@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Lua_IDEA.Entities;
+using Lua_IDEA.Data.Entities;
+using Lua_IDEA.Models;
 using Lua_IDEA.Services;
 using Lua_IDEA.Views;
 using Microsoft.UI.Xaml.Controls;
@@ -89,7 +90,9 @@ public partial class MainWindowViewModel : ObservableObject
         InitializeWithWindow.Initialize(savePicker, hWnd);
 
         savePicker.SuggestedStartLocation = PickerLocationId.DocumentsLibrary;
-        savePicker.FileTypeChoices.Add("Plain Text", new List<string>() { ".pm", ".bo", ".txt" });
+        savePicker.FileTypeChoices.Add("MacroFile", new List<string>() { ".pm" });
+        savePicker.FileTypeChoices.Add("BackgroundOperation", new List<string>() {".bo"});
+        savePicker.FileTypeChoices.Add("TextFile", new List<string>() {".txt"});
 
         savePicker.SuggestedFileName = "file";
 
@@ -204,4 +207,5 @@ public partial class MainWindowViewModel : ObservableObject
 
         Tabs.Add(file);
     }
+
 }

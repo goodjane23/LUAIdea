@@ -1,5 +1,5 @@
 ﻿using Lua_IDEA.Data;
-using Lua_IDEA.Entities;
+using Lua_IDEA.Data.Entities;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
