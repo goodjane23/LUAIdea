@@ -102,7 +102,7 @@
                     </Grid.RowDefinitions>
 
                     <Grid Grid.Row="0">
-                        <Pivot Title="Список макросов">
+                        <Pivot Title="Список команд">
                             <PivotItem Header="Макросы">
                                 <TreeView Margin="0,6,0,0"
                                           ItemsSource="{x:Bind viewModel.Macros}"
@@ -132,9 +132,11 @@
                         </Pivot>
                     </Grid>
 
-                    <StackPanel Grid.Row="1" Margin="8,12,8,24">
+                    <StackPanel Grid.Row="1" Margin="8,12,8,12">
                         <TextBlock Text="Описание команды" Style="{StaticResource SubtitleTextBlockStyle}"/>
-                        <TextBlock Text="Какое то описание"/>
+                        <TextBlock Margin="0,8,0,0"
+                                   Text="{x:Bind ((entities:Command)viewModel.SelectedCommand).Description, Mode=OneWay}"
+                                   TextWrapping="Wrap"/>
                     </StackPanel>
                     
 
@@ -146,7 +148,7 @@
                             HorizontalAlignment="Stretch">
                         <StackPanel Orientation="Horizontal">
                             <FontIcon Glyph="&#xE72C;"/>
-                            <TextBlock Margin="8,0,0,0" Text="Обновить"/>
+                            <TextBlock Margin="8,0,0,0" Text="Обновить команды"/>
                         </StackPanel>
                     </Button>
 
