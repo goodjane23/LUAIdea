@@ -8,8 +8,8 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
-using Windows.Networking.Connectivity;
 using Windows.Storage;
 using Windows.Storage.Pickers;
 using WinRT.Interop;
@@ -18,9 +18,10 @@ namespace Lua_IDEA.ViewModels;
 
 public partial class MainWindowViewModel : ObservableObject
 {
-    public ObservableCollection<LuaFile> Tabs { get; }
-    public ObservableCollection<CommandCategory> Categories { get; }
-    public ObservableCollection<LuaFile> FavoritesMacros { get; }
+    public ObservableCollection<LuaFile> Tabs { get; } = new();
+    public ObservableCollection<LuaFile> FavoritesMacros { get; } = new();
+    public ObservableCollection<CommandCategory> Macros { get; } = new();
+    public ObservableCollection<CommandCategory> BackgroudOperations { get; } = new();
 
     [ObservableProperty]
     public LuaFile selectedTab;
@@ -34,63 +35,43 @@ public partial class MainWindowViewModel : ObservableObject
     [ObservableProperty]
     private string errorText;
 
-    public IRelayCommand AddFileCommand { get; }
-    public IRelayCommand OpenFileCommand { get; }
-    public IRelayCommand SaveFileCommand { get; }
-    public IRelayCommand SaveFileAsCommand { get; }
-    public IRelayCommand SaveAllFileCommand { get; }
-    public IRelayCommand CloseFileCommand { get; }
-    public IRelayCommand LoadCommandsCommand { get; }
-    public IRelayCommand CloseMacroPanelCommand { get; }
-    public IRelayCommand PasteCommand { get; }
-    public IRelayCommand AddToFavoritesCommand { get; }
-    public IRelayCommand RemoveToFavoritesCommand { get; }
-
-    public IRelayCommand TextChangingCommand { get; }
-
     private readonly CommandService commandService;
+    private readonly SyntaxCheckerService syntaxChecker;
 
     public MainWindowViewModel()
     {
         commandService = new CommandService();
-
-        Tabs = new ObservableCollection<LuaFile>();
-        Categories = new ObservableCollection<CommandCategory>();
-        FavoritesMacros = new ObservableCollection<LuaFile>();
-
-        AddFileCommand = new RelayCommand(CreateNewFile);
-        OpenFileCommand = new AsyncRelayCommand(OpenFile);
-        SaveFileCommand = new AsyncRelayCommand<LuaFile>(SaveFile);
-        SaveFileAsCommand = new AsyncRelayCommand(SaveFileAs);
-        SaveAllFileCommand = new AsyncRelayCommand(SaveAllFiles);
-        CloseFileCommand = new AsyncRelayCommand(CloseFile);
-        TextChangingCommand = new RelayCommand(TextChanging);
-        CloseMacroPanelCommand = new RelayCommand(() => IsMacrosPanelVisible = false);
-        LoadCommandsCommand = new AsyncRelayCommand(LoadCommands);
-        AddToFavoritesCommand = new RelayCommand(AddToFavorites);
-        RemoveToFavoritesCommand = new RelayCommand(RemoveToFavorites);
-        PasteCommand = new RelayCommand(Paste);
+        syntaxChecker = new SyntaxCheckerService();
 
         CreateNewFile();
     }
 
-    private void TextChanging()
+    [RelayCommand]
+    private void CloseMacroPanel()
     {
-        ErrorText = SyntaxCheckService.SyntaxCheck(SelectedTab.Content);    
-        
+        IsMacrosPanelVisible = false;
     }
 
+    [RelayCommand]
+    private void TextChanging()
+    {
+        ErrorText = syntaxChecker.CheckSyntax(SelectedTab.Content);    
+    }
+
+    [RelayCommand]
     private async Task SaveFileAs()
     {
         await SaveDialog(SelectedTab);
     }
 
+    [RelayCommand]
     private async Task SaveAllFiles()
     {
         foreach (var tab in Tabs)
             await SaveFile(tab);
     }
-    
+
+    [RelayCommand]
     private async Task SaveFile(LuaFile luafile)
     {
         if (luafile is null && SelectedTab is not null)
@@ -130,6 +111,7 @@ public partial class MainWindowViewModel : ObservableObject
         }
     }
 
+    [RelayCommand]
     private void CreateNewFile()
     {
         var file = new LuaFile()
@@ -138,34 +120,38 @@ public partial class MainWindowViewModel : ObservableObject
             Path = "",
             Content = "",
             IsSaved = false,
-            isFavorite = false,
+            IsFavorite = false,
         };
 
         Tabs.Add(file);
     }
 
-    private async Task CloseFile()
+    [RelayCommand]
+    private async Task CloseFile(LuaFile? file)
     {
-        if (SelectedTab is null)
+        file ??= SelectedTab;
+
+        if (file is null)
             return;
 
-        if (!SelectedTab.IsSaved)
+        if (!file.IsSaved)
         {
             var dialog = new ContentDialog();
 
             dialog.XamlRoot = (App.MainWindow as MainWindow).Content.XamlRoot;
-            dialog.Title = "Save your work?";
-            dialog.PrimaryButtonText = "Save";
-            dialog.SecondaryButtonText = "Don't Save";
-            dialog.CloseButtonText = "Cancel";
+            dialog.Title = $"Сохранить изменения в файле {file.Name}?";
+            dialog.PrimaryButtonText = "Сохранить";
+            dialog.SecondaryButtonText = "Не сохранять";
+            dialog.CloseButtonText = "Отмена";
             dialog.DefaultButton = ContentDialogButton.Primary;
 
             await dialog.ShowAsync();
         }
         
-        Tabs.Remove(SelectedTab);
+        Tabs.Remove(file);
     }
 
+    [RelayCommand]
     private void Paste()
     {
         if (SelectedTab is null)
@@ -177,16 +163,22 @@ public partial class MainWindowViewModel : ObservableObject
         SelectedTab.Content += $"{command.Name}\n";
     }
 
-    private async Task LoadCommands()
+    [RelayCommand]
+    private async Task UpdateCommands()
     {
+        Macros.Clear();
+        BackgroudOperations.Clear();
+
         var result = await commandService.LoadCommands();
 
-        foreach (var command in result)
-        {
-            Categories.Add(command);
-        }
+        foreach (var command in result.Where(x => x.IsMacro))
+            Macros.Add(command);
+
+        foreach (var command in result.Where(x => !x.IsMacro))
+            BackgroudOperations.Add(command);
     }
 
+    [RelayCommand]
     private async Task OpenFile()
     {
         var openPicker = new FileOpenPicker();
@@ -211,18 +203,5 @@ public partial class MainWindowViewModel : ObservableObject
         };
 
         Tabs.Add(file);
-    }
-
-    private async void AddToFavorites()
-    {
-        if (SelectedTab.Path is null)
-            await SaveFile(SelectedTab);
-        SelectedTab.IsFavorite = true;
-        FavoritesMacros.Add(SelectedTab);
-    }
-
-    private void RemoveToFavorites()
-    {
-        FavoritesMacros.Remove(SelectedTab);
     }
 }

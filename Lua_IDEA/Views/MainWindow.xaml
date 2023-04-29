@@ -24,25 +24,24 @@
         <!-- Menu -->
         <MenuBar Grid.Row="1">
             <MenuBarItem Title="File">
-                <MenuFlyoutItem Text="New" Command="{x:Bind viewModel.AddFileCommand}"/>
+                <MenuFlyoutItem Text="New" Command="{x:Bind viewModel.CreateNewFileCommand}"/>
                 <MenuFlyoutItem Text="Open" Command="{x:Bind viewModel.OpenFileCommand}"/>
                 <MenuFlyoutSeparator />
                 <MenuFlyoutItem Text="Save" Command="{x:Bind viewModel.SaveFileCommand}"/>
                 <MenuFlyoutItem Text="Save As" Command="{x:Bind viewModel.SaveFileAsCommand}"/>
-                <MenuFlyoutItem Text="Save All" Command="{x:Bind viewModel.SaveAllFileCommand}"/>
+                <MenuFlyoutItem Text="Save All" Command="{x:Bind viewModel.SaveAllFilesCommand}"/>
                 <MenuFlyoutSeparator />
                 <MenuFlyoutItem Text="Close" Command="{x:Bind viewModel.CloseFileCommand}"/>
+            </MenuBarItem>
+
+            <MenuBarItem Title="Edit">
+                <ToggleMenuFlyoutItem Text="В Избранное" IsChecked="{x:Bind viewModel.SelectedTab.IsFavorite, Mode=TwoWay}"/>
             </MenuBarItem>
 
             <MenuBarItem Title="View">
                 <ToggleMenuFlyoutItem Text="Панель макросов" IsChecked="{x:Bind viewModel.IsMacrosPanelVisible, Mode=TwoWay}"/>
                 <MenuFlyoutSeparator/>
                 <MenuFlyoutItem Text="Настройки"/>
-            </MenuBarItem>
-            
-            <MenuBarItem Title="Settings">
-                <MenuFlyoutItem Text="Добавить в Избранное" Command="{x:Bind viewModel.AddToFavoritesCommand}"/>
-                <MenuFlyoutItem Text="Убрать из Избранного" Command="{x:Bind viewModel.RemoveToFavoritesCommand}"/>
             </MenuBarItem>
 
             <MenuBarItem Title="Help">
@@ -61,40 +60,26 @@
                      x:Name="TabMacroTextBox"
                      TabItemsSource="{x:Bind viewModel.Tabs}"
                      SelectedItem="{x:Bind viewModel.SelectedTab, Mode=TwoWay}"
-                     AddTabButtonCommand="{x:Bind viewModel.AddFileCommand}"                     
+                     AddTabButtonCommand="{x:Bind viewModel.CreateNewFileCommand}"
                      TabCloseRequested="TabView_TabCloseRequested">
-                
                 <TabView.TabItemTemplate>
                     <DataTemplate x:DataType="entities:LuaFile">
-                        <TabViewItem>
-                            <TabViewItem.Header>
-                                <ContentControl>
-                                    <Grid>
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="Auto"/>
-                                            <ColumnDefinition Width="*"/>                                            
-                                        </Grid.ColumnDefinitions>
-                                        <TextBlock 
-                                            Grid.Column="1"
-                                            VerticalAlignment="Center"
-                                            Text="{x:Bind Name}"/>
-                                        <Button
-                                            Visibility="{x:Bind IsFavorite, Mode=OneWay}"
-                                            BorderBrush="Transparent"
-                                            Background="Transparent">
-                                            <FontIcon Glyph="&#xE734;" />
-                                        </Button>
-                                           
-                                    </Grid>
-                                </ContentControl>
-                            </TabViewItem.Header>
-                        <TextBox
-                                MinHeight="{Binding ElementName=TabMacroTextBox, Path=ActualHeight}" 
-                                Text="{x:Bind Content, Mode=TwoWay}"
-                                Margin="4"
-                                TextChanging="TextBox_TextChanging"
-                                TextWrapping="Wrap"
-                                AcceptsReturn="True"/>
+                        <TabViewItem Header="{x:Bind Name}">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="*"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+
+                                <TextBox Grid.Row="0" Margin="4"
+                                         Text="{x:Bind Content, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                         TextWrapping="Wrap"
+                                         AcceptsReturn="True"/>
+
+                                <TextBlock Grid.Row="1" Margin="4"
+                                           VerticalAlignment="Bottom"
+                                           Text="Error text" />
+                            </Grid>
                         </TabViewItem>
                     </DataTemplate>
                 </TabView.TabItemTemplate>
@@ -102,7 +87,7 @@
 
             <!-- Панель макросов -->
             <Grid Grid.Column="1"
-                  Width="400"
+                  Width="450"
                   Visibility="{x:Bind viewModel.IsMacrosPanelVisible, Mode=OneWay}">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*"/>
@@ -111,62 +96,64 @@
 
                 <Grid Grid.Row="0">
                     <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="2*"/>
                         <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
 
-                    <Grid Grid.Row="0" Margin="8">
-                        <TextBlock Text="Список макросов"
-                                   VerticalAlignment="Center"
-                                   HorizontalAlignment="Left"/>
-                        
-                        <Button Content="X"
-                                VerticalAlignment="Center"
-                                HorizontalAlignment="Right"
-                                Command="{x:Bind viewModel.CloseMacroPanelCommand}"/>
+                    <Grid Grid.Row="0">
+                        <Pivot Title="Список команд">
+                            <PivotItem Header="Макросы">
+                                <TreeView Margin="0,6,0,0"
+                                          ItemsSource="{x:Bind viewModel.Macros}"
+                                          SelectedItem="{x:Bind viewModel.SelectedCommand, Mode=TwoWay}">
+                                    <TreeView.ItemTemplate>
+                                        <DataTemplate x:DataType="entities:CommandCategory">
+                                            <TreeViewItem ItemsSource="{Binding Commands}"
+                                                          Content="{Binding Name}" 
+                                                          DoubleTapped="TreeViewItem_DoubleTapped"/>
+                                        </DataTemplate>
+                                    </TreeView.ItemTemplate>
+                                </TreeView>
+                            </PivotItem>
+                            <PivotItem Header="Фоновые операции">
+                                <TreeView Margin="0,6,0,0"
+                                          ItemsSource="{x:Bind viewModel.BackgroudOperations}"
+                                          SelectedItem="{x:Bind viewModel.SelectedCommand, Mode=TwoWay}">
+                                    <TreeView.ItemTemplate>
+                                        <DataTemplate x:DataType="entities:CommandCategory">
+                                            <TreeViewItem ItemsSource="{Binding Commands}"
+                                                          Content="{Binding Name}" 
+                                                          DoubleTapped="TreeViewItem_DoubleTapped"/>
+                                        </DataTemplate>
+                                    </TreeView.ItemTemplate>
+                                </TreeView>
+                            </PivotItem>
+                        </Pivot>
                     </Grid>
 
-                    <TreeView Grid.Row="1"
-                              ItemsSource="{x:Bind viewModel.Categories}"
-                              SelectedItem="{x:Bind viewModel.SelectedCommand, Mode=TwoWay}">
-                        <TreeView.ItemTemplate>
-                            <DataTemplate x:DataType="entities:CommandCategory">
-                                <TreeViewItem ItemsSource="{Binding Commands}"
-                                              Content="{Binding Name}" 
-                                              DoubleTapped="TreeViewItem_DoubleTapped"/>
-                            </DataTemplate>
-                        </TreeView.ItemTemplate>
-                    </TreeView>
+                    <StackPanel Grid.Row="1" Margin="8,12,8,12">
+                        <TextBlock Text="Описание команды" Style="{StaticResource SubtitleTextBlockStyle}"/>
+                        <TextBlock Margin="0,8,0,0"
+                                   Text="{x:Bind ((entities:Command)viewModel.SelectedCommand).Description, Mode=OneWay}"
+                                   TextWrapping="Wrap"/>
+                    </StackPanel>
+                    
 
-                    <Grid Grid.Row="2" Margin="8">
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="*"/>
-                            <RowDefinition Height="Auto"/>
-                        </Grid.RowDefinitions>
+                    <Button Grid.Row="2"
+                            Margin="8"
+                            Style="{StaticResource AccentButtonStyle}"
+                            Command="{x:Bind viewModel.UpdateCommandsCommand}"
+                            VerticalAlignment="Center"
+                            HorizontalAlignment="Stretch">
+                        <StackPanel Orientation="Horizontal">
+                            <FontIcon Glyph="&#xE72C;"/>
+                            <TextBlock Margin="8,0,0,0" Text="Обновить команды"/>
+                        </StackPanel>
+                    </Button>
 
-                        <TextBlock 
-                            Grid.Row="0"
-                            Text="{Binding Path=SelectedCommand.Description,
-                            UpdateSourceTrigger=PropertyChanged}"/>
-
-                        <Button Grid.Row="1"
-                                Style="{StaticResource AccentButtonStyle}"
-                                Command="{x:Bind viewModel.LoadCommandsCommand}"
-                                VerticalAlignment="Center"
-                                HorizontalAlignment="Stretch">
-                            <StackPanel Orientation="Horizontal">
-                                <FontIcon Glyph="&#xE72C;"/>
-                                <TextBlock Margin="8,0,0,0" Text="Обновить"/>
-                            </StackPanel>
-                        </Button>
-                    </Grid>
                 </Grid>
             </Grid>
         </Grid>
-        
-        <!--Error textBlock-->
-        <TextBlock Grid.Row="3"                  
-                   Text="{x:Bind viewModel.ErrorText, Mode=OneWay}" />
     </Grid>
 </Window>
