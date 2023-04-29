@@ -35,7 +35,7 @@
             </MenuBarItem>
 
             <MenuBarItem Title="Edit">
-                <ToggleMenuFlyoutItem Text="В Избранное" Command="{x:Bind viewModel.ChangeFavoriteStatusCommand}" IsChecked="{x:Bind viewModel.SelectedTab.IsFavorite, Mode=TwoWay}"/>
+                <ToggleMenuFlyoutItem Text="В Избранное" IsChecked="{x:Bind viewModel.SelectedTab.IsFavorite, Mode=TwoWay}"/>
                 <MenuFlyoutSeparator />              
             </MenuBarItem>
 
