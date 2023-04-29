@@ -139,10 +139,10 @@ public partial class MainWindowViewModel : ObservableObject
             var dialog = new ContentDialog();
 
             dialog.XamlRoot = (App.MainWindow as MainWindow).Content.XamlRoot;
-            dialog.Title = "Save your work?";
-            dialog.PrimaryButtonText = "Save";
-            dialog.SecondaryButtonText = "Don't Save";
-            dialog.CloseButtonText = "Cancel";
+            dialog.Title = $"Сохранить изменения в файле {file.Name}?";
+            dialog.PrimaryButtonText = "Сохранить";
+            dialog.SecondaryButtonText = "Не сохранять";
+            dialog.CloseButtonText = "Отмена";
             dialog.DefaultButton = ContentDialogButton.Primary;
 
             await dialog.ShowAsync();
@@ -171,10 +171,10 @@ public partial class MainWindowViewModel : ObservableObject
 
         var result = await commandService.LoadCommands();
 
-        foreach (var command in result.Where(x => x.Name.StartsWith('5')))
+        foreach (var command in result.Where(x => x.IsMacro))
             Macros.Add(command);
 
-        foreach (var command in result.Where(x => x.Name.StartsWith('4')))
+        foreach (var command in result.Where(x => !x.IsMacro))
             BackgroudOperations.Add(command);
     }
 

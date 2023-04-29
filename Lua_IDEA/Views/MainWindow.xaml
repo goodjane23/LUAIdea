@@ -98,6 +98,7 @@
                     <Grid.RowDefinitions>
                         <RowDefinition Height="*"/>
                         <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
 
                     <Grid Grid.Row="0">
@@ -117,7 +118,8 @@
                             </PivotItem>
                             <PivotItem Header="Фоновые операции">
                                 <TreeView Margin="0,6,0,0"
-                                          ItemsSource="{x:Bind viewModel.BackgroudOperations}">
+                                          ItemsSource="{x:Bind viewModel.BackgroudOperations}"
+                                          SelectedItem="{x:Bind viewModel.SelectedCommand, Mode=TwoWay}">
                                     <TreeView.ItemTemplate>
                                         <DataTemplate x:DataType="entities:CommandCategory">
                                             <TreeViewItem ItemsSource="{Binding Commands}"
@@ -130,26 +132,24 @@
                         </Pivot>
                     </Grid>
 
-                    <Grid Grid.Row="1" Margin="8">
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="*"/>
-                            <RowDefinition Height="Auto"/>
-                        </Grid.RowDefinitions>
+                    <StackPanel Grid.Row="1" Margin="8,12,8,24">
+                        <TextBlock Text="Описание команды" Style="{StaticResource SubtitleTextBlockStyle}"/>
+                        <TextBlock Text="Какое то описание"/>
+                    </StackPanel>
+                    
 
-                        <TextBlock Grid.Row="0"
-                                   Text="{Binding Path=SelectedCommand.Description}"/>
+                    <Button Grid.Row="2"
+                            Margin="8"
+                            Style="{StaticResource AccentButtonStyle}"
+                            Command="{x:Bind viewModel.UpdateCommandsCommand}"
+                            VerticalAlignment="Center"
+                            HorizontalAlignment="Stretch">
+                        <StackPanel Orientation="Horizontal">
+                            <FontIcon Glyph="&#xE72C;"/>
+                            <TextBlock Margin="8,0,0,0" Text="Обновить"/>
+                        </StackPanel>
+                    </Button>
 
-                        <Button Grid.Row="1"
-                                Style="{StaticResource AccentButtonStyle}"
-                                Command="{x:Bind viewModel.UpdateCommandsCommand}"
-                                VerticalAlignment="Center"
-                                HorizontalAlignment="Stretch">
-                            <StackPanel Orientation="Horizontal">
-                                <FontIcon Glyph="&#xE72C;"/>
-                                <TextBlock Margin="8,0,0,0" Text="Обновить"/>
-                            </StackPanel>
-                        </Button>
-                    </Grid>
                 </Grid>
             </Grid>
         </Grid>

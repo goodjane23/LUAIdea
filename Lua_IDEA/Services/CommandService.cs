@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
-using Windows.Networking.Connectivity;
 
 namespace Lua_IDEA.Services;
 
@@ -14,9 +13,13 @@ public class CommandService
     private const string BaseUrl = "http://doc.pumotix.ru/pages/viewpage.action?pageId=";
 
     private readonly Dictionary<string, string> CommandCategories;
-   
+
+    private readonly NetworkChecker networkChecker;
+
     public CommandService()
     {
+        networkChecker = new NetworkChecker();
+
         CommandCategories = new Dictionary<string, string>()
         {
             { "5180768", "Входы и выходы" },
@@ -40,27 +43,25 @@ public class CommandService
 
     public async Task<IEnumerable<CommandCategory>> LoadCommands()
     {
-        var isInternetHere = NetworkInformation.GetInternetConnectionProfile() != null;
+        using var httpClient = new HttpClient();
 
-        if (false)
-            return await LoadCommandsFromWeb();
+        var isInternetAvailable = networkChecker.IsInternetAvailable(httpClient);
+
+        if (isInternetAvailable)
+            return await LoadCommandsFromWeb(httpClient);
         else
             return await LoadCommandsFromDb();
     }
 
-    private async Task<IEnumerable<CommandCategory>> LoadCommandsFromWeb()
+    private async Task<IEnumerable<CommandCategory>> LoadCommandsFromWeb(HttpClient httpClient)
     {
         await using var appContext = new AppDbContext();
-       // appContext.CommandCategory.RemoveRange(appContext.CommandCategory);
-        await appContext.SaveChangesAsync();
 
         var result = new List<CommandCategory>();
 
-        using var client = new HttpClient();
-
         foreach (var address in CommandCategories.Keys)
         {
-            var content = await client.GetStringAsync($"{BaseUrl}{address}");
+            var content = await httpClient.GetStringAsync($"{BaseUrl}{address}");
             var pageStrings = content.Replace("<", "@").Split('@');
 
             for (var j = 0; j <= pageStrings.Length - 1; j++)
@@ -91,13 +92,10 @@ public class CommandService
                         var commandDescription = pageStrings[j + 2];
                         commandDescription = commandDescription.Substring(commandDescription.IndexOf(">") + 1);
 
-                        var func_out = $"{commandName}@{commandDescription}";
                         var commandId = address.Substring(address.LastIndexOf("=") + 1);
 
-                        func_out = $"{commandId}@{func_out}";
-
                         var header = CommandCategories[commandId];
-                        var resultCommand = result.FirstOrDefault(x => x.Name == header);
+                        var resultCommand = result.FirstOrDefault(x => x.Name == header && x.IsMacro == commandId.StartsWith('5'));
 
                         if (resultCommand is not null)
                         {
@@ -107,7 +105,6 @@ public class CommandService
                                 {
                                     Name = commandName,
                                     Description = commandDescription,
-                                    IsMacroCommand = func_out.StartsWith("5")
                                 });
 
                                 continue;
@@ -119,7 +116,6 @@ public class CommandService
                                 {
                                     Name = commandName,
                                     Description = commandDescription,
-                                    IsMacroCommand = func_out.StartsWith("5")
                                 }
                             };
 
@@ -129,13 +125,13 @@ public class CommandService
                         result.Add(new CommandCategory()
                         {
                             Name = header,
+                            IsMacro = commandId.StartsWith('5'),
                             Commands = new List<Command>()
                             {
                                 new Command()
                                 {
                                     Name = commandName,
-                                    Description = commandDescription,
-                                    IsMacroCommand = func_out.StartsWith("5")
+                                    Description = commandDescription
                                 }
                             }
                             
@@ -144,6 +140,8 @@ public class CommandService
                 }
             }
         }
+
+        // TODO: Удалять записи перед сохранением новых
 
         await appContext.CommandCategory.AddRangeAsync(result);
         await appContext.SaveChangesAsync();
