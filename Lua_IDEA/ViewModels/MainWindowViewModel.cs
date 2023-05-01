@@ -19,6 +19,10 @@ namespace Lua_IDEA.ViewModels;
 
 public partial class MainWindowViewModel : ObservableObject
 {
+    public event Action CommandPasted;
+    public event Func<LuaFile, Task> SaveRequested;
+    public event Func<LuaFile, Task<bool>> CloseRequested;
+
     public ObservableCollection<LuaFile> Tabs { get; } = new();
     public ObservableCollection<LuaFile> FavoritesMacros { get; } = new();
     public ObservableCollection<CommandCategory> Macros { get; } = new();
@@ -31,10 +35,7 @@ public partial class MainWindowViewModel : ObservableObject
     private bool isMacrosPanelVisible;
 
     [ObservableProperty]
-    private object selectedCommand;
-
-    [ObservableProperty]
-    private string errorText;
+    private Command selectedCommand;
 
     private readonly CommandService commandService;
     private readonly SyntaxCheckerService syntaxChecker;
@@ -48,70 +49,29 @@ public partial class MainWindowViewModel : ObservableObject
     }
 
     [RelayCommand]
-    private void CloseMacroPanel()
-    {
-        IsMacrosPanelVisible = false;
-    }
-
-    [RelayCommand]
-    private void TextChanging()
-    {
-        ErrorText = syntaxChecker.CheckSyntax(SelectedTab.Content);    
-    }
-
-    [RelayCommand]
     private async Task SaveFileAs()
     {
-        await SaveDialog(SelectedTab);
+        if (SelectedTab is null)
+            return;
+
+        await SaveRequested.Invoke(SelectedTab);
     }
 
     [RelayCommand]
     private async Task SaveAllFiles()
     {
-        foreach (var tab in Tabs)
-            await SaveFile(tab);
+        throw new NotImplementedException();
     }
 
     [RelayCommand]
     private async Task SaveFile(LuaFile luafile)
     {
-        if (luafile is null && SelectedTab is not null)
-            await SaveDialog(SelectedTab);
+        luafile ??= SelectedTab;
 
-        if (luafile is not null && SelectedTab is  null)
-            await SaveDialog(luafile);
-    }
+        if (luafile is null || luafile.IsSaved)
+            return;
 
-    private async Task SaveDialog(LuaFile luaFile)
-    {
-        var savePicker = new FileSavePicker();
-
-        var hWnd = WindowNative.GetWindowHandle(App.MainWindow);
-        InitializeWithWindow.Initialize(savePicker, hWnd);
-
-        savePicker.SuggestedStartLocation = PickerLocationId.DocumentsLibrary;
-        savePicker.FileTypeChoices.Add("MacroFile", new List<string>() { ".pm" });
-        savePicker.FileTypeChoices.Add("BackgroundOperation", new List<string>() {".bo"});
-        savePicker.FileTypeChoices.Add("TextFile", new List<string>() {".txt"});
-
-        savePicker.SuggestedFileName = "file";
-
-        var storageFile = await savePicker.PickSaveFileAsync();
-
-        if (storageFile is not null)
-        {
-            CachedFileManager.DeferUpdates(storageFile);
-            using var stream = await storageFile.OpenStreamForWriteAsync();
-
-            using (var tw = new StreamWriter(stream))
-            {
-                tw.WriteLine(luaFile.Content);
-            }
-
-            luaFile.Path = storageFile.Path;
-            luaFile.Name = storageFile.Name;
-            luaFile.IsSaved = true;
-        }
+        await SaveRequested.Invoke(luafile);
     }
 
     [RelayCommand]
@@ -137,21 +97,22 @@ public partial class MainWindowViewModel : ObservableObject
         if (file is null)
             return;
 
-        if (!file.IsSaved)
+        if (file.IsSaved)
         {
-            var dialog = new ContentDialog();
-
-            dialog.XamlRoot = (App.MainWindow as MainWindow).Content.XamlRoot;
-            dialog.Title = $"Сохранить изменения в файле {file.Name}?";
-            dialog.PrimaryButtonText = "Сохранить";
-            dialog.SecondaryButtonText = "Не сохранять";
-            dialog.CloseButtonText = "Отмена";
-            dialog.DefaultButton = ContentDialogButton.Primary;
-
-            await dialog.ShowAsync();
+            Tabs.Remove(file);
+            return;
         }
+
+        var result = await CloseRequested.Invoke(file);
         
-        Tabs.Remove(file);
+        if (result)
+        {
+            Tabs.Remove(file);
+            return;
+        }
+
+        if (!result && !file.IsSaved)
+            await SaveRequested.Invoke(file);
     }
 
     [RelayCommand]
@@ -164,6 +125,10 @@ public partial class MainWindowViewModel : ObservableObject
             return;
 
         SelectedTab.Content += $"{command.Name}\n";
+        SelectedTab.IsSaved = false;
+        SelectedTab.Errors = syntaxChecker.CheckSyntax(SelectedTab.Content);
+
+        CommandPasted?.Invoke();
     }
 
     [RelayCommand]
@@ -171,6 +136,8 @@ public partial class MainWindowViewModel : ObservableObject
     {
         Macros.Clear();
         BackgroudOperations.Clear();
+
+        SelectedCommand = null!;
 
         var result = await commandService.LoadCommands();
 
@@ -192,7 +159,9 @@ public partial class MainWindowViewModel : ObservableObject
         openPicker.ViewMode = PickerViewMode.Thumbnail;
         openPicker.SuggestedStartLocation = PickerLocationId.Desktop;
 
+        openPicker.FileTypeFilter.Add(".pm");
         openPicker.FileTypeFilter.Add(".txt");
+        openPicker.FileTypeFilter.Add(".bo");
 
         var storageFile = await openPicker.PickSingleFileAsync();
         var fileContent = await FileIO.ReadTextAsync(storageFile);

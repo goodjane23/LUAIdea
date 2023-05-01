@@ -1,21 +1,32 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using Microsoft.UI.Xaml;
 
 namespace Lua_IDEA.Models;
 
 public partial class LuaFile : ObservableObject
 {
     [ObservableProperty]
-    public string name;
+    private string name;
 
     [ObservableProperty]
-    public string path;
+    private string path;
 
     [ObservableProperty]
-    public string content;
+    private string content;
 
     [ObservableProperty]
-    public bool isSaved;
+    private bool isSaved;
 
     [ObservableProperty]
-    public bool isFavorite;
+    private bool isFavorite;
+
+    [ObservableProperty]
+    private string errors;
+
+    public Visibility HasErrors()
+    {
+        return Errors?.Length > 0
+            ? Visibility.Visible
+            : Visibility.Collapsed;
+    }
 }

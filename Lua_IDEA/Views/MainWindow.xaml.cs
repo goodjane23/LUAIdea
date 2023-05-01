@@ -1,13 +1,25 @@
+using Lua_IDEA.Data.Entities;
 using Lua_IDEA.Models;
 using Lua_IDEA.ViewModels;
+using Microsoft.UI.Text;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Numerics;
+using System.Threading.Tasks;
+using Windows.Storage;
+using Windows.Storage.Pickers;
+using WinRT.Interop;
 
 namespace Lua_IDEA.Views;
 
 public sealed partial class MainWindow : Window
 {
+    private RichEditBox currentTextEditor;
+
     private readonly MainWindowViewModel viewModel;
 
     public MainWindow()
@@ -16,8 +28,66 @@ public sealed partial class MainWindow : Window
 
         ExtendsContentIntoTitleBar = true;
         SetTitleBar(titleBar);
-        
+
         viewModel = new MainWindowViewModel();
+
+        viewModel.CommandPasted += OnCommandPasted;
+        viewModel.SaveRequested += OnSaveRequested;
+        viewModel.CloseRequested += OnCloseRequested;
+    }
+
+    private void OnCommandPasted()
+    {
+        currentTextEditor?.Document.SetText(TextSetOptions.None, viewModel.SelectedTab?.Content);
+    }
+
+    private async Task<bool> OnCloseRequested(LuaFile file)
+    {
+        var dialog = new ContentDialog
+        {
+            XamlRoot = (App.MainWindow as MainWindow)?.Content.XamlRoot,
+            Title = $"Сохранить изменения в файле {file.Name}?",
+            PrimaryButtonText = "Сохранить",
+            SecondaryButtonText = "Не сохранять",
+            CloseButtonText = "Отмена",
+            DefaultButton = ContentDialogButton.Primary
+        };
+
+        var dialogResult = await dialog.ShowAsync();
+
+        return dialogResult == ContentDialogResult.Secondary;
+    }
+
+    private async Task OnSaveRequested(LuaFile file)
+    {
+        var savePicker = new FileSavePicker();
+
+        var hWnd = WindowNative.GetWindowHandle(this);
+        InitializeWithWindow.Initialize(savePicker, hWnd);
+
+        savePicker.SuggestedStartLocation = PickerLocationId.DocumentsLibrary;
+        savePicker.FileTypeChoices.Add("Macro File", new List<string>() { ".pm" });
+        savePicker.FileTypeChoices.Add("Background Operation", new List<string>() { ".bo" });
+        savePicker.FileTypeChoices.Add("Text File", new List<string>() { ".txt" });
+
+        savePicker.SuggestedFileName = file.Name;
+
+        var storageFile = await savePicker.PickSaveFileAsync();
+
+        if (storageFile is null)
+            return;
+
+        CachedFileManager.DeferUpdates(storageFile);
+
+        using var stream = await storageFile.OpenStreamForWriteAsync();
+        using var tw = new StreamWriter(stream);
+
+        tw.WriteLine(file.Content);
+
+        file.Path = storageFile.Path;
+        file.Name = storageFile.Name;
+        file.IsSaved = true;
+
     }
 
     private void TreeViewItem_DoubleTapped(object sender, DoubleTappedRoutedEventArgs e)
@@ -35,8 +105,36 @@ public sealed partial class MainWindow : Window
         viewModel.UpdateCommandsCommand.Execute(null);
     }
 
-    private void TextBox_TextChanging(TextBox sender, TextBoxTextChangingEventArgs args)
+    private void TreeView_ItemInvoked(TreeView sender, TreeViewItemInvokedEventArgs args)
     {
-        viewModel.TextChangingCommand.Execute(null);
+        if (args.InvokedItem is not Command command)
+            return;
+
+        viewModel.SelectedCommand = command;
+    }
+
+    private void textEditor_TextChanged(object sender, RoutedEventArgs e)
+    {
+        if (sender is not RichEditBox textEditor)
+            return;
+
+        var text = "";
+        textEditor.TextDocument.GetText(TextGetOptions.UseObjectText, out text);
+
+        viewModel.SelectedTab.Content = text;
+        viewModel.SelectedTab.IsSaved = false;
+    }
+
+    private void textEditor_Loaded(object sender, RoutedEventArgs e)
+    {
+        if (sender is not RichEditBox textEditor)
+            return;
+
+        textEditor.Height = tabviewgrid.ActualSize.ToSize().Height;
+        currentTextEditor = textEditor;
+
+        var text = viewModel.SelectedTab?.Content;
+
+        textEditor?.Document.SetText(TextSetOptions.None, text);
     }
 }
