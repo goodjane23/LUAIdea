@@ -4,7 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:entities="using:Lua_IDEA.Entities"
+    xmlns:entities="using:Lua_IDEA.Data.Entities" xmlns:models="using:Lua_IDEA.Models"
     mc:Ignorable="d">
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
@@ -23,35 +23,40 @@
 
         <!-- Menu -->
         <MenuBar Grid.Row="1">
-            <MenuBarItem Title="File">
-                <MenuFlyoutItem Text="New" Command="{x:Bind viewModel.CreateNewFileCommand}"/>
-                <MenuFlyoutItem Text="Open" Command="{x:Bind viewModel.OpenFileCommand}"/>
+            <MenuBarItem Title="Файл">
+                <MenuFlyoutItem Text="Создать" Command="{x:Bind viewModel.CreateNewFileCommand}"/>
+                <MenuFlyoutItem Text="Открыть" Command="{x:Bind viewModel.OpenFileCommand}"/>
                 <MenuFlyoutSeparator />
-                <MenuFlyoutItem Text="Save" Command="{x:Bind viewModel.SaveFileCommand}"/>
-                <MenuFlyoutItem Text="Save As" Command="{x:Bind viewModel.SaveFileAsCommand}"/>
-                <MenuFlyoutItem Text="Save All" Command="{x:Bind viewModel.SaveAllFilesCommand}"/>
+                <MenuFlyoutItem Text="Сохранить" Command="{x:Bind viewModel.SaveFileCommand}"/>
+                <MenuFlyoutItem Text="Сохранить как" Command="{x:Bind viewModel.SaveFileAsCommand}"/>
+                <MenuFlyoutItem Text="Сохранить все" Command="{x:Bind viewModel.SaveAllFilesCommand}"/>
                 <MenuFlyoutSeparator />
-                <MenuFlyoutItem Text="Close" Command="{x:Bind viewModel.CloseFileCommand}"/>
+                <MenuFlyoutItem Text="Закрыть" Command="{x:Bind viewModel.CloseFileCommand}"/>
             </MenuBarItem>
 
-            <MenuBarItem Title="Edit">
+            <MenuBarItem Title="Изменить">
                 <ToggleMenuFlyoutItem Text="В Избранное" IsChecked="{x:Bind viewModel.SelectedTab.IsFavorite, Mode=TwoWay}"/>
-                <MenuFlyoutSeparator />              
+                <MenuFlyoutSeparator/>
+                <MenuFlyoutSubItem Text="Избранное">
+                    <MenuFlyoutItem Text="File 1"/>
+                    <MenuFlyoutItem Text="File 2"/>
+                    <MenuFlyoutItem Text="File 3"/>
+                </MenuFlyoutSubItem>
             </MenuBarItem>
 
-            <MenuBarItem Title="View">
+            <MenuBarItem Title="Просмотр">
                 <ToggleMenuFlyoutItem Text="Панель макросов" IsChecked="{x:Bind viewModel.IsMacrosPanelVisible, Mode=TwoWay}"/>
                 <MenuFlyoutSeparator/>
                 <MenuFlyoutItem Text="Настройки"/>
             </MenuBarItem>
 
-            <MenuBarItem Title="Help">
-                <MenuFlyoutItem Text="About"/>
+            <MenuBarItem Title="Помощь">
+                <MenuFlyoutItem Text="О Приложении"/>
             </MenuBarItem>
         </MenuBar>
 
         <!-- File tab view-->
-        <Grid Grid.Row="2">
+        <Grid Grid.Row="2" x:Name="tabviewgrid">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="Auto"/>
@@ -64,7 +69,7 @@
                      AddTabButtonCommand="{x:Bind viewModel.CreateNewFileCommand}"
                      TabCloseRequested="TabView_TabCloseRequested">
                 <TabView.TabItemTemplate>
-                    <DataTemplate x:DataType="entities:LuaFile">
+                    <DataTemplate x:DataType="models:LuaFile">
                         <TabViewItem>
                             <TabViewItem.Header>
                                 <ContentControl>
@@ -73,8 +78,8 @@
                                             <ColumnDefinition Width="*"/>
                                             <ColumnDefinition Width="Auto"/>
                                         </Grid.ColumnDefinitions>
+                                        
                                         <FontIcon Grid.Column="0"
-                                                  HorizontalAlignment="Right"
                                                   VerticalAlignment="Center"
                                                   FontSize="12"                                                  
                                                   Visibility="{x:Bind IsFavorite, Mode=OneWay}"
@@ -82,24 +87,29 @@
                                         
                                         <TextBlock Grid.Column="1"
                                                    VerticalAlignment="Center"
-                                                   HorizontalAlignment="Left"
                                                    Margin="8,0,0,0"
                                                    Text="{x:Bind Name}"/>                                       
                                     </Grid>
                                 </ContentControl>
                             </TabViewItem.Header>
+                            
                             <Grid>
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="*"/>
                                     <RowDefinition Height="Auto"/>
                                 </Grid.RowDefinitions>
 
-                                <TextBox Grid.Row="0" Margin="4"
-                                         Text="{x:Bind Content, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                         TextWrapping="Wrap"
-                                         AcceptsReturn="True"/>
+                                <RichEditBox Grid.Row="0"
+                                             Margin="4"
+                                             TextChanged="textEditor_TextChanged"
+                                             Loaded="textEditor_Loaded"
+                                             IsSpellCheckEnabled="False"
+                                             MinHeight="500"/>
 
-                                <TextBlock Grid.Row="1" Margin="4"
+                                <TextBlock Grid.Row="1"
+                                           Margin="8"
+                                           Visibility="{x:Bind HasErrors(), Mode=OneWay}"
+                                           Text="{x:Bind Errors,Mode=OneWay}"
                                            VerticalAlignment="Bottom"/>
                             </Grid>
                         </TabViewItem>
@@ -127,8 +137,9 @@
                         <Pivot Title="Список команд">
                             <PivotItem Header="Макросы">
                                 <TreeView Margin="0,6,0,0"
+                                          CanReorderItems="False"
                                           ItemsSource="{x:Bind viewModel.Macros}"
-                                          SelectedItem="{x:Bind viewModel.SelectedCommand, Mode=TwoWay}">
+                                          ItemInvoked="TreeView_ItemInvoked">
                                     <TreeView.ItemTemplate>
                                         <DataTemplate x:DataType="entities:CommandCategory">
                                             <TreeViewItem ItemsSource="{Binding Commands}"
@@ -140,8 +151,9 @@
                             </PivotItem>
                             <PivotItem Header="Фоновые операции">
                                 <TreeView Margin="0,6,0,0"
+                                          CanReorderItems="False"
                                           ItemsSource="{x:Bind viewModel.BackgroudOperations}"
-                                          SelectedItem="{x:Bind viewModel.SelectedCommand, Mode=TwoWay}">
+                                          ItemInvoked="TreeView_ItemInvoked">
                                     <TreeView.ItemTemplate>
                                         <DataTemplate x:DataType="entities:CommandCategory">
                                             <TreeViewItem ItemsSource="{Binding Commands}"
@@ -154,19 +166,19 @@
                         </Pivot>
                     </Grid>
 
+                    <ProgressRing Grid.Row="0" IsActive="{x:Bind viewModel.UpdateCommandsCommand.IsRunning, Mode=OneWay}"/>
+
                     <StackPanel Grid.Row="1" Margin="8,12,8,12">
                         <TextBlock Text="Описание команды" Style="{StaticResource SubtitleTextBlockStyle}"/>
                         <TextBlock Margin="0,8,0,0"
-                                   Text="{x:Bind ((entities:Command)viewModel.SelectedCommand).Description, Mode=OneWay}"
+                                   Text="{x:Bind viewModel.SelectedCommand.Description, Mode=OneWay}"
                                    TextWrapping="Wrap"/>
                     </StackPanel>
-                    
 
                     <Button Grid.Row="2"
                             Margin="8"
                             Style="{StaticResource AccentButtonStyle}"
                             Command="{x:Bind viewModel.UpdateCommandsCommand}"
-                            VerticalAlignment="Center"
                             HorizontalAlignment="Stretch">
                         <StackPanel Orientation="Horizontal">
                             <FontIcon Glyph="&#xE72C;"/>
