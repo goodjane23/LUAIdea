@@ -197,14 +197,20 @@ public partial class MainWindowViewModel : ObservableObject
         if (String.IsNullOrEmpty(SelectedTab.Path) || SelectedTab.Path=="")
             await SaveFile(SelectedTab);
       
-
+        List<string> result = new List<string>();
+     
         if (SelectedTab.IsFavorite)
         {
-            var temp = await FileService.AddToFavorite(SelectedTab.Path);
+            result = (List<string>)await FileService.AddToFavorite(SelectedTab.Path);
         }
         else
         {
-            var temp = await FileService.RemoveFromFavorite(SelectedTab.Path);
+            result = (List<string>)await FileService.RemoveFromFavorite(SelectedTab.Path);
+           
+        }
+        foreach (var favoriteMacro in result)
+        {
+            FavoritesMacros.Add(favoriteMacro);
         }
     }
 }
