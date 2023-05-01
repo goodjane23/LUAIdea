@@ -24,7 +24,7 @@ public partial class MainWindowViewModel : ObservableObject
     public event Func<LuaFile, Task<bool>> CloseRequested;
 
     public ObservableCollection<LuaFile> Tabs { get; } = new();
-    public ObservableCollection<LuaFile> FavoritesMacros { get; } = new();
+    public ObservableCollection<string> FavoritesMacros { get; set; } = new();
     public ObservableCollection<CommandCategory> Macros { get; } = new();
     public ObservableCollection<CommandCategory> BackgroudOperations { get; } = new();
 
@@ -44,7 +44,7 @@ public partial class MainWindowViewModel : ObservableObject
     {
         commandService = new CommandService();
         syntaxChecker = new SyntaxCheckerService();
-
+        
         CreateNewFile();
     }
 
@@ -164,6 +164,9 @@ public partial class MainWindowViewModel : ObservableObject
         openPicker.FileTypeFilter.Add(".bo");
 
         var storageFile = await openPicker.PickSingleFileAsync();
+
+        if (storageFile is null) return;
+     
         var fileContent = await FileIO.ReadTextAsync(storageFile);
 
         var file = new LuaFile
@@ -177,4 +180,31 @@ public partial class MainWindowViewModel : ObservableObject
         Tabs.Add(file);
     }
 
+    private async Task GetFavoritesMacrosAsync()
+    {
+       var result = await FileService.GetFavoriteMacros();
+        foreach (var favoriteMacro in result)
+        {
+            FavoritesMacros.Add(favoriteMacro); 
+        }
+    }
+
+    [RelayCommand]
+    private async void ChangeFavoriteStatus()
+    {
+        if (SelectedTab is null) return;
+
+        if (String.IsNullOrEmpty(SelectedTab.Path) || SelectedTab.Path=="")
+            await SaveFile(SelectedTab);
+      
+
+        if (SelectedTab.IsFavorite)
+        {
+            var temp = await FileService.AddToFavorite(SelectedTab.Path);
+        }
+        else
+        {
+            var temp = await FileService.RemoveFromFavorite(SelectedTab.Path);
+        }
+    }
 }
