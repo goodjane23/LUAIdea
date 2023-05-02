@@ -13,27 +13,33 @@ using System.Threading.Tasks;
 using Windows.Storage;
 using Windows.Storage.Pickers;
 using WinRT.Interop;
+using WinUIEx;
 
 namespace Lua_IDEA.Views;
 
-public sealed partial class MainWindow : Window
+public sealed partial class MainWindow : WindowEx
 {
     private RichEditBox currentTextEditor;
 
     private readonly MainWindowViewModel viewModel;
 
-    public MainWindow()
+    public MainWindow(MainWindowViewModel viewModel)
     {
         InitializeComponent();
 
         ExtendsContentIntoTitleBar = true;
         SetTitleBar(titleBar);
 
-        viewModel = new MainWindowViewModel();
+        this.viewModel = viewModel;
 
         viewModel.CommandPasted += OnCommandPasted;
         viewModel.SaveRequested += OnSaveRequested;
         viewModel.CloseRequested += OnCloseRequested;
+
+        SizeChanged += (sender, args) =>
+        {
+            currentTextEditor.Height = tabviewgrid.ActualSize.ToSize().Height;
+        };
     }
 
     private void OnCommandPasted()

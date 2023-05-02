@@ -38,12 +38,12 @@ public partial class MainWindowViewModel : ObservableObject
     private Command selectedCommand;
 
     private readonly CommandService commandService;
-    private readonly SyntaxCheckerService syntaxChecker;
+    private readonly SyntaxChecker syntaxChecker;
 
-    public MainWindowViewModel()
+    public MainWindowViewModel(CommandService commandService, SyntaxChecker syntaxChecker)
     {
-        commandService = new CommandService();
-        syntaxChecker = new SyntaxCheckerService();
+        this.commandService = commandService;
+        this.syntaxChecker = syntaxChecker;
 
         CreateNewFile();
     }

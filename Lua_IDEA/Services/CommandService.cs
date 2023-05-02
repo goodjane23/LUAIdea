@@ -12,15 +12,19 @@ public class CommandService
 {
     private const string BaseUrl = "http://doc.pumotix.ru/pages/viewpage.action?pageId=";
 
-    private readonly Dictionary<string, string> CommandCategories;
+    private readonly Dictionary<string, string> commandCategories;
 
     private readonly NetworkChecker networkChecker;
+    private readonly IDbContextFactory<AppDbContext> contextFactory;
 
-    public CommandService()
+    public CommandService(
+        NetworkChecker networkChecker,
+        IDbContextFactory<AppDbContext> contextFactory)
     {
-        networkChecker = new NetworkChecker();
+        this.networkChecker = networkChecker;
+        this.contextFactory = contextFactory;
 
-        CommandCategories = new Dictionary<string, string>()
+        commandCategories = new Dictionary<string, string>()
         {
             { "5180768", "Входы и выходы" },
             { "5180766", "Оси" },
@@ -55,11 +59,11 @@ public class CommandService
 
     private async Task<IEnumerable<CommandCategory>> LoadCommandsFromWeb(HttpClient httpClient)
     {
-        await using var appContext = new AppDbContext();
+        await using var appContext = await contextFactory.CreateDbContextAsync();
 
         var result = new List<CommandCategory>();
 
-        foreach (var address in CommandCategories.Keys)
+        foreach (var address in commandCategories.Keys)
         {
             var content = await httpClient.GetStringAsync($"{BaseUrl}{address}");
             var pageStrings = content.Replace("<", "@").Split('@');
@@ -94,7 +98,7 @@ public class CommandService
 
                         var commandId = address.Substring(address.LastIndexOf("=") + 1);
 
-                        var header = CommandCategories[commandId];
+                        var header = commandCategories[commandId];
                         var resultCommand = result.FirstOrDefault(x => x.Name == header && x.IsMacro == commandId.StartsWith('5'));
 
                         if (resultCommand is not null)
@@ -134,7 +138,7 @@ public class CommandService
                                     Description = commandDescription
                                 }
                             }
-                            
+
                         });
                     }
                 }
@@ -151,12 +155,12 @@ public class CommandService
 
     private async Task<IEnumerable<CommandCategory>> LoadCommandsFromDb()
     {
-        await using var appDbContext = new AppDbContext();
+        await using var appDbContext = await contextFactory.CreateDbContextAsync();
 
         var result = await appDbContext.CommandCategory
             .Include(x => x.Commands)
             .ToListAsync();
 
-        return result;       
+        return result;
     }
 }

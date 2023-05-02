@@ -9,13 +9,9 @@ public sealed class AppDbContext : DbContext
     public DbSet<Command> Commands { get; set; }
     public DbSet<FavoriteFile> FavoriteFiles { get; set; }
 
-    public AppDbContext()
+    public AppDbContext(DbContextOptions<AppDbContext> options)
+        : base(options)
     {
         Database.EnsureCreated();
-    }
-
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-    {
-        optionsBuilder.UseSqlite("Data Source=database.db");
     }
 }

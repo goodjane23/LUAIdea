@@ -3,7 +3,7 @@ using System;
 
 namespace Lua_IDEA.Services;
 
-class SyntaxCheckerService
+public class SyntaxChecker
 {
     public string CheckSyntax(string text)
     {
