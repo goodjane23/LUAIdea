@@ -36,15 +36,12 @@
             </MenuBarItem>
 
             <MenuBarItem Title="Изменить">
-                <ToggleMenuFlyoutItem Text="В Избранное" IsChecked="{x:Bind viewModel.SelectedTab.IsFavorite, Mode=TwoWay}"/>
-                <MenuFlyoutSeparator/>
-                <MenuFlyoutSubItem Text="Избранное">
-                    <MenuFlyoutItem Text="File 1"/>
-                    <MenuFlyoutItem Text="File 2"/>
-                    <MenuFlyoutItem Text="File 3"/>
-                </MenuFlyoutSubItem>
+                <ToggleMenuFlyoutItem Text="В Избранное" 
+                                      Command="{x:Bind viewModel.ChangeFavoriteStatusCommand}" 
+                                      IsChecked="{x:Bind viewModel.SelectedTab.IsFavorite, Mode=TwoWay}"/>
+                <MenuFlyoutSeparator/>                
             </MenuBarItem>
-
+            
             <MenuBarItem Title="Просмотр">
                 <ToggleMenuFlyoutItem Text="Панель макросов" IsChecked="{x:Bind viewModel.IsMacrosPanelVisible, Mode=TwoWay}"/>
                 <MenuFlyoutSeparator/>
