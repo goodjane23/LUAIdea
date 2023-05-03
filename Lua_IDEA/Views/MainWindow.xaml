@@ -54,7 +54,7 @@
         </MenuBar>
 
         <!-- File tab view-->
-        <Grid Grid.Row="2" x:Name="tabviewgrid">
+        <Grid Grid.Row="2" x:Name="tabViewGrid">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="Auto"/>

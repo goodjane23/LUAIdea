@@ -38,7 +38,8 @@ public sealed partial class MainWindow : WindowEx
 
         SizeChanged += (sender, args) =>
         {
-            currentTextEditor.Height = tabviewgrid.ActualSize.ToSize().Height;
+            if (currentTextEditor is not null)
+                currentTextEditor.Height = tabViewGrid.ActualSize.ToSize().Height;
         };
     }
 
@@ -51,7 +52,7 @@ public sealed partial class MainWindow : WindowEx
     {
         var dialog = new ContentDialog
         {
-            XamlRoot = (App.MainWindow as MainWindow)?.Content.XamlRoot,
+            XamlRoot = Content.XamlRoot,
             Title = $"Сохранить изменения в файле {file.Name}?",
             PrimaryButtonText = "Сохранить",
             SecondaryButtonText = "Не сохранять",
@@ -93,7 +94,6 @@ public sealed partial class MainWindow : WindowEx
         file.Path = storageFile.Path;
         file.Name = storageFile.Name;
         file.IsSaved = true;
-
     }
 
     private void TreeViewItem_DoubleTapped(object sender, DoubleTappedRoutedEventArgs e)
@@ -124,7 +124,7 @@ public sealed partial class MainWindow : WindowEx
         if (sender is not RichEditBox textEditor)
             return;
 
-        var text = "";
+        var text = string.Empty;
         textEditor.TextDocument.GetText(TextGetOptions.UseObjectText, out text);
 
         viewModel.SelectedTab.Content = text;
@@ -136,7 +136,7 @@ public sealed partial class MainWindow : WindowEx
         if (sender is not RichEditBox textEditor)
             return;
 
-        textEditor.Height = tabviewgrid.ActualSize.ToSize().Height;
+        textEditor.Height = tabViewGrid.ActualSize.ToSize().Height;
         currentTextEditor = textEditor;
 
         var text = viewModel.SelectedTab?.Content;

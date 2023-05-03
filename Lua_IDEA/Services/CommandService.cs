@@ -49,7 +49,7 @@ public class CommandService
     {
         using var httpClient = new HttpClient();
 
-        var isInternetAvailable = networkChecker.IsInternetAvailable(httpClient);
+        var isInternetAvailable = await networkChecker.IsInternetAvailable(httpClient, "http://doc.pumotix.ru/");
 
         if (isInternetAvailable)
             return await LoadCommandsFromWeb(httpClient);

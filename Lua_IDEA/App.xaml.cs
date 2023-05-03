@@ -23,7 +23,7 @@ public partial class App : Application
         appHost = Host.CreateDefaultBuilder()
             .ConfigureServices(services =>
             {
-                // Databse
+                // Database
                 services.AddDbContextFactory<AppDbContext>(options =>
                 {
                     options.UseSqlite("Data Source=database.db");
@@ -33,8 +33,9 @@ public partial class App : Application
                 services.AddSingleton<CommandService>();
                 services.AddSingleton<NetworkChecker>();
                 services.AddSingleton<SyntaxChecker>();
+                services.AddSingleton<FavoritesService>();
 
-                // Windows
+                // Views
                 services.AddSingleton<MainWindow>();
 
                 // ViewModels

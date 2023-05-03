@@ -3,12 +3,8 @@ using CommunityToolkit.Mvvm.Input;
 using Lua_IDEA.Data.Entities;
 using Lua_IDEA.Models;
 using Lua_IDEA.Services;
-using Lua_IDEA.Views;
-using Microsoft.UI.Xaml.Controls;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Windows.Storage;
@@ -39,11 +35,16 @@ public partial class MainWindowViewModel : ObservableObject
 
     private readonly CommandService commandService;
     private readonly SyntaxChecker syntaxChecker;
+    private readonly FavoritesService favoritesService;
 
-    public MainWindowViewModel(CommandService commandService, SyntaxChecker syntaxChecker)
+    public MainWindowViewModel(
+        CommandService commandService,
+        SyntaxChecker syntaxChecker,
+        FavoritesService favoritesService)
     {
         this.commandService = commandService;
         this.syntaxChecker = syntaxChecker;
+        this.favoritesService = favoritesService;
 
         CreateNewFile();
     }
@@ -182,35 +183,35 @@ public partial class MainWindowViewModel : ObservableObject
 
     private async Task GetFavoritesMacrosAsync()
     {
-       var result = await FileService.GetFavoriteMacros();
+        var result = await favoritesService.GetFavoriteMacros();
+
         foreach (var favoriteMacro in result)
-        {
             FavoritesMacros.Add(favoriteMacro); 
-        }
     }
 
     [RelayCommand]
     private async void ChangeFavoriteStatus()
     {
-        if (SelectedTab is null) return;
+        if (SelectedTab is null)
+            return;
 
-        if (String.IsNullOrEmpty(SelectedTab.Path) || SelectedTab.Path=="")
+        if (String.IsNullOrEmpty(SelectedTab.Path) || SelectedTab.Path == "")
             await SaveFile(SelectedTab);
-      
-        List<string> result = new List<string>();
      
         if (SelectedTab.IsFavorite)
         {
-            result = (List<string>)await FileService.AddToFavorite(SelectedTab.Path);
+            await favoritesService.AddToFavorite(SelectedTab.Path);
         }
         else
         {
-            result = (List<string>)await FileService.RemoveFromFavorite(SelectedTab.Path);
-           
+            await favoritesService.RemoveFromFavorite(SelectedTab.Path);
         }
+
+        var result = await favoritesService.GetFavoriteMacros();
+
+        FavoritesMacros.Clear();
+
         foreach (var favoriteMacro in result)
-        {
-            FavoritesMacros.Add(favoriteMacro);
-        }
+            FavoritesMacros.Add(favoriteMacro);   
     }
 }
