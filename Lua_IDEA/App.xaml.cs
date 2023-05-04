@@ -6,13 +6,13 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.UI.Xaml;
-using System.Net;
+using WinUIEx;
 
 namespace Lua_IDEA;
 
 public partial class App : Application
 {
-    public static Window MainWindow { get; private set; }
+    public static WindowEx MainWindow { get; private set; }
 
     private readonly IHost appHost;
 

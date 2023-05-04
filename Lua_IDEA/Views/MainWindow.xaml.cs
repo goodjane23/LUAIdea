@@ -30,6 +30,8 @@ public sealed partial class MainWindow : WindowEx
         ExtendsContentIntoTitleBar = true;
         SetTitleBar(titleBar);
 
+        AppWindow.SetIcon(Path.Combine(AppContext.BaseDirectory, "Assets/appicon.ico"));
+
         this.viewModel = viewModel;
 
         viewModel.CommandPasted += OnCommandPasted;
