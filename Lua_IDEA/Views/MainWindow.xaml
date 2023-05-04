@@ -68,8 +68,7 @@
 
                         <MenuBarItem Title="Изменить">
                             <ToggleMenuFlyoutItem Text="В Избранное" 
-                                                  Command="{x:Bind viewModel.ChangeFavoriteStatusCommand}" 
-                                                  IsChecked="{x:Bind viewModel.SelectedTab.IsFavorite, Mode=TwoWay}"/>
+                                                  Command="{x:Bind viewModel.ChangeFavoriteStatusCommand}" />
                             <MenuFlyoutSeparator/>
                         </MenuBarItem>
 

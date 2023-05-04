@@ -6,9 +6,9 @@ namespace Lua_IDEA.Services;
 
 public class NetworkChecker
 {
-    public async Task<bool> IsInternetAvailable(HttpClient httpClient, string? address = null)
+    public async Task<bool> IsNecessaryResourceAvailable(HttpClient httpClient, string? address = null)
     {
-        address ??= "https://www.google.com/";
+        address ??= "http://doc.pumotix.ru/";
 
 		try
 		{

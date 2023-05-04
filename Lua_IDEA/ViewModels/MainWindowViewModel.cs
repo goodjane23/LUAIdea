@@ -3,12 +3,15 @@ using CommunityToolkit.Mvvm.Input;
 using Lua_IDEA.Data.Entities;
 using Lua_IDEA.Models;
 using Lua_IDEA.Services;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml;
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using Windows.Storage;
 using Windows.Storage.Pickers;
+using Windows.UI.Popups;
 using WinRT.Interop;
 
 namespace Lua_IDEA.ViewModels;
@@ -61,7 +64,13 @@ public partial class MainWindowViewModel : ObservableObject
     [RelayCommand]
     private async Task SaveAllFiles()
     {
-        throw new NotImplementedException();
+        foreach (var tab in Tabs)
+        {
+            if (!tab.IsSaved)
+            {
+                await SaveFile(tab);
+            }
+        }
     }
 
     [RelayCommand]
@@ -195,23 +204,28 @@ public partial class MainWindowViewModel : ObservableObject
         if (SelectedTab is null)
             return;
 
-        if (String.IsNullOrEmpty(SelectedTab.Path) || SelectedTab.Path == "")
-            await SaveFile(SelectedTab);
+        if (String.IsNullOrEmpty(SelectedTab.Path))
+        {
+            ///TODO:
+            ///Вывкести сообщение "перед добавлением в избранное нужно сохранить файл
+            ///по результату смотреть
+            ///
+        }
+
+        await SaveFile(SelectedTab);
      
-        if (SelectedTab.IsFavorite)
-        {
+        if (SelectedTab.IsFavorite) 
             await favoritesService.AddToFavorite(SelectedTab.Path);
-        }
         else
-        {
             await favoritesService.RemoveFromFavorite(SelectedTab.Path);
-        }
 
         var result = await favoritesService.GetFavoriteMacros();
 
         FavoritesMacros.Clear();
 
         foreach (var favoriteMacro in result)
-            FavoritesMacros.Add(favoriteMacro);   
+            FavoritesMacros.Add(favoriteMacro);
+
+        SelectedTab.IsFavorite = !SelectedTab.IsFavorite;
     }
 }
