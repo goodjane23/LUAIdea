@@ -38,12 +38,12 @@ public partial class MainWindowViewModel : ObservableObject
 
     private readonly CommandService commandService;
     private readonly SyntaxChecker syntaxChecker;
-    private readonly FavoritesService favoritesService;
+    private readonly FilesOnDBService favoritesService;
 
     public MainWindowViewModel(
         CommandService commandService,
         SyntaxChecker syntaxChecker,
-        FavoritesService favoritesService)
+        FilesOnDBService favoritesService)
     {
         this.commandService = commandService;
         this.syntaxChecker = syntaxChecker;
@@ -59,6 +59,7 @@ public partial class MainWindowViewModel : ObservableObject
             return;
 
         await SaveRequested.Invoke(SelectedTab);
+        AddToRecent();
     }
 
     [RelayCommand]
@@ -227,5 +228,10 @@ public partial class MainWindowViewModel : ObservableObject
             FavoritesMacros.Add(favoriteMacro);
 
         SelectedTab.IsFavorite = !SelectedTab.IsFavorite;
+    }
+
+    private void AddToRecent()
+    {
+        SelectedTab
     }
 }

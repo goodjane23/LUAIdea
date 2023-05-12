@@ -33,7 +33,7 @@ public partial class App : Application
                 services.AddSingleton<CommandService>();
                 services.AddSingleton<NetworkChecker>();
                 services.AddSingleton<SyntaxChecker>();
-                services.AddSingleton<FavoritesService>();
+                services.AddSingleton<FilesOnDBService>();
 
                 // Views
                 services.AddSingleton<MainWindow>();
