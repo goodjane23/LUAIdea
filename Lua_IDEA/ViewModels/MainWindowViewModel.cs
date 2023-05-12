@@ -45,6 +45,7 @@ public partial class MainWindowViewModel : ObservableObject
         SyntaxChecker syntaxChecker,
         FavoritesService favoritesService)
     {
+        ExistMacroChecker existMacroChecker = new ExistMacroChecker();
         this.commandService = commandService;
         this.syntaxChecker = syntaxChecker;
         this.favoritesService = favoritesService;
