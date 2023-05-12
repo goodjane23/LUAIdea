@@ -59,7 +59,7 @@ public partial class MainWindowViewModel : ObservableObject
             return;
 
         await SaveRequested.Invoke(SelectedTab);
-        AddToRecent();
+        await favoritesService.AddToFavorite(SelectedTab.Path);
     }
 
     [RelayCommand]
@@ -83,6 +83,7 @@ public partial class MainWindowViewModel : ObservableObject
             return;
 
         await SaveRequested.Invoke(luafile);
+        await favoritesService.AddToFavorite(SelectedTab.Path);
     }
 
     [RelayCommand]
@@ -90,9 +91,9 @@ public partial class MainWindowViewModel : ObservableObject
     {
         var file = new LuaFile()
         {
-            Name = "New file",
+            Name = "M",
             Path = "",
-            Content = "",
+            Content = "function M() \r\n\r\n end",
             IsSaved = false,
             IsFavorite = false,
         };
@@ -230,8 +231,4 @@ public partial class MainWindowViewModel : ObservableObject
         SelectedTab.IsFavorite = !SelectedTab.IsFavorite;
     }
 
-    private void AddToRecent()
-    {
-        SelectedTab
-    }
 }
