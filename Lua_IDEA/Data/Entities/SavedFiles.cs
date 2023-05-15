@@ -6,4 +6,6 @@ public class SavedFile
     public string Path { get; set; }
 
     public bool IsFavorite { get; set; }
+
+    public bool IsRecent { get; set; }
 }

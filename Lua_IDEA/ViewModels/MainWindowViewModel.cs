@@ -13,6 +13,8 @@ using Windows.Storage;
 using Windows.Storage.Pickers;
 using Windows.UI.Popups;
 using WinRT.Interop;
+using Lua_IDEA.Views;
+using WinUIEx;
 
 namespace Lua_IDEA.ViewModels;
 
@@ -20,15 +22,15 @@ public partial class MainWindowViewModel : ObservableObject
 {
     public event Action CommandPasted;
     public event Func<LuaFile, Task> SaveRequested;
+    public event Func<Task<bool>> SaveCheckRequested;
     public event Func<LuaFile, Task<bool>> CloseRequested;
 
-    public ObservableCollection<LuaFile> Tabs { get; } = new();
-    public ObservableCollection<string> FavoritesMacros { get; set; } = new();
-    public ObservableCollection<CommandCategory> Macros { get; } = new();
-    public ObservableCollection<CommandCategory> BackgroudOperations { get; } = new();
+    private readonly CommandService commandService;
+    private readonly SyntaxChecker syntaxChecker;
+    private readonly FilesOnDBService favoritesService;
 
     [ObservableProperty]
-    public LuaFile selectedTab;
+    private LuaFile selectedTab;
 
     [ObservableProperty]
     private bool isMacrosPanelVisible;
@@ -36,9 +38,11 @@ public partial class MainWindowViewModel : ObservableObject
     [ObservableProperty]
     private Command selectedCommand;
 
-    private readonly CommandService commandService;
-    private readonly SyntaxChecker syntaxChecker;
-    private readonly FilesOnDBService favoritesService;
+    public ObservableCollection<LuaFile> Tabs { get; } = new();
+    public ObservableCollection<string> FavoritesMacros { get; set; } = new();
+    public ObservableCollection<string> RecentMacros { get; set; } = new();
+    public ObservableCollection<CommandCategory> Macros { get; } = new();
+    public ObservableCollection<CommandCategory> BackgroudOperations { get; } = new();
 
     public MainWindowViewModel(
         CommandService commandService,
@@ -48,7 +52,9 @@ public partial class MainWindowViewModel : ObservableObject
         this.commandService = commandService;
         this.syntaxChecker = syntaxChecker;
         this.favoritesService = favoritesService;
-
+        RecentMacros.Add("werty");
+        RecentMacros.Add("werty");
+        RecentMacros.Add("werty");
         CreateNewFile();
     }
 
@@ -116,7 +122,7 @@ public partial class MainWindowViewModel : ObservableObject
         }
 
         var result = await CloseRequested.Invoke(file);
-        
+
         if (result)
         {
             Tabs.Remove(file);
@@ -178,7 +184,7 @@ public partial class MainWindowViewModel : ObservableObject
         var storageFile = await openPicker.PickSingleFileAsync();
 
         if (storageFile is null) return;
-     
+
         var fileContent = await FileIO.ReadTextAsync(storageFile);
 
         var file = new LuaFile
@@ -197,29 +203,27 @@ public partial class MainWindowViewModel : ObservableObject
         var result = await favoritesService.GetFavoriteMacros();
 
         foreach (var favoriteMacro in result)
-            FavoritesMacros.Add(favoriteMacro); 
+            FavoritesMacros.Add(favoriteMacro);
     }
 
     [RelayCommand]
-    private async void ChangeFavoriteStatus()
+    private async Task ChangeFavoriteStatus()
     {
+        bool res = true;
         if (SelectedTab is null)
             return;
 
         if (String.IsNullOrEmpty(SelectedTab.Path))
-        {
-            ///TODO:
-            ///Вывкести сообщение "перед добавлением в избранное нужно сохранить файл
-            ///по результату смотреть
-            ///
-        }
+            res = await SaveCheckRequested.Invoke();
 
+        if (!res) return;
+       
         await SaveFile(SelectedTab);
-     
-        if (SelectedTab.IsFavorite) 
-            await favoritesService.AddToFavorite(SelectedTab.Path);
+
+        if (SelectedTab.IsFavorite)
+            await favoritesService.RemoveFromFavorite(SelectedTab.Path);       
         else
-            await favoritesService.RemoveFromFavorite(SelectedTab.Path);
+            await favoritesService.AddToFavorite(SelectedTab.Path);
 
         var result = await favoritesService.GetFavoriteMacros();
 
@@ -229,6 +233,19 @@ public partial class MainWindowViewModel : ObservableObject
             FavoritesMacros.Add(favoriteMacro);
 
         SelectedTab.IsFavorite = !SelectedTab.IsFavorite;
+    }
+
+    [RelayCommand]
+    private async Task ListShowFilesView(string favorite)
+    {
+        if (favorite is "1")
+        {
+
+        }
+        if (favorite is "0")
+        {
+
+        }
     }
 
 }

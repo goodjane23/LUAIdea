@@ -47,8 +47,10 @@ public class FilesOnDBService
         await using var appDbContext = await contextFactory.CreateDbContextAsync();
 
         var favoriteFile = new SavedFile
-        {
-            Path = path
+        {            
+            Path = path,
+            IsFavorite = true,
+            IsRecent = false
         };
 
         await appDbContext.FavoriteFiles.AddAsync(favoriteFile);

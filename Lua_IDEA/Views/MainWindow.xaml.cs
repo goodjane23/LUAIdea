@@ -37,12 +37,30 @@ public sealed partial class MainWindow : WindowEx
         viewModel.CommandPasted += OnCommandPasted;
         viewModel.SaveRequested += OnSaveRequested;
         viewModel.CloseRequested += OnCloseRequested;
+        viewModel.SaveCheckRequested += OnSaveCheckRequested;
 
         SizeChanged += (sender, args) =>
         {
             if (currentTextEditor is not null)
                 currentTextEditor.Height = tabViewGrid.ActualSize.ToSize().Height;
         };
+    }
+
+    private async Task<bool> OnSaveCheckRequested()
+    {
+        var dialog = new ContentDialog
+        {
+            XamlRoot = Content.XamlRoot,
+            Title = $"Необходимо сохранить файл, перед тем как добавить файл в избранное. Сохранть?",
+            PrimaryButtonText = "Сохранить",
+            SecondaryButtonText = "Не сохранять",
+            CloseButtonText = "Отмена",
+            DefaultButton = ContentDialogButton.Primary
+        };
+
+        var dialogResult = await dialog.ShowAsync();
+
+        return dialogResult == ContentDialogResult.Primary;
     }
 
     private void OnCommandPasted()
@@ -145,5 +163,10 @@ public sealed partial class MainWindow : WindowEx
         var text = viewModel.SelectedTab?.Content;
 
         textEditor?.Document.SetText(TextSetOptions.None, text);
+    }
+
+    private void MenuFlyoutItem_Click(object sender, RoutedEventArgs e)
+    {
+
     }
 }
