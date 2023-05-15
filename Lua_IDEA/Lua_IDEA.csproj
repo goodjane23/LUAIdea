@@ -24,8 +24,10 @@
     <WindowsPackageType>None</WindowsPackageType>
     <Nullable>enable</Nullable>
     <ApplicationIcon>Assets\appicon.ico</ApplicationIcon>
+    <UseWPF>False</UseWPF>
   </PropertyGroup>
   <ItemGroup>
+    <None Remove="Views\Dialogs\RecentFilesDialogSelector.xaml" />
     <None Remove="Views\ListFilesWindow.xaml" />
     <None Remove="Views\Pages\SettingsPage.xaml" />
     <None Remove="Views\Pages\ShellPage.xaml" />
@@ -42,6 +44,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="AvalonEdit" Version="6.3.0.90" />
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.5" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="7.0.5" />
@@ -73,6 +76,11 @@
   </ItemGroup>
   <ItemGroup>
     <Page Update="Views\Pages\ShellPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Views\Dialogs\RecentFilesDialogSelector.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>

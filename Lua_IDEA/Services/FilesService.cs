@@ -8,11 +8,11 @@ using System.Threading.Tasks;
 
 namespace Lua_IDEA.Services;
 
-public class FilesOnDBService
+public class FilesServise
 {
     private readonly IDbContextFactory<AppDbContext> contextFactory;
 
-    public FilesOnDBService(IDbContextFactory<AppDbContext> contextFactory)
+    public FilesServise(IDbContextFactory<AppDbContext> contextFactory)
     {
         this.contextFactory = contextFactory;
     }
@@ -35,10 +35,10 @@ public class FilesOnDBService
 
         var recentMacros = await appDbContext.FavoriteFiles
             .Where(x => x.IsFavorite == false)
-            .Select(x => x.Path)
+            .TakeLast(10)
+            .Select(x => x.Path) 
             .ToListAsync();
-
-        recentMacros = recentMacros.GetRange(recentMacros.Count-10, recentMacros.Count);
+        
         return recentMacros;
     }
 
@@ -56,7 +56,6 @@ public class FilesOnDBService
         await appDbContext.FavoriteFiles.AddAsync(favoriteFile);
         await appDbContext.SaveChangesAsync();
     }
-
     public async Task AddToRecent(string path)
     {
         await using var appDbContext = await contextFactory.CreateDbContextAsync();

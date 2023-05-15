@@ -1,6 +1,7 @@
 using Lua_IDEA.Data.Entities;
 using Lua_IDEA.Models;
 using Lua_IDEA.ViewModels;
+using Lua_IDEA.Views.Dialogs;
 using Microsoft.UI.Text;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -165,8 +166,4 @@ public sealed partial class MainWindow : WindowEx
         textEditor?.Document.SetText(TextSetOptions.None, text);
     }
 
-    private void MenuFlyoutItem_Click(object sender, RoutedEventArgs e)
-    {
-
-    }
 }

@@ -1,7 +1,9 @@
 ﻿using Lua_IDEA.Data;
+using Lua_IDEA.Extentions;
 using Lua_IDEA.Services;
 using Lua_IDEA.ViewModels;
 using Lua_IDEA.Views;
+using Lua_IDEA.Views.Dialogs;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -33,14 +35,15 @@ public partial class App : Application
                 services.AddSingleton<CommandService>();
                 services.AddSingleton<NetworkChecker>();
                 services.AddSingleton<SyntaxChecker>();
-                services.AddSingleton<FilesOnDBService>();
+                services.AddSingleton<FilesServise>();
 
                 // Views
                 services.AddSingleton<MainWindow>();
+                services.AddWindowFactory<RecentFilesDialogSelector>();
 
                 // ViewModels
                 services.AddSingleton<MainWindowViewModel>();
-                services.AddSingleton<ListFilesControlViewModel>();
+                services.AddSingleton<RecentFilesDialogSelectorViewModel>();
             })
             .Build();
     }
