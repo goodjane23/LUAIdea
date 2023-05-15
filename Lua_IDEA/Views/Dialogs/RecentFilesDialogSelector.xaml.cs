@@ -26,6 +26,7 @@ public sealed partial class RecentFilesDialogSelector : ContentDialog
     private readonly RecentFilesDialogSelectorViewModel viewModel;
     public RecentFilesDialogSelector(RecentFilesDialogSelectorViewModel viewModel)
     {
+        
         this.viewModel = viewModel;
         this.InitializeComponent();
     }

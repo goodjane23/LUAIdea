@@ -245,7 +245,6 @@ public partial class MainWindowViewModel : ObservableObject
     private async Task RecentDialogShow()
     {
         var recentdialog = recentDialogFactory.Create();
-
         await recentdialog.ShowAsync();
         
     }

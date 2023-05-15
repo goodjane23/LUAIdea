@@ -165,5 +165,4 @@ public sealed partial class MainWindow : WindowEx
 
         textEditor?.Document.SetText(TextSetOptions.None, text);
     }
-
 }
