@@ -76,8 +76,8 @@
                             <ToggleMenuFlyoutItem Text="Панель макросов" IsChecked="{x:Bind viewModel.IsMacrosPanelVisible, Mode=TwoWay}"/>
                             <MenuFlyoutSeparator/>
                             <MenuFlyoutItem Text="Настройки"/>
-                            <MenuFlyoutItem Text="Недавние" Click=""/>
-                            <MenuFlyoutItem Text="Избранные" Click="MenuFlyoutItem_Click"/>
+                            <MenuFlyoutItem Text="Недавние" />
+                            <MenuFlyoutItem Text="Избранные" />
                         </MenuBarItem>
                         <MenuBarItem Title="Помощь">
                             <MenuFlyoutItem Text="О Программе"/>
