@@ -143,7 +143,7 @@ public class CommandService
                 }
             }
         }
-
+      
         // TODO: Удалять записи перед сохранением новых
 
         await appDbContext.CommandCategory.AddRangeAsync(result);

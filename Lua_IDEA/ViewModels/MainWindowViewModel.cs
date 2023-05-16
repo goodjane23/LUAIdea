@@ -15,10 +15,15 @@ using Windows.UI.Popups;
 using WinRT.Interop;
 using Lua_IDEA.Views;
 using WinUIEx;
+using Lua_IDEA.Factory;
+using Lua_IDEA.Views.Dialogs;
+using CommunityToolkit.Mvvm.Messaging;
+using Lua_IDEA.Messages;
+using System.IO;
 
 namespace Lua_IDEA.ViewModels;
 
-public partial class MainWindowViewModel : ObservableObject
+public partial class MainWindowViewModel : ObservableObject, IRecipient<SelectRecentFileMessage>
 {
     public event Action CommandPasted;
     public event Func<LuaFile, Task> SaveRequested;
@@ -27,7 +32,7 @@ public partial class MainWindowViewModel : ObservableObject
 
     private readonly CommandService commandService;
     private readonly SyntaxChecker syntaxChecker;
-    private readonly FilesOnDBService favoritesService;
+    private readonly FilesServise filesService;
 
     [ObservableProperty]
     private LuaFile selectedTab;
@@ -47,14 +52,12 @@ public partial class MainWindowViewModel : ObservableObject
     public MainWindowViewModel(
         CommandService commandService,
         SyntaxChecker syntaxChecker,
-        FilesOnDBService favoritesService)
+        FilesServise filesService)
     {
         this.commandService = commandService;
         this.syntaxChecker = syntaxChecker;
-        this.favoritesService = favoritesService;
-        RecentMacros.Add("werty");
-        RecentMacros.Add("werty");
-        RecentMacros.Add("werty");
+        this.filesService = filesService;
+        WeakReferenceMessenger.Default.Register<SelectRecentFileMessage>(this);
         CreateNewFile();
     }
 
@@ -65,7 +68,7 @@ public partial class MainWindowViewModel : ObservableObject
             return;
 
         await SaveRequested.Invoke(SelectedTab);
-        await favoritesService.AddToFavorite(SelectedTab.Path);
+        await filesService.AddToRecent(SelectedTab.Path);
     }
 
     [RelayCommand]
@@ -89,7 +92,7 @@ public partial class MainWindowViewModel : ObservableObject
             return;
 
         await SaveRequested.Invoke(luafile);
-        await favoritesService.AddToFavorite(SelectedTab.Path);
+        await filesService.AddToRecent(SelectedTab.Path);
     }
 
     [RelayCommand]
@@ -200,7 +203,7 @@ public partial class MainWindowViewModel : ObservableObject
 
     private async Task GetFavoritesMacrosAsync()
     {
-        var result = await favoritesService.GetFavoriteMacros();
+        var result = await filesService.GetFavoriteMacros();
 
         foreach (var favoriteMacro in result)
             FavoritesMacros.Add(favoriteMacro);
@@ -210,6 +213,7 @@ public partial class MainWindowViewModel : ObservableObject
     private async Task ChangeFavoriteStatus()
     {
         bool res = true;
+
         if (SelectedTab is null)
             return;
 
@@ -221,11 +225,11 @@ public partial class MainWindowViewModel : ObservableObject
         await SaveFile(SelectedTab);
 
         if (SelectedTab.IsFavorite)
-            await favoritesService.RemoveFromFavorite(SelectedTab.Path);       
+            await filesService.RemoveFromFavorite(SelectedTab.Path);       
         else
-            await favoritesService.AddToFavorite(SelectedTab.Path);
+            await filesService.AddToFavorite(SelectedTab.Path);
 
-        var result = await favoritesService.GetFavoriteMacros();
+        var result = await filesService.GetFavoriteMacros();
 
         FavoritesMacros.Clear();
 
@@ -235,17 +239,21 @@ public partial class MainWindowViewModel : ObservableObject
         SelectedTab.IsFavorite = !SelectedTab.IsFavorite;
     }
 
-    [RelayCommand]
-    private async Task ListShowFilesView(string favorite)
+    public async void Receive(SelectRecentFileMessage message)
     {
-        if (favorite is "1")
+        var text = await File.ReadAllTextAsync(message.Value);
+        LuaFile luaFile = new LuaFile()
         {
-
-        }
-        if (favorite is "0")
-        {
-
-        }
+            Name = "jdhksjh",
+            Content = text,
+            IsSaved = true,
+            Path = message.Value,
+        };
+        Tabs.Add(luaFile);
     }
 
+    private void OpenSelectedFile(string path)
+    {
+
+    }
 }

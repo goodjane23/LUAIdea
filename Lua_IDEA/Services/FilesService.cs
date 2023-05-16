@@ -8,11 +8,11 @@ using System.Threading.Tasks;
 
 namespace Lua_IDEA.Services;
 
-public class FilesOnDBService
+public class FilesServise
 {
     private readonly IDbContextFactory<AppDbContext> contextFactory;
 
-    public FilesOnDBService(IDbContextFactory<AppDbContext> contextFactory)
+    public FilesServise(IDbContextFactory<AppDbContext> contextFactory)
     {
         this.contextFactory = contextFactory;
     }
@@ -21,25 +21,26 @@ public class FilesOnDBService
     {
         await using var appDbContext = await contextFactory.CreateDbContextAsync();
 
-        var favoriteMacros = await appDbContext.FavoriteFiles            
-            .Where(x => x.IsFavorite == true)
+        var favoriteMacros = await appDbContext.SavedPathFiles
+            .AsNoTracking()
+            .Where(x => x.IsFavorite)
             .Select(x => x.Path)
             .ToListAsync();
        
-        return favoriteMacros;
+        return favoriteMacros.TakeLast(30);
     }
 
     public async Task<IEnumerable<string>> GetRecentMacros()
     {
         await using var appDbContext = await contextFactory.CreateDbContextAsync();
 
-        var recentMacros = await appDbContext.FavoriteFiles
-            .Where(x => x.IsFavorite == false)
+        var recentMacros = await appDbContext.SavedPathFiles
+            .AsNoTracking()
+            .Where(x => x.IsRecent)
             .Select(x => x.Path)
             .ToListAsync();
 
-        recentMacros = recentMacros.GetRange(recentMacros.Count-10, recentMacros.Count);
-        return recentMacros;
+        return recentMacros.TakeLast(10);
     }
 
     public async Task AddToFavorite(string path)
@@ -53,10 +54,9 @@ public class FilesOnDBService
             IsRecent = false
         };
 
-        await appDbContext.FavoriteFiles.AddAsync(favoriteFile);
+        await appDbContext.SavedPathFiles.AddAsync(favoriteFile);
         await appDbContext.SaveChangesAsync();
     }
-
     public async Task AddToRecent(string path)
     {
         await using var appDbContext = await contextFactory.CreateDbContextAsync();
@@ -64,10 +64,11 @@ public class FilesOnDBService
         var recentFile = new SavedFile
         {
             Path = path,
-            IsFavorite = false
+            IsFavorite = false,
+            IsRecent = true,
         };
 
-        await appDbContext.FavoriteFiles.AddAsync(recentFile);
+        await appDbContext.SavedPathFiles.AddAsync(recentFile);
         await appDbContext.SaveChangesAsync();
     }
 
@@ -75,13 +76,13 @@ public class FilesOnDBService
     {
         await using var appDbContext = await contextFactory.CreateDbContextAsync();
 
-        var favoriteMacros = appDbContext.FavoriteFiles
+        var favoriteMacros = appDbContext.SavedPathFiles
             .FirstOrDefault(x => x.Path == path);
 
         if (favoriteMacros is null)
             return;
         
-        appDbContext.FavoriteFiles.Remove(favoriteMacros);
+        appDbContext.SavedPathFiles.Remove(favoriteMacros);
         await appDbContext.SaveChangesAsync();
     }
 }
