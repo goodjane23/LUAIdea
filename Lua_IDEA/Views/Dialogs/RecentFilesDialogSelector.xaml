@@ -11,14 +11,15 @@
     Style="{StaticResource DefaultContentDialogStyle}"
     mc:Ignorable="d"
     Width="400"
-    Height="200">
+    Height="200"
+    Opened="ContentDialog_Opened"
+    PrimaryButtonCommand="{x:Bind viewModel.SelectFileCommand}">
 
     <Grid>
-
-        <Button
-            Content="FUUUCK">
-            
-        </Button>
+        <ListBox
+            ItemsSource="{x:Bind viewModel.RecentPaths}"
+            SelectedItem="{x:Bind viewModel.SelectedPath, Mode=TwoWay}"/>
         
+
     </Grid>
 </ContentDialog>

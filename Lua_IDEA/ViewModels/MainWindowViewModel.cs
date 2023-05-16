@@ -17,10 +17,13 @@ using Lua_IDEA.Views;
 using WinUIEx;
 using Lua_IDEA.Factory;
 using Lua_IDEA.Views.Dialogs;
+using CommunityToolkit.Mvvm.Messaging;
+using Lua_IDEA.Messages;
+using System.IO;
 
 namespace Lua_IDEA.ViewModels;
 
-public partial class MainWindowViewModel : ObservableObject
+public partial class MainWindowViewModel : ObservableObject, IRecipient<SelectRecentFileMessage>
 {
     public event Action CommandPasted;
     public event Func<LuaFile, Task> SaveRequested;
@@ -30,7 +33,6 @@ public partial class MainWindowViewModel : ObservableObject
     private readonly CommandService commandService;
     private readonly SyntaxChecker syntaxChecker;
     private readonly FilesServise filesService;
-    private readonly WindowFactory<RecentFilesDialogSelector> recentDialogFactory;
 
     [ObservableProperty]
     private LuaFile selectedTab;
@@ -50,16 +52,12 @@ public partial class MainWindowViewModel : ObservableObject
     public MainWindowViewModel(
         CommandService commandService,
         SyntaxChecker syntaxChecker,
-        FilesServise filesService,
-        WindowFactory<RecentFilesDialogSelector> windowFactory)
+        FilesServise filesService)
     {
         this.commandService = commandService;
         this.syntaxChecker = syntaxChecker;
         this.filesService = filesService;
-        this.recentDialogFactory = windowFactory;
-        RecentMacros.Add("werty");
-        RecentMacros.Add("werty");
-        RecentMacros.Add("werty");
+        WeakReferenceMessenger.Default.Register<SelectRecentFileMessage>(this);
         CreateNewFile();
     }
 
@@ -94,7 +92,7 @@ public partial class MainWindowViewModel : ObservableObject
             return;
 
         await SaveRequested.Invoke(luafile);
-        await filesService.AddToFavorite(SelectedTab.Path);
+        await filesService.AddToRecent(SelectedTab.Path);
     }
 
     [RelayCommand]
@@ -241,12 +239,21 @@ public partial class MainWindowViewModel : ObservableObject
         SelectedTab.IsFavorite = !SelectedTab.IsFavorite;
     }
 
-    [RelayCommand]
-    private async Task RecentDialogShow()
+    public async void Receive(SelectRecentFileMessage message)
     {
-        var recentdialog = recentDialogFactory.Create();
-        await recentdialog.ShowAsync();
-        
+        var text = await File.ReadAllTextAsync(message.Value);
+        LuaFile luaFile = new LuaFile()
+        {
+            Name = "jdhksjh",
+            Content = text,
+            IsSaved = true,
+            Path = message.Value,
+        };
+        Tabs.Add(luaFile);
     }
 
+    private void OpenSelectedFile(string path)
+    {
+
+    }
 }

@@ -21,25 +21,26 @@ public class FilesServise
     {
         await using var appDbContext = await contextFactory.CreateDbContextAsync();
 
-        var favoriteMacros = await appDbContext.FavoriteFiles            
-            .Where(x => x.IsFavorite == true)
+        var favoriteMacros = await appDbContext.SavedPathFiles
+            .AsNoTracking()
+            .Where(x => x.IsFavorite)
             .Select(x => x.Path)
             .ToListAsync();
        
-        return favoriteMacros;
+        return favoriteMacros.TakeLast(30);
     }
 
     public async Task<IEnumerable<string>> GetRecentMacros()
     {
         await using var appDbContext = await contextFactory.CreateDbContextAsync();
 
-        var recentMacros = await appDbContext.FavoriteFiles
-            .Where(x => x.IsFavorite == false)
-            .TakeLast(10)
-            .Select(x => x.Path) 
+        var recentMacros = await appDbContext.SavedPathFiles
+            .AsNoTracking()
+            .Where(x => x.IsRecent)
+            .Select(x => x.Path)
             .ToListAsync();
-        
-        return recentMacros;
+
+        return recentMacros.TakeLast(10);
     }
 
     public async Task AddToFavorite(string path)
@@ -53,7 +54,7 @@ public class FilesServise
             IsRecent = false
         };
 
-        await appDbContext.FavoriteFiles.AddAsync(favoriteFile);
+        await appDbContext.SavedPathFiles.AddAsync(favoriteFile);
         await appDbContext.SaveChangesAsync();
     }
     public async Task AddToRecent(string path)
@@ -63,10 +64,11 @@ public class FilesServise
         var recentFile = new SavedFile
         {
             Path = path,
-            IsFavorite = false
+            IsFavorite = false,
+            IsRecent = true,
         };
 
-        await appDbContext.FavoriteFiles.AddAsync(recentFile);
+        await appDbContext.SavedPathFiles.AddAsync(recentFile);
         await appDbContext.SaveChangesAsync();
     }
 
@@ -74,13 +76,13 @@ public class FilesServise
     {
         await using var appDbContext = await contextFactory.CreateDbContextAsync();
 
-        var favoriteMacros = appDbContext.FavoriteFiles
+        var favoriteMacros = appDbContext.SavedPathFiles
             .FirstOrDefault(x => x.Path == path);
 
         if (favoriteMacros is null)
             return;
         
-        appDbContext.FavoriteFiles.Remove(favoriteMacros);
+        appDbContext.SavedPathFiles.Remove(favoriteMacros);
         await appDbContext.SaveChangesAsync();
     }
 }

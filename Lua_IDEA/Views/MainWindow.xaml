@@ -78,7 +78,7 @@
                             <ToggleMenuFlyoutItem Text="Панель макросов" IsChecked="{x:Bind viewModel.IsMacrosPanelVisible, Mode=TwoWay}"/>
                             <MenuFlyoutSeparator/>
                             <MenuFlyoutItem Text="Настройки"/>
-                            <MenuFlyoutItem Text="Недавние" Command="{x:Bind viewModel.RecentDialogShowCommand}"/>
+                            <MenuFlyoutItem Text="Недавние" Click="ShowRecentDialog"/>
                         </MenuBarItem>
                         <MenuBarItem Title="Помощь">
                             <MenuFlyoutItem Text="О Программе"/>

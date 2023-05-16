@@ -1,4 +1,5 @@
 using Lua_IDEA.Data.Entities;
+using Lua_IDEA.Factory;
 using Lua_IDEA.Models;
 using Lua_IDEA.ViewModels;
 using Lua_IDEA.Views.Dialogs;
@@ -23,10 +24,15 @@ public sealed partial class MainWindow : WindowEx
     private RichEditBox currentTextEditor;
 
     private readonly MainWindowViewModel viewModel;
+    private readonly WindowFactory<RecentFilesDialogSelector> windowFactory;
 
-    public MainWindow(MainWindowViewModel viewModel)
+    public MainWindow(
+        MainWindowViewModel viewModel,
+        WindowFactory<RecentFilesDialogSelector> windowFactory)
     {
         InitializeComponent();
+
+        this.windowFactory = windowFactory;
 
         ExtendsContentIntoTitleBar = true;
         SetTitleBar(titleBar);
@@ -164,5 +170,18 @@ public sealed partial class MainWindow : WindowEx
         var text = viewModel.SelectedTab?.Content;
 
         textEditor?.Document.SetText(TextSetOptions.None, text);
+    }
+
+    private async void ShowRecentDialog(object sender, RoutedEventArgs e)
+    {
+        var resentDialog = windowFactory.Create();
+        resentDialog.XamlRoot = this.Content.XamlRoot;
+
+        resentDialog.Title = "Выбирете файл";
+        resentDialog.PrimaryButtonText = "Открыть";
+        resentDialog.CloseButtonText = "Отмена";
+        resentDialog.DefaultButton = ContentDialogButton.Primary;
+        await resentDialog.ShowAsync();
+
     }
 }
