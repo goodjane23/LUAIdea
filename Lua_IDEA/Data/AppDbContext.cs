@@ -7,7 +7,7 @@ public sealed class AppDbContext : DbContext
 {
     public DbSet<CommandCategory> CommandCategory { get; set; }
     public DbSet<Command> Commands { get; set; }
-    public DbSet<FavoriteFile> FavoriteFiles { get; set; }
+    public DbSet<SavedFile> SavedPathFiles { get; set; }
 
     public AppDbContext(DbContextOptions<AppDbContext> options)
         : base(options)

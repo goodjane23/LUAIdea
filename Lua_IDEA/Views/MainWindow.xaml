@@ -6,7 +6,9 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:entities="using:Lua_IDEA.Data.Entities"
-    xmlns:models="using:Lua_IDEA.Models"
+    xmlns:models="using:Lua_IDEA.Models" 
+    xmlns:avalon="using:ICSharpCode.AvalonEdit"
+	xmlns:avalonEdit="http://icsharpcode.net/sharpdevelop/avalonedit"
     Width="1500" Height="1000"
     MinWidth="1500" MinHeight="1000"
     mc:Ignorable="d">
@@ -67,7 +69,7 @@
                         </MenuBarItem>
 
                         <MenuBarItem Title="Изменить">
-                            <ToggleMenuFlyoutItem Text="В Избранное" 
+                            <MenuFlyoutItem Text="В Избранное" 
                                                   Command="{x:Bind viewModel.ChangeFavoriteStatusCommand}" />
                             <MenuFlyoutSeparator/>
                         </MenuBarItem>
@@ -76,9 +78,14 @@
                             <ToggleMenuFlyoutItem Text="Панель макросов" IsChecked="{x:Bind viewModel.IsMacrosPanelVisible, Mode=TwoWay}"/>
                             <MenuFlyoutSeparator/>
                             <MenuFlyoutItem Text="Настройки"/>
+                            <MenuFlyoutItem Text="Недавние" Click="ShowRecentDialog"/>
                         </MenuBarItem>
-
                         <MenuBarItem Title="Помощь">
+                            <MenuFlyoutSubItem Text="Тестовые макросы">
+                                <MenuFlyoutItem Text="Пример макроса" Command="{x:Bind viewModel.ShowTestMacroCommand}"/>
+                                <MenuFlyoutItem Text="Карта высот"  Command="{x:Bind viewModel.ShowHeightMapCommand}"/>
+
+                            </MenuFlyoutSubItem>
                             <MenuFlyoutItem Text="О Программе"/>
                         </MenuBarItem>
                     </MenuBar>
@@ -117,7 +124,7 @@
                                         <Grid.RowDefinitions>
                                             <RowDefinition Height="*"/>
                                             <RowDefinition Height="Auto"/>
-                                        </Grid.RowDefinitions>
+                                        </Grid.RowDefinitions>                                       
 
                                         <RichEditBox Grid.Row="0"
                                                      Margin="4"

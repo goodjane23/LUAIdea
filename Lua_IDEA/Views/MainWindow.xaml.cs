@@ -1,6 +1,8 @@
 using Lua_IDEA.Data.Entities;
+using Lua_IDEA.Factory;
 using Lua_IDEA.Models;
 using Lua_IDEA.ViewModels;
+using Lua_IDEA.Views.Dialogs;
 using Microsoft.UI.Text;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -22,10 +24,15 @@ public sealed partial class MainWindow : WindowEx
     private RichEditBox currentTextEditor;
 
     private readonly MainWindowViewModel viewModel;
+    private readonly WindowFactory<RecentFilesDialogSelector> windowFactory;
 
-    public MainWindow(MainWindowViewModel viewModel)
+    public MainWindow(
+        MainWindowViewModel viewModel,
+        WindowFactory<RecentFilesDialogSelector> windowFactory)
     {
         InitializeComponent();
+
+        this.windowFactory = windowFactory;
 
         ExtendsContentIntoTitleBar = true;
         SetTitleBar(titleBar);
@@ -37,12 +44,30 @@ public sealed partial class MainWindow : WindowEx
         viewModel.CommandPasted += OnCommandPasted;
         viewModel.SaveRequested += OnSaveRequested;
         viewModel.CloseRequested += OnCloseRequested;
+        viewModel.SaveCheckRequested += OnSaveCheckRequested;
 
         SizeChanged += (sender, args) =>
         {
             if (currentTextEditor is not null)
                 currentTextEditor.Height = tabViewGrid.ActualSize.ToSize().Height;
         };
+    }
+
+    private async Task<bool> OnSaveCheckRequested()
+    {
+        var dialog = new ContentDialog
+        {
+            XamlRoot = Content.XamlRoot,
+            Title = $"Необходимо сохранить файл, перед тем как добавить файл в избранное. Сохранть?",
+            PrimaryButtonText = "Сохранить",
+            SecondaryButtonText = "Не сохранять",
+            CloseButtonText = "Отмена",
+            DefaultButton = ContentDialogButton.Primary
+        };
+
+        var dialogResult = await dialog.ShowAsync();
+
+        return dialogResult == ContentDialogResult.Primary;
     }
 
     private void OnCommandPasted()
@@ -145,5 +170,18 @@ public sealed partial class MainWindow : WindowEx
         var text = viewModel.SelectedTab?.Content;
 
         textEditor?.Document.SetText(TextSetOptions.None, text);
+    }
+
+    private async void ShowRecentDialog(object sender, RoutedEventArgs e)
+    {
+        var resentDialog = windowFactory.Create();
+        resentDialog.XamlRoot = this.Content.XamlRoot;
+
+        resentDialog.Title = "Выбирете файл";
+        resentDialog.PrimaryButtonText = "Открыть";
+        resentDialog.CloseButtonText = "Отмена";
+        resentDialog.DefaultButton = ContentDialogButton.Primary;
+        await resentDialog.ShowAsync();
+
     }
 }
