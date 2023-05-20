@@ -56,11 +56,10 @@
                     <!-- Menu -->
                     <MenuBar Grid.Row="0">
                         <MenuBarItem Title="Файл">
-                            <MenuFlyoutItem Text="Создать макрос" Command="{x:Bind viewModel.CreateNewMacroCommand}"/>
-                            <MenuFlyoutItem Text="Создать фоновую операцию" Command="{x:Bind viewModel.CreateNewBackgroundCommand}"/>
-                            <MenuFlyoutItem Text="Открыть" Command="{x:Bind viewModel.OpenFileCommand}"/>
+                            <MenuFlyoutItem Text="Создать" Command="{x:Bind viewModel.CreateNewFileCommand}"/>
+                            <MenuFlyoutItem Icon="OpenFile" Text="Открыть" Command="{x:Bind viewModel.OpenFileCommand}"/>
                             <MenuFlyoutSeparator />
-                            <MenuFlyoutItem Text="Сохранить" Command="{x:Bind viewModel.SaveFileCommand}"/>
+                            <MenuFlyoutItem Icon="Save" Text="Сохранить" Command="{x:Bind viewModel.SaveFileCommand}"/>
                             <MenuFlyoutItem Text="Сохранить как" Command="{x:Bind viewModel.SaveFileAsCommand}"/>
                             <MenuFlyoutItem Text="Сохранить все" Command="{x:Bind viewModel.SaveAllFilesCommand}"/>
                             <MenuFlyoutSeparator />
@@ -68,9 +67,7 @@
                         </MenuBarItem>
 
                         <MenuBarItem Title="Изменить">
-                            <MenuFlyoutItem Text="В Избранное" 
-                                                  Command="{x:Bind viewModel.ChangeFavoriteStatusCommand}" />
-                            <MenuFlyoutSeparator/>
+                            <MenuFlyoutItem Text="В Избранное" Command="{x:Bind viewModel.ChangeFavoriteStatusCommand}" />
                         </MenuBarItem>
 
                         <MenuBarItem Title="Просмотр">
@@ -80,6 +77,7 @@
                             <MenuFlyoutItem Text="Недавние" Click="ShowRecentDialog"/>
                             <MenuFlyoutItem Text="Избранное" Click="ShowFavoriteDialog"/>
                         </MenuBarItem>
+                        
                         <MenuBarItem Title="Помощь">
                             <MenuFlyoutSubItem Text="Примеры макросов">
                                 <MenuFlyoutItem Text="Перебор пинов" Command="{x:Bind viewModel.ShowMacroExampleCommand}" CommandParameter="0" />

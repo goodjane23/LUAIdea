@@ -13,7 +13,9 @@
     PrimaryButtonCommand="{x:Bind viewModel.SelectFileCommand}">
 
     <Grid>
-        <ListBox ItemsSource="{x:Bind viewModel.RecentPaths}"
-                 SelectedItem="{x:Bind viewModel.SelectedPath, Mode=TwoWay}"/>
+        <ProgressRing IsActive="{x:Bind viewModel.GetRecentPathsCommand.IsRunning}"/>
+
+        <ListView ItemsSource="{x:Bind viewModel.RecentPaths}"
+                  SelectedItem="{x:Bind viewModel.SelectedPath, Mode=TwoWay}"/>
     </Grid>
 </ContentDialog>

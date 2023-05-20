@@ -177,9 +177,9 @@ public sealed partial class MainWindow : WindowEx
     private async void ShowRecentDialog(object sender, RoutedEventArgs e)
     {
         var resentDialog = windowFactory.Create();
-        resentDialog.XamlRoot = Content.XamlRoot;
 
-        resentDialog.Title = "Выберите файл";
+        resentDialog.XamlRoot = Content.XamlRoot;
+        resentDialog.Title = "Недавние файлы";
         resentDialog.PrimaryButtonText = "Открыть";
         resentDialog.CloseButtonText = "Отмена";
         resentDialog.DefaultButton = ContentDialogButton.Primary;

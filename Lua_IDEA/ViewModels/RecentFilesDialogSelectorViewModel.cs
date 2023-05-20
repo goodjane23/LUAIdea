@@ -34,6 +34,9 @@ public partial class RecentFilesSelectorViewModel : ObservableObject
     [RelayCommand]
     private void SelectFile()
     {
+        if (string.IsNullOrEmpty(SelectedPath))
+            return;
+
         WeakReferenceMessenger.Default.Send(new SelectRecentFileMessage(SelectedPath));
     }
 }

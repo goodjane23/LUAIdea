@@ -249,13 +249,15 @@ public partial class MainWindowViewModel : ObservableObject, IRecipient<SelectRe
     public async void Receive(SelectRecentFileMessage message)
     {
         var text = await File.ReadAllTextAsync(message.Value);
-        LuaFile luaFile = new LuaFile()
+
+        var luaFile = new LuaFile()
         {
             Name = "jdhksjh",
             Content = text,
             IsSaved = true,
             Path = message.Value,
         };
+
         Tabs.Add(luaFile);
     }
 
