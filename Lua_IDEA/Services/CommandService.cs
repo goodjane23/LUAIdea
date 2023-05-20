@@ -1,7 +1,6 @@
 ﻿using Lua_IDEA.Data;
 using Lua_IDEA.Data.Entities;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Internal;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
@@ -13,17 +12,19 @@ public class CommandService
 {    
     private const string BaseUrl = "http://doc.pumotix.ru/pages/viewpage.action?pageId=";
 
+    private readonly Dictionary<string, string> commandCategories;
+
     private readonly IDbContextFactory<AppDbContext> contextFactory;
-    private readonly Dictionary<string, string> CommandCategories;
     private readonly NetworkChecker networkChecker;
 
-    public CommandService(IDbContextFactory<AppDbContext> contextFactory)
+    public CommandService(
+        IDbContextFactory<AppDbContext> contextFactory,
+        NetworkChecker networkChecker)
     {
         this.contextFactory = contextFactory;
+        this.networkChecker = networkChecker;
 
-        networkChecker = new NetworkChecker();
-
-        CommandCategories = new Dictionary<string, string>()
+        commandCategories = new Dictionary<string, string>()
         {
             { "5180768", "Входы и выходы" },
             { "5180766", "Оси" },
@@ -48,12 +49,13 @@ public class CommandService
     {
         using var httpClient = new HttpClient();
 
-        var isInternetAvailable = await networkChecker.IsNecessaryResourceAvailable(httpClient);
+        var isInternetAvailable = await networkChecker.IsInternetAvailable(httpClient);
 
-        if (isInternetAvailable)
-            return await LoadCommandsFromWeb(httpClient);
-        else
-            return await LoadCommandsFromDb();
+        var result = isInternetAvailable
+            ? await LoadCommandsFromWeb(httpClient)
+            : await LoadCommandsFromDb();
+
+        return result;
     }
 
     private async Task<IEnumerable<CommandCategory>> LoadCommandsFromWeb(HttpClient httpClient)
@@ -62,7 +64,7 @@ public class CommandService
 
         var result = new List<CommandCategory>();
 
-        foreach (var address in CommandCategories.Keys)
+        foreach (var address in commandCategories.Keys)
         {
             var content = await httpClient.GetStringAsync($"{BaseUrl}{address}");
             var pageStrings = content.Replace("<", "@").Split('@');
@@ -97,7 +99,7 @@ public class CommandService
 
                         var commandId = address.Substring(address.LastIndexOf("=") + 1);
 
-                        var header = CommandCategories[commandId];
+                        var header = commandCategories[commandId];
                         var resultCommand = result.FirstOrDefault(x => x.Name == header && x.IsMacro == commandId.StartsWith('5'));
 
                         if (resultCommand is not null)
@@ -162,6 +164,4 @@ public class CommandService
 
         return result;       
     }
-
-
 }

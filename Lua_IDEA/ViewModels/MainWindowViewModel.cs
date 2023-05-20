@@ -55,6 +55,7 @@ public partial class MainWindowViewModel : ObservableObject, IRecipient<SelectRe
         this.commandService = commandService;
         this.syntaxChecker = syntaxChecker;
         this.filesService = filesService;
+
         WeakReferenceMessenger.Default.Register<SelectRecentFileMessage>(this);
         CreateNewMacro();
     }
@@ -213,14 +214,6 @@ public partial class MainWindowViewModel : ObservableObject, IRecipient<SelectRe
 
         Tabs.Add(file);
         SelectedTab = Tabs.Last();
-    }
-
-    private async Task GetFavoritesMacrosAsync()
-    {
-        var result = await filesService.GetFavoriteMacros();
-
-        foreach (var favoriteMacro in result)
-            FavoritesMacros.Add(favoriteMacro);
     }
 
     [RelayCommand]

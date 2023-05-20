@@ -7,24 +7,25 @@ using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 
 namespace Lua_IDEA.ViewModels;
-public partial class RecentFilesDialogSelectorViewModel : ObservableObject
-{
-    private readonly FilesServise filesServise;
 
-    public ObservableCollection<string> RecentPaths { get; set; } = new();
+public partial class RecentFilesSelectorViewModel : ObservableObject
+{
+    public ObservableCollection<string> RecentPaths { get; } = new();
 
     [ObservableProperty]
     private string selectedPath;
 
-    public RecentFilesDialogSelectorViewModel(FilesServise filesService)
+    private readonly FilesServise filesService;
+
+    public RecentFilesSelectorViewModel(FilesServise filesService)
     {
-        this.filesServise = filesService;
+        this.filesService = filesService;
     }
 
     [RelayCommand]
     private async Task GetRecentPaths()
     {
-        var paths = await filesServise.GetRecentMacros();
+        var paths = await filesService.GetRecentMacros();
 
         foreach (var path in paths)
             RecentPaths.Add(path);

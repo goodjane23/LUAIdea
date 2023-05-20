@@ -33,7 +33,7 @@
     <None Remove="Resources\modbus_spindle_Toshiba_VF-S11.bm" />
     <None Remove="Resources\MXX.pm" />
     <None Remove="Views\Dialogs\FavoriteFilesSelector.xaml" />
-    <None Remove="Views\Dialogs\RecentFilesDialogSelector.xaml" />
+    <None Remove="Views\Dialogs\RecentFilesSelector.xaml" />
     <None Remove="Views\ListFilesWindow.xaml" />
     <None Remove="Views\Pages\SettingsPage.xaml" />
     <None Remove="Views\Pages\ShellPage.xaml" />
@@ -110,7 +110,7 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Page Update="Views\Dialogs\RecentFilesDialogSelector.xaml">
+    <Page Update="Views\Dialogs\RecentFilesSelector.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>

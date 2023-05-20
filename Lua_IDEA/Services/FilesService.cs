@@ -57,6 +57,7 @@ public class FilesServise
         await appDbContext.SavedPathFiles.AddAsync(favoriteFile);
         await appDbContext.SaveChangesAsync();
     }
+
     public async Task AddToRecent(string path)
     {
         await using var appDbContext = await contextFactory.CreateDbContextAsync();

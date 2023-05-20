@@ -39,13 +39,11 @@ public partial class App : Application
 
                 // Views
                 services.AddSingleton<MainWindow>();
-                services.AddWindowFactory<RecentFilesDialogSelector>();
-                services.AddWindowFactory<FavoriteFilesSelector>();
+                services.AddDialogFactory<RecentFilesSelector>();
 
                 // ViewModels
                 services.AddSingleton<MainWindowViewModel>();
-                services.AddSingleton<RecentFilesDialogSelectorViewModel>();
-                services.AddSingleton<FavoriteFilesSelectorViewModel>();
+                services.AddSingleton<RecentFilesSelectorViewModel>();
             })
             .Build();
     }
