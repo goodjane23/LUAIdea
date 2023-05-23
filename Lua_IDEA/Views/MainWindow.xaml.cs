@@ -24,15 +24,18 @@ public sealed partial class MainWindow : WindowEx
     private RichEditBox currentTextEditor;
 
     private readonly MainWindowViewModel viewModel;
-    private readonly WindowFactory<RecentFilesDialogSelector> windowFactory;
+    private readonly WindowFactory<RecentFilesDialogSelector> recentWindow;
+    private readonly WindowFactory<RecentFilesDialogSelector> favoritesWindow;
 
     public MainWindow(
         MainWindowViewModel viewModel,
-        WindowFactory<RecentFilesDialogSelector> windowFactory)
+        WindowFactory<RecentFilesDialogSelector> windowFactory,
+        WindowFactory<RecentFilesDialogSelector> favoritesWindow)
     {
         InitializeComponent();
 
-        this.windowFactory = windowFactory;
+        this.recentWindow = windowFactory;
+        this.favoritesWindow = favoritesWindow;
 
         ExtendsContentIntoTitleBar = true;
         SetTitleBar(titleBar);
@@ -51,6 +54,7 @@ public sealed partial class MainWindow : WindowEx
             if (currentTextEditor is not null)
                 currentTextEditor.Height = tabViewGrid.ActualSize.ToSize().Height;
         };
+        this.favoritesWindow = favoritesWindow;
     }
 
     private async Task<bool> OnSaveCheckRequested()
@@ -174,14 +178,26 @@ public sealed partial class MainWindow : WindowEx
 
     private async void ShowRecentDialog(object sender, RoutedEventArgs e)
     {
-        var resentDialog = windowFactory.Create();
+        var resentDialog = recentWindow.Create();
         resentDialog.XamlRoot = this.Content.XamlRoot;
 
-        resentDialog.Title = "Выбирете файл";
+        resentDialog.Title = "Выберите файл";
         resentDialog.PrimaryButtonText = "Открыть";
         resentDialog.CloseButtonText = "Отмена";
         resentDialog.DefaultButton = ContentDialogButton.Primary;
         await resentDialog.ShowAsync();
 
+    }
+
+    private async void ShowFavoriteDialog(object sender, RoutedEventArgs e)
+    {
+        var favoritesDialog = favoritesWindow.Create();
+        favoritesDialog.XamlRoot = this.Content.XamlRoot;
+
+        favoritesDialog.Title = "Выберите файл";
+        favoritesDialog.PrimaryButtonText = "Открыть";
+        favoritesDialog.CloseButtonText = "Отмена";
+        favoritesDialog.DefaultButton = ContentDialogButton.Primary;
+        await favoritesDialog.ShowAsync();
     }
 }

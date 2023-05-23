@@ -3,31 +3,35 @@ using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using Lua_IDEA.Messages;
 using Lua_IDEA.Services;
+using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace Lua_IDEA.ViewModels;
-public partial class RecentFilesDialogSelectorViewModel : ObservableObject
+public partial class FavoriteFilesSelectorViewModel : ObservableObject
 {
     private readonly FilesServise filesServise;
 
-    public ObservableCollection<string> RecentPaths { get; set; } = new();
+    public ObservableCollection<string> FavoritePaths { get; set; } = new();
 
     [ObservableProperty]
     private string selectedPath;
 
-    public RecentFilesDialogSelectorViewModel(FilesServise filesService)
+    public FavoriteFilesSelectorViewModel(FilesServise filesService)
     {
         this.filesServise = filesService;
     }
 
     [RelayCommand]
-    private async Task GetRecentPaths()
+    private async Task GetFavoritePaths()
     {
-        var paths = await filesServise.GetRecentMacros();
+        var paths = await filesServise.GetFavoriteMacros();
 
         foreach (var path in paths)
-            RecentPaths.Add(path);
+            FavoritePaths.Add(path);
     }
 
     [RelayCommand]

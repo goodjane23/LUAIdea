@@ -79,6 +79,7 @@
                             <MenuFlyoutSeparator/>
                             <MenuFlyoutItem Text="Настройки"/>
                             <MenuFlyoutItem Text="Недавние" Click="ShowRecentDialog"/>
+                            <MenuFlyoutItem Text="Избранное" Click="ShowFavoriteDialog"/>
                         </MenuBarItem>
                         <MenuBarItem Title="Помощь">
                             <MenuFlyoutSubItem Text="Тестовые макросы">
