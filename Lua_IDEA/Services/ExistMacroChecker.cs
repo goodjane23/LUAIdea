@@ -14,23 +14,24 @@ namespace Lua_IDEA.Services;
 public class ExistMacroChecker
 {
     string error;
-    public ObservableCollection<LuaFile> ExistMacros { get; } = new();
+    public List<LuaFile> ExistMacros { get; set; } = new();
+    public List<LuaFile> ExistBackground { get; } = new();
 
     public ExistMacroChecker()
     {
         var appDataPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
         var pm = $@"{appDataPath}\Purelogic\Pumotix\Server\Macros\";
-        Smth(pm);
+        CreateDirectory(pm);
     }
 
-    private async Task Smth(string pm)
+    private async Task CreateDirectory(string pm)
     {
         try
         {
             var rootDirectoryInfo = new DirectoryInfo(pm);
+            ExistMacros = await GetFiles(rootDirectoryInfo);
             var node = await CreateDirectoryNode(rootDirectoryInfo);
-            
-           
+
         }
         catch (Exception)
         {
@@ -38,23 +39,17 @@ public class ExistMacroChecker
         }
     }
 
-    private async Task<List<DirectoryInfo>> CreateDirectoryNode(DirectoryInfo directoryInfo)
+    private async Task<List<LuaFile>> GetFiles(DirectoryInfo path)
     {
-        List<DirectoryInfo> files = new List<DirectoryInfo>();
+        List<LuaFile> files = new List<LuaFile>();
 
-        //Получаем папки которые лежат внутри папки макросов
-        foreach (var directory in directoryInfo.GetDirectories())
-        {
-            files.Add(directory);
-        }
-
-        foreach (var file in directoryInfo.GetFiles())
+        foreach (var file in path.GetFiles())
         {
             using var sr = new StreamReader(file.FullName);
 
             var script = new Script();
             var content = await sr.ReadToEndAsync();
-           
+
             var code = content.Replace("require(", "---require(");
 
             try
@@ -76,8 +71,17 @@ public class ExistMacroChecker
                 Errors = error,
             };
 
-            ExistMacros.Add(luaFile);
+            files.Add(luaFile);
         }
         return files;
+    }
+   
+    private async Task<List<DirectoryInfo>> CreateDirectoryNode(DirectoryInfo directoryInfo)
+    {
+        List<DirectoryInfo> folders = new List<DirectoryInfo>();
+        var dInfo = directoryInfo.GetDirectories();
+
+        return dInfo.ToList();
+
     }
 }
