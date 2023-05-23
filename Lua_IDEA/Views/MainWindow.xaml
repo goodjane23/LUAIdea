@@ -83,9 +83,9 @@
                         <MenuBarItem Title="Помощь">
                             <MenuFlyoutSubItem Text="Тестовые макросы">
                                 <MenuFlyoutItem Text="Пример макроса" Command="{x:Bind viewModel.ShowTestMacroCommand}"/>
-                                <MenuFlyoutItem Text="Карта высот"  Command="{x:Bind viewModel.ShowHeightMapCommand}"/>
-
+                                <MenuFlyoutItem Text="Карта высот" Command="{x:Bind viewModel.ShowHeightMapCommand}"/>
                             </MenuFlyoutSubItem>
+                            <MenuFlyoutItem Text="Макросы Pumotix" Command="{x:Bind viewModel.GetExistMacroCommand}"/>
                             <MenuFlyoutItem Text="О Программе"/>
                         </MenuBarItem>
                     </MenuBar>

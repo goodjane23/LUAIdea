@@ -36,6 +36,7 @@ public partial class App : Application
                 services.AddSingleton<NetworkChecker>();
                 services.AddSingleton<SyntaxChecker>();
                 services.AddSingleton<FilesServise>();
+                services.AddSingleton<ExistMacroChecker>();
 
                 // Views
                 services.AddSingleton<MainWindow>();
@@ -43,6 +44,7 @@ public partial class App : Application
 
                 // ViewModels
                 services.AddSingleton<MainWindowViewModel>();
+                services.AddSingleton<ExistMacroViewModel>();
                 services.AddSingleton<RecentFilesDialogSelectorViewModel>();
             })
             .Build();

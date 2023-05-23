@@ -13,6 +13,7 @@ namespace Lua_IDEA.Services;
 
 public class ExistMacroChecker
 {
+    string error;
     public ObservableCollection<LuaFile> ExistMacros { get; } = new();
 
     public ExistMacroChecker()
@@ -28,8 +29,8 @@ public class ExistMacroChecker
         {
             var rootDirectoryInfo = new DirectoryInfo(pm);
             var node = await CreateDirectoryNode(rootDirectoryInfo);
-
-            ExistMacros.Add(node);
+            
+           
         }
         catch (Exception)
         {
@@ -37,7 +38,7 @@ public class ExistMacroChecker
         }
     }
 
-    private async Task<LuaFile> CreateDirectoryNode(DirectoryInfo directoryInfo)
+    private async Task<List<DirectoryInfo>> CreateDirectoryNode(DirectoryInfo directoryInfo)
     {
         List<DirectoryInfo> files = new List<DirectoryInfo>();
 
@@ -62,7 +63,7 @@ public class ExistMacroChecker
             }
             catch (Exception ex)
             {
-               
+                error = ex.Message;
             }
 
             LuaFile luaFile = new LuaFile
@@ -71,11 +72,12 @@ public class ExistMacroChecker
                 IsSaved = true,
                 IsFavorite = true,
                 Name = file.Name,
-                Content = content,               
+                Content = content,
+                Errors = error,
             };
 
             ExistMacros.Add(luaFile);
         }
-        return null;
+        return files;
     }
 }

@@ -13,6 +13,7 @@ using WinRT.Interop;
 using CommunityToolkit.Mvvm.Messaging;
 using Lua_IDEA.Messages;
 using System.IO;
+using Windows.Graphics.Printing.PrintTicket;
 
 namespace Lua_IDEA.ViewModels;
 
@@ -26,6 +27,7 @@ public partial class MainWindowViewModel : ObservableObject, IRecipient<SelectRe
     private readonly CommandService commandService;
     private readonly SyntaxChecker syntaxChecker;
     private readonly FilesServise filesService;
+    private readonly ExistMacroChecker macroChecker;
 
     [ObservableProperty]
     private LuaFile selectedTab;
@@ -45,9 +47,10 @@ public partial class MainWindowViewModel : ObservableObject, IRecipient<SelectRe
     public MainWindowViewModel(
         CommandService commandService,
         SyntaxChecker syntaxChecker,
-        FilesServise filesService)
+        FilesServise filesService,
+        ExistMacroChecker macroChecker)
     {
-        ExistMacroChecker existMacroChecker = new ExistMacroChecker();
+        this.macroChecker = macroChecker;
         this.commandService = commandService;
         this.syntaxChecker = syntaxChecker;
         this.filesService = filesService;
@@ -275,6 +278,12 @@ public partial class MainWindowViewModel : ObservableObject, IRecipient<SelectRe
         };
         Tabs.Add(testMacro);
         SelectedTab = Tabs.Last();
+    }
+
+    [RelayCommand]
+    private async void GetExistMacro()
+    {
+        
     }
 
 

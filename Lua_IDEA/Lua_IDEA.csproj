@@ -29,6 +29,7 @@
   <ItemGroup>
     <None Remove="Views\Dialogs\RecentFilesDialogSelector.xaml" />
     <None Remove="Views\ListFilesWindow.xaml" />
+    <None Remove="Views\Pages\ExistMacroPage.xaml" />
     <None Remove="Views\Pages\SettingsPage.xaml" />
     <None Remove="Views\Pages\ShellPage.xaml" />
   </ItemGroup>
@@ -63,6 +64,11 @@
   -->
   <ItemGroup Condition="'$(DisableMsixProjectCapabilityAddedByProject)'!='true' and '$(EnableMsixTooling)'=='true'">
     <ProjectCapability Include="Msix" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Views\Pages\ExistMacroPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Page Update="Views\ListFilesWindow.xaml">
