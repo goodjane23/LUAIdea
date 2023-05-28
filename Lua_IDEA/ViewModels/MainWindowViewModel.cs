@@ -291,6 +291,11 @@ public partial class MainWindowViewModel : ObservableObject, IRecipient<SelectRe
         SelectedTab = Tabs.Last();
     }
 
+    [RelayCommand]
+    private void CloseMacroPanel()
+    {
+        IsMacrosPanelVisible = false;
+    }
 
     private void OpenSelectedFile(string path)
     {
