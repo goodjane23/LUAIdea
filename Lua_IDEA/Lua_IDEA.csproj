@@ -27,6 +27,10 @@
     <UseWPF>False</UseWPF>
   </PropertyGroup>
   <ItemGroup>
+    <None Remove="Resources\analog_fro_sso.bm" />
+    <None Remove="Resources\M155.pm" />
+    <None Remove="Resources\modbus_spindle_Toshiba_VF-S11.bm" />
+    <None Remove="Resources\MXX.pm" />
     <None Remove="Views\Dialogs\FavoriteFilesSelector.xaml" />
     <None Remove="Views\Dialogs\RecentFilesDialogSelector.xaml" />
     <None Remove="Views\ListFilesWindow.xaml" />
@@ -64,6 +68,20 @@
   -->
   <ItemGroup Condition="'$(DisableMsixProjectCapabilityAddedByProject)'!='true' and '$(EnableMsixTooling)'=='true'">
     <ProjectCapability Include="Msix" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\analog_fro_sso.bm">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\M155.pm">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\modbus_spindle_Toshiba_VF-S11.bm">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\MXX.pm">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
   </ItemGroup>
   <ItemGroup>
     <Page Update="Views\Dialogs\FavoriteFilesSelector.xaml">

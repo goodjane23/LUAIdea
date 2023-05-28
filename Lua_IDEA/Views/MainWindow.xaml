@@ -83,10 +83,13 @@
                             <MenuFlyoutItem Text="Избранное" Click="ShowFavoriteDialog"/>
                         </MenuBarItem>
                         <MenuBarItem Title="Помощь">
-                            <MenuFlyoutSubItem Text="Тестовые макросы">
-                                <MenuFlyoutItem Text="Пример макроса" Command="{x:Bind viewModel.ShowTestMacroCommand}"/>
-                                <MenuFlyoutItem Text="Карта высот"  Command="{x:Bind viewModel.ShowHeightMapCommand}"/>
-
+                            <MenuFlyoutSubItem Text="Примеры макросов">
+                                <MenuFlyoutItem Text="Перебор пинов" Command="{x:Bind viewModel.ShowTestMacroCommand}"/>
+                                <MenuFlyoutItem Text="Карта высот"  Command="{x:Bind viewModel.ShowHeightMapCommand}"/>                              
+                            </MenuFlyoutSubItem>
+                            <MenuFlyoutSubItem Text="Примеры фоновых операци">
+                                <MenuFlyoutItem Text="Управление подачей" Command="{x:Bind viewModel.ShowaAnalogInputsBOCommand}"/>
+                                <MenuFlyoutItem Text="Управление шпинделем"  Command="{x:Bind viewModel.ShowSpindleBOCommand}"/>
                             </MenuFlyoutSubItem>
                             <MenuFlyoutItem Text="О Программе"/>
                         </MenuBarItem>
