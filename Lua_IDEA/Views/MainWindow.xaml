@@ -6,14 +6,13 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:entities="using:Lua_IDEA.Data.Entities"
-    xmlns:models="using:Lua_IDEA.Models" 
-    xmlns:avalon="using:ICSharpCode.AvalonEdit"
-	xmlns:avalonEdit="http://icsharpcode.net/sharpdevelop/avalonedit"
+    xmlns:converters="using:Lua_IDEA.Helpers"
+    xmlns:models="using:Lua_IDEA.Models"
     Width="1500" Height="1000"
     MinWidth="1500" MinHeight="1000"
     mc:Ignorable="d">
 
-    <Grid Loaded="Grid_Loaded">
+        <Grid Loaded="Grid_Loaded">
         <Grid.RowDefinitions>
             <RowDefinition Height="32"/>
             <RowDefinition Height="*"/>
@@ -94,7 +93,7 @@
                     <TabView Grid.Row="1"
                              TabItemsSource="{x:Bind viewModel.Tabs}"
                              SelectedItem="{x:Bind viewModel.SelectedTab, Mode=TwoWay}"
-                             AddTabButtonCommand="{x:Bind viewModel.CreateNewFileCommand}"
+                             AddTabButtonCommand="{x:Bind viewModel.CreateNewFileCommand}"                             
                              TabCloseRequested="TabView_TabCloseRequested">
                         <TabView.TabItemTemplate>
                             <DataTemplate x:DataType="models:LuaFile">
@@ -105,6 +104,7 @@
                                                 <Grid.ColumnDefinitions>
                                                     <ColumnDefinition Width="*"/>
                                                     <ColumnDefinition Width="Auto"/>
+                                                    <ColumnDefinition Width="*"/>
                                                 </Grid.ColumnDefinitions>
 
                                                 <FontIcon Grid.Column="0"
@@ -117,6 +117,11 @@
                                                            VerticalAlignment="Center"
                                                            Margin="8,0,0,0"
                                                            Text="{x:Bind Name}"/>
+                                                <FontIcon Grid.Column="2"
+                                                          VerticalAlignment="Center"
+                                                          FontSize="10"                                                  
+                                                          Visibility="{Binding IsSaved, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={converters:InverseBooleanConverter}}"
+                                                          Glyph="&#xEA38;"/>
                                             </Grid>
                                         </ContentControl>
                                     </TabViewItem.Header>
@@ -131,7 +136,7 @@
                                                      Margin="4"
                                                      TextChanged="textEditor_TextChanged"
                                                      Loaded="textEditor_Loaded"
-                                                     IsSpellCheckEnabled="False"
+                                                     IsSpellCheckEnabled="False"                                                     
                                                      MinHeight="500"/>
 
                                         <TextBlock Grid.Row="1"
