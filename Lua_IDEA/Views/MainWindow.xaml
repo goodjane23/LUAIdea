@@ -57,7 +57,8 @@
                     <!-- Menu -->
                     <MenuBar Grid.Row="0">
                         <MenuBarItem Title="Файл">
-                            <MenuFlyoutItem Text="Создать" Command="{x:Bind viewModel.CreateNewFileCommand}"/>
+                            <MenuFlyoutItem Text="Создать макрос" Command="{x:Bind viewModel.CreateNewMacroCommand}"/>
+                            <MenuFlyoutItem Text="Создать фоновую операцию" Command="{x:Bind viewModel.CreateNewBackgroundCommand}"/>
                             <MenuFlyoutItem Text="Открыть" Command="{x:Bind viewModel.OpenFileCommand}"/>
                             <MenuFlyoutSeparator />
                             <MenuFlyoutItem Text="Сохранить" Command="{x:Bind viewModel.SaveFileCommand}"/>
@@ -93,7 +94,7 @@
                     <TabView Grid.Row="1"
                              TabItemsSource="{x:Bind viewModel.Tabs}"
                              SelectedItem="{x:Bind viewModel.SelectedTab, Mode=TwoWay}"
-                             AddTabButtonCommand="{x:Bind viewModel.CreateNewFileCommand}"                             
+                             AddTabButtonCommand="{x:Bind viewModel.CreateNewMacroCommand}"
                              TabCloseRequested="TabView_TabCloseRequested">
                         <TabView.TabItemTemplate>
                             <DataTemplate x:DataType="models:LuaFile">

@@ -51,7 +51,7 @@ public partial class MainWindowViewModel : ObservableObject, IRecipient<SelectRe
         this.syntaxChecker = syntaxChecker;
         this.filesService = filesService;
         WeakReferenceMessenger.Default.Register<SelectRecentFileMessage>(this);
-        CreateNewFile();
+        CreateNewMacro();
     }
 
     [RelayCommand]
@@ -89,13 +89,28 @@ public partial class MainWindowViewModel : ObservableObject, IRecipient<SelectRe
     }
 
     [RelayCommand]
-    private void CreateNewFile()
+    private void CreateNewMacro()
     {
         var file = new LuaFile()
         {
             Name = "M",
             Path = "",
             Content = "function M() \r\n\r\n end",
+            IsSaved = false,
+            IsFavorite = false,
+        };
+
+        Tabs.Add(file);
+    }
+
+    [RelayCommand]
+    private void CreateNewBackground()
+    {
+        var file = new LuaFile()
+        {
+            Name = "XX",
+            Path = "",
+            Content = "function handle() \r\t --- code\r\t\n\r end",
             IsSaved = false,
             IsFavorite = false,
         };
