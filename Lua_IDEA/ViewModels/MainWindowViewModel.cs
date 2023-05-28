@@ -108,7 +108,7 @@ public partial class MainWindowViewModel : ObservableObject, IRecipient<SelectRe
     {
         var file = new LuaFile()
         {
-            Name = "M",
+            Name = "XX",
             Path = "",
             Content = "function handle() \r\t --- code\r\t\n\r end",
             IsSaved = false,
