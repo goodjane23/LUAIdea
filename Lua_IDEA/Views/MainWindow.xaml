@@ -119,8 +119,8 @@
                                                            Text="{x:Bind Name}"/>
                                                 <FontIcon Grid.Column="2"
                                                           VerticalAlignment="Center"
-                                                          FontSize="10"                                                  
-                                                          Visibility="{Binding IsSaved, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={converters:InverseBooleanConverter}}"
+                                                          FontSize="8"                                                  
+                                                          Visibility="{x:Bind ChangedIconVisibility, Mode=OneWay}"
                                                           Glyph="&#xEA38;"/>
                                             </Grid>
                                         </ContentControl>
