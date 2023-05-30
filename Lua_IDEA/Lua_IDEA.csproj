@@ -29,6 +29,7 @@
   <ItemGroup>
     <None Remove="Resources\analog_fro_sso.bm" />
     <None Remove="Resources\M155.pm" />
+    <None Remove="Resources\MarcoExamples.xaml" />
     <None Remove="Resources\modbus_spindle_Toshiba_VF-S11.bm" />
     <None Remove="Resources\MXX.pm" />
     <None Remove="Views\Dialogs\FavoriteFilesSelector.xaml" />
@@ -70,18 +71,23 @@
     <ProjectCapability Include="Msix" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Resources\analog_fro_sso.bm">
+    <EmbeddedResource Include="Resources\analog_fro_sso.bm">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Resources\M155.pm">
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\M155.pm">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Resources\modbus_spindle_Toshiba_VF-S11.bm">
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\modbus_spindle_Toshiba_VF-S11.bm">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Resources\MXX.pm">
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\MXX.pm">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Resource>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Resources\MarcoExamples.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Page Update="Views\Dialogs\FavoriteFilesSelector.xaml">

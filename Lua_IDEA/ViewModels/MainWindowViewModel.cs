@@ -15,6 +15,9 @@ using Lua_IDEA.Messages;
 using System.IO;
 using Microsoft.UI.Xaml;
 using System.Resources;
+using System.Reflection;
+using Microsoft.VisualBasic.Logging;
+using MoonSharp.Interpreter.Loaders;
 
 namespace Lua_IDEA.ViewModels;
 
@@ -264,29 +267,46 @@ public partial class MainWindowViewModel : ObservableObject, IRecipient<SelectRe
     }
 
     [RelayCommand]
-    private async void ShowTestMacro()
+    private async void ShowMacroExample(string number)
     {
 
-    }
+        string path = number;
+        switch (number)
+        {
+            case "0":
+                 path = "Lua_IDEA.Resources.M155.pm";
+                break;
+            case "1":
+                 path = "Lua_IDEA.Resources.MXX.pm";
+                break;
+            case "2":
+                 path = "Lua_IDEA.Resources.analog_fro_sso.bm";
+                break;
+            case "3":
+                path = "Lua_IDEA.Resources.modbus_spindle_Toshiba_VF-S11.bm";
+                break;
 
-    [RelayCommand]
-    private async void ShowHeightMap() 
-    {
+            default:
+                break;
+        }
+        var lf = new LuaFile();
+        var assembly = Assembly.GetExecutingAssembly();
+        using (Stream stream = assembly.GetManifestResourceStream(path))
+        using (StreamReader reader = new StreamReader(stream))
+        {
+            lf.Content = reader.ReadToEnd();
+            lf.Name = path;
+            lf.IsSaved = true;
+            lf.Path = path;
+        }
+        Tabs.Add(lf);
+        SelectedTab = Tabs.Last();
     }
-
-    [RelayCommand]
-    private async void ShowaAnalogInputsBOCommand()
-    {
-    }
+   
     [RelayCommand]
     private void CloseMacroPanel()
     {
         IsMacrosPanelVisible = false;
-    }
-
-    [RelayCommand]
-    private async void ShowSpindleBOCommand()
-    {
     }
 
 }
