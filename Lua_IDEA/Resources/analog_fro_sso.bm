@@ -1,0 +1,57 @@
+function handle()
+	
+	-- Фоновая операция для регулировки % рабочей подачи и оборотов
+	-- шпинделя в зависимости от состояния аналоговых входов
+	-- Background operation to adjust the set % of the working feed and 
+	-- spindle speed depending on the state of the analog inputs.
+	
+	-- Фоновая операция не выполняется при работе на Симуляторе
+	-- Background operation is not performed when the Simulator is used.
+	if (not IsRealDeviceConnected()) then
+		return
+	end
+	
+	-- Настройка параметров регулировки рабочей подачи.
+	-- Данные параметры можно изменять.
+	-- Feed Rate Override settings.
+	-- These parameters can be changed.
+	local AnalogInpNumFRO = 0 			-- Номер аналогового входа для регулировки рабочей подачи (см. руководство на контроллер)
+	local MinFRO = 0					-- Минимальное значение рабочей подачи в %. Соответствует минимальному значению аналогового входа.
+	local MaxFRO = 200					-- Максимальное значение рабочей подачи в %. Соответствует максимальному значению аналогового входа.
+	local AnalogInpFROMinValue = 0.005	-- Значение аналогового входа, соответствующее минимальному положению потенциометра (см. вкладку "Диагностика" -> блок "Входные сигналы")
+	local AnalogInpFROMaxValue = 0.9	-- Значение аналогового входа, соответствующее максимальному положению потенциометра (см. вкладку "Диагностика" -> блок "Входные сигналы")
+	
+	-- Настройка параметров регулировки оборотов шпинделя
+	-- Данные параметры можно изменять.
+	-- Spindle Speed Override settings.
+	-- These parameters can be changed.
+	local AnalogInpNumSSO = 1			-- Номер аналогового входа для регулировки рабочей подачи (см. руководство на контроллер)
+	local MinSSO = 0					-- Минимальное значение оборотов шпинделя в %. Соответствует минимальному значению аналогового входа.
+	local MaxSSO = 200					-- Максимальное значение оборотов шпинделя в %. Соответствует максимальному значению аналогового входа.
+	local AnalogInpSSOMinValue = 0.005	-- Значение аналогового входа, соответствующее минимальному положению потенциометра (см. вкладку "Диагностика" -> блок "Входные сигналы")
+	local AnalogInpSSOMaxValue = 0.9	-- Значение аналогового входа, соответствующее максимальному положению потенциометра (см. вкладку "Диагностика" -> блок "Входные сигналы")
+	
+	local AnalogInputsCount = GetAnalogInputsCount()
+	if (AnalogInputsCount == 0) then
+		return
+	end
+	
+	if (AnalogInputsCount > AnalogInpNumFRO) then
+		-- Расчет и установка текущего % рабочей подачи.
+		-- НЕ РЕКОМЕНДУЕТСЯ изменять формулу расчета!
+		-- Calculation and setting of the current % of the working feed.
+		-- IT is NOT RECOMMENDED to change the calculation formula!
+		local AnalogInpFRONormalized = (GetAnalogInput(AnalogInpNumFRO) - AnalogInpFROMinValue) / (AnalogInpFROMaxValue - AnalogInpFROMinValue)
+		SetFeedrateOverridePercent(MinFRO + AnalogInpFRONormalized * (MaxFRO - MinFRO))
+	end
+	
+	if (AnalogInputsCount > AnalogInpNumSSO) then
+		-- Расчет и установка текущего % оборотов шпинделя.
+		-- НЕ РЕКОМЕНДУЕТСЯ изменять формулу расчета!
+		-- Calculation and setting of the current % of the spindle speed.
+		-- IT is NOT RECOMMENDED to change the calculation formula!
+		local AnalogInpSSONormalized = (GetAnalogInput(AnalogInpNumSSO) - AnalogInpSSOMinValue) / (AnalogInpSSOMaxValue - AnalogInpSSOMinValue)
+		SetSpindleSpeedOverridePercent(MinSSO + AnalogInpSSONormalized * (MaxSSO - MinSSO))
+	end
+	
+end

@@ -27,6 +27,11 @@
     <UseWPF>False</UseWPF>
   </PropertyGroup>
   <ItemGroup>
+    <None Remove="Resources\analog_fro_sso.bm" />
+    <None Remove="Resources\M155.pm" />
+    <None Remove="Resources\MarcoExamples.xaml" />
+    <None Remove="Resources\modbus_spindle_Toshiba_VF-S11.bm" />
+    <None Remove="Resources\MXX.pm" />
     <None Remove="Views\Dialogs\FavoriteFilesSelector.xaml" />
     <None Remove="Views\Dialogs\RecentFilesDialogSelector.xaml" />
     <None Remove="Views\ListFilesWindow.xaml" />
@@ -64,6 +69,25 @@
   -->
   <ItemGroup Condition="'$(DisableMsixProjectCapabilityAddedByProject)'!='true' and '$(EnableMsixTooling)'=='true'">
     <ProjectCapability Include="Msix" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\analog_fro_sso.bm">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\M155.pm">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\modbus_spindle_Toshiba_VF-S11.bm">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\MXX.pm">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Resources\MarcoExamples.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Page Update="Views\Dialogs\FavoriteFilesSelector.xaml">
