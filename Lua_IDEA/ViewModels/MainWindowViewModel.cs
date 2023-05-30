@@ -278,6 +278,11 @@ public partial class MainWindowViewModel : ObservableObject, IRecipient<SelectRe
     private async void ShowaAnalogInputsBOCommand()
     {
     }
+    [RelayCommand]
+    private void CloseMacroPanel()
+    {
+        IsMacrosPanelVisible = false;
+    }
 
     [RelayCommand]
     private async void ShowSpindleBOCommand()

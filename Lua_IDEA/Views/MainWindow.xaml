@@ -6,14 +6,12 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:entities="using:Lua_IDEA.Data.Entities"
-    xmlns:models="using:Lua_IDEA.Models" 
-    xmlns:avalon="using:ICSharpCode.AvalonEdit"
-	xmlns:avalonEdit="http://icsharpcode.net/sharpdevelop/avalonedit"
+    xmlns:models="using:Lua_IDEA.Models"
     Width="1500" Height="1000"
     MinWidth="1500" MinHeight="1000"
     mc:Ignorable="d">
 
-    <Grid Loaded="Grid_Loaded">
+        <Grid Loaded="Grid_Loaded">
         <Grid.RowDefinitions>
             <RowDefinition Height="32"/>
             <RowDefinition Height="*"/>
@@ -109,6 +107,7 @@
                                                 <Grid.ColumnDefinitions>
                                                     <ColumnDefinition Width="*"/>
                                                     <ColumnDefinition Width="Auto"/>
+                                                    <ColumnDefinition Width="*"/>
                                                 </Grid.ColumnDefinitions>
 
                                                 <FontIcon Grid.Column="0"
@@ -121,6 +120,11 @@
                                                            VerticalAlignment="Center"
                                                            Margin="8,0,0,0"
                                                            Text="{x:Bind Name}"/>
+                                                <FontIcon Grid.Column="2"
+                                                          VerticalAlignment="Center"
+                                                          FontSize="8"                                                  
+                                                          Visibility="{x:Bind ChangedIconVisibility, Mode=OneWay}"
+                                                          Glyph="&#xEA38;"/>
                                             </Grid>
                                         </ContentControl>
                                     </TabViewItem.Header>
@@ -135,7 +139,7 @@
                                                      Margin="4"
                                                      TextChanged="textEditor_TextChanged"
                                                      Loaded="textEditor_Loaded"
-                                                     IsSpellCheckEnabled="False"
+                                                     IsSpellCheckEnabled="False"                                                     
                                                      MinHeight="500"/>
 
                                         <TextBlock Grid.Row="1"
@@ -168,7 +172,25 @@
                     </Grid.RowDefinitions>
 
                     <Grid Grid.Row="0">
-                        <Pivot Title="Список команд">
+                        <Pivot>
+                            <Pivot.Title>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Button Grid.Column="0"
+                                            Command="{x:Bind viewModel.CloseMacroPanelCommand}">
+                                        <FontIcon Glyph="&#xE8BB;" FontSize="8" />
+                                    </Button>
+                                    <TextBlock 
+                                        Grid.Column="1"
+                                        Margin="12,0,0,0"
+                                        Text="Список команд"/>
+                                    
+                                </Grid>
+                            </Pivot.Title>
+                            
                             <PivotItem Header="Макросы">
                                 <TreeView Margin="0,6,0,0"
                                           CanReorderItems="False"
