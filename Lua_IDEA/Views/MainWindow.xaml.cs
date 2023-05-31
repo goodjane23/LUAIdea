@@ -24,16 +24,15 @@ public sealed partial class MainWindow : WindowEx
     private RichEditBox currentTextEditor;
 
     private readonly MainWindowViewModel viewModel;
-    private readonly DialogFactory<RecentFilesSelector> windowFactory;
+    private readonly DialogFactory<RecentFilesSelector> dialogFactory;
 
     public MainWindow(
         MainWindowViewModel viewModel,
-        DialogFactory<RecentFilesSelector> windowFactory)
+        DialogFactory<RecentFilesSelector> dialogFactory)
     {
         InitializeComponent();
 
-        this.recentWindow = windowFactory;
-        this.favoritesWindow = favoritesWindow;
+        this.dialogFactory = dialogFactory;
 
         ExtendsContentIntoTitleBar = true;
         SetTitleBar(titleBar);
@@ -52,7 +51,6 @@ public sealed partial class MainWindow : WindowEx
             if (currentTextEditor is not null)
                 currentTextEditor.Height = tabViewGrid.ActualSize.ToSize().Height;
         };
-        this.favoritesWindow = favoritesWindow;
     }
 
     private async Task<bool> OnSaveCheckRequested()
@@ -176,7 +174,7 @@ public sealed partial class MainWindow : WindowEx
 
     private async void ShowRecentDialog(object sender, RoutedEventArgs e)
     {
-        var resentDialog = windowFactory.Create();
+        var resentDialog = dialogFactory.Create();
 
         resentDialog.XamlRoot = Content.XamlRoot;
         resentDialog.Title = "Недавние файлы";

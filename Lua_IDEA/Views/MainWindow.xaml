@@ -56,7 +56,7 @@
                     <!-- Menu -->
                     <MenuBar Grid.Row="0">
                         <MenuBarItem Title="Файл">
-                            <MenuFlyoutItem Text="Создать" Command="{x:Bind viewModel.CreateNewFileCommand}"/>
+                            <MenuFlyoutItem Text="Создать" Command="{x:Bind viewModel.CreateNewMacroCommand}"/>
                             <MenuFlyoutItem Icon="OpenFile" Text="Открыть" Command="{x:Bind viewModel.OpenFileCommand}"/>
                             <MenuFlyoutSeparator />
                             <MenuFlyoutItem Icon="Save" Text="Сохранить" Command="{x:Bind viewModel.SaveFileCommand}"/>
@@ -75,7 +75,7 @@
                             <MenuFlyoutSeparator/>
                             <MenuFlyoutItem Text="Настройки"/>
                             <MenuFlyoutItem Text="Недавние" Click="ShowRecentDialog"/>
-                            <MenuFlyoutItem Text="Избранное" Click="ShowFavoriteDialog"/>
+                            <MenuFlyoutItem Text="Избранное"/>
                         </MenuBarItem>
                         
                         <MenuBarItem Title="Помощь">
@@ -119,6 +119,7 @@
                                                            VerticalAlignment="Center"
                                                            Margin="8,0,0,0"
                                                            Text="{x:Bind Name}"/>
+                                                
                                                 <FontIcon Grid.Column="2"
                                                           VerticalAlignment="Center"
                                                           FontSize="8"                                                  

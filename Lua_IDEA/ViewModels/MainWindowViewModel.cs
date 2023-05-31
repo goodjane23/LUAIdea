@@ -13,11 +13,7 @@ using WinRT.Interop;
 using CommunityToolkit.Mvvm.Messaging;
 using Lua_IDEA.Messages;
 using System.IO;
-using Microsoft.UI.Xaml;
-using System.Resources;
 using System.Reflection;
-using Microsoft.VisualBasic.Logging;
-using MoonSharp.Interpreter.Loaders;
 
 namespace Lua_IDEA.ViewModels;
 
