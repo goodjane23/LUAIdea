@@ -101,32 +101,31 @@
                             <DataTemplate x:DataType="models:LuaFile">
                                 <TabViewItem>
                                     <TabViewItem.Header>
-                                        <ContentControl>
-                                            <Grid>
-                                                <Grid.ColumnDefinitions>
-                                                    <ColumnDefinition Width="*"/>
-                                                    <ColumnDefinition Width="Auto"/>
-                                                    <ColumnDefinition Width="*"/>
-                                                </Grid.ColumnDefinitions>
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                                <ColumnDefinition Width="*"/>
+                                            </Grid.ColumnDefinitions>
 
-                                                <FontIcon Grid.Column="0"
-                                                          VerticalAlignment="Center"
-                                                          FontSize="12"                                                  
-                                                          Visibility="{x:Bind IsFavorite, Mode=OneWay}"
-                                                          Glyph="&#xE735;"/>
+                                            <FontIcon Grid.Column="0"
+                                                      VerticalAlignment="Center"
+                                                      FontSize="12"                                                  
+                                                      Visibility="{x:Bind IsFavorite, Mode=OneWay}"
+                                                      Glyph="&#xE735;"/>
 
-                                                <TextBlock Grid.Column="1"
-                                                           VerticalAlignment="Center"
-                                                           Margin="8,0,0,0"
-                                                           Text="{x:Bind Name}"/>
-                                                
-                                                <FontIcon Grid.Column="2"
-                                                          VerticalAlignment="Center"
-                                                          FontSize="8"                                                  
-                                                          Visibility="{x:Bind ChangedIconVisibility, Mode=OneWay}"
-                                                          Glyph="&#xEA38;"/>
-                                            </Grid>
-                                        </ContentControl>
+                                            <TextBlock Grid.Column="1"
+                                                       VerticalAlignment="Center"
+                                                       Margin="8,0,0,0"
+                                                       Text="{x:Bind Name}"/>
+
+                                            <FontIcon Grid.Column="2"
+                                                      VerticalAlignment="Center"
+                                                      Margin="8,0,0,0"
+                                                      FontSize="8"                                                  
+                                                      Visibility="{x:Bind ChangedIconVisibility, Mode=OneWay}"
+                                                      Glyph="&#xEA38;"/>
+                                        </Grid>
                                     </TabViewItem.Header>
 
                                     <Grid>
