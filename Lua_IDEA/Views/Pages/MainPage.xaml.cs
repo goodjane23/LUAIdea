@@ -43,7 +43,7 @@ public sealed partial class MainPage : Page
         SizeChanged += (sender, args) =>
         {
             if (currentTextEditor is not null)
-                currentTextEditor.Height = tabViewGrid.ActualSize.ToSize().Height;
+                currentTextEditor.Height = tabViewGrid.ActualSize.ToSize().Height - 45;
         };
     }
 
@@ -153,7 +153,7 @@ public sealed partial class MainPage : Page
         if (sender is not RichEditBox textEditor)
             return;
 
-        textEditor.Height = tabViewGrid.ActualSize.ToSize().Height;
+        textEditor.Height = tabViewGrid.ActualSize.ToSize().Height - 45;
         currentTextEditor = textEditor;
 
         var text = ViewModel.SelectedTab?.Content;

@@ -67,9 +67,15 @@
                 </MenuBarItem>
 
                 <MenuBarItem Title="Помощь">
-                    <MenuFlyoutSubItem Text="Тестовые макросы">
-                        <MenuFlyoutItem Text="Пример макроса" Command="{x:Bind ViewModel.ShowTestMacroCommand}"/>
-                        <MenuFlyoutItem Text="Карта высот" Command="{x:Bind ViewModel.ShowHeightMapCommand}"/>
+                    <MenuFlyoutSubItem Text="Примеры">
+                        <MenuFlyoutSubItem Text="Макросы">
+                            <MenuFlyoutItem Text="Перебор пинов" Command="{x:Bind ViewModel.ShowTestMacroCommand}" CommandParameter="Macro_MXXX"/>
+                            <MenuFlyoutItem Text="Карта высот" Command="{x:Bind ViewModel.ShowTestMacroCommand}" CommandParameter="Macro_M155"/>
+                        </MenuFlyoutSubItem>
+                        <MenuFlyoutSubItem Text="Фоновые операции">
+                            <MenuFlyoutItem Text="Управление подачей" Command="{x:Bind ViewModel.ShowTestMacroCommand}" CommandParameter="Macro_AnalogFfo"/>
+                            <MenuFlyoutItem Text="Управление шпинделем" Command="{x:Bind ViewModel.ShowTestMacroCommand}" CommandParameter="Macro_Spindle"/>
+                        </MenuFlyoutSubItem>
                     </MenuFlyoutSubItem>
                     <MenuFlyoutSeparator />
                     <MenuFlyoutItem Text="О Программе"/>

@@ -1,0 +1,324 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Macro_M155" xml:space="preserve">
+	  <value>function m155()
+    local XWidth = 70
+    local YWidth = 50
+    local SafeZ  = 3
+    local ProbeZ = -3
+    local StepX  = 15
+    local StepY  = 15
+    local Feed   = 50
+    local TipHeight = 0
+    local ProbeFilename = "C:\\temp\\probe.txt"
+     
+    PushCurrentDistanceMode()
+    PushCurrentMotionMode()
+     
+    if (IsProbingPinConfigured()) then
+        -- open the file
+        file, msg = io.open(ProbeFilename, "w")
+         
+        if (file == nil) then
+            DisplayMessage("Could not open probe output file ("..msg..")")
+            Stop()
+            return
+        end
+         
+        ExecuteMDI("F "..Feed)
+        ExecuteMDI("G90 G38.2 Z-100")
+         
+        -- set the current location to 0,0,0
+        ExecuteMDI("G92 X0Y0Z0")
+        ExecuteMDI("G0 Z"..SafeZ)
+         
+        local direction = 0
+        for y = 0, YWidth, StepY do
+            if (direction == 1) then
+                direction = 0
+            else
+                direction = 1
+            end
+             
+            for x = 0, XWidth, StepX do
+                if (direction == 1) then
+                    ExecuteMDI("G0 X"..x.." Y"..y.." Z"..SafeZ)
+                else
+                    ExecuteMDI("G0 X"..(XWidth - x).." Y"..y.." Z"..SafeZ)
+                end
+                 
+                ExecuteMDI("G38.2 Z"..ProbeZ)
+                LogCurrentPos(TipHeight)
+                ExecuteMDI("G0 Z"..SafeZ)
+            end
+        end
+         
+        if (direction == 1) then
+            ExecuteMDI("G0 X"..XWidth.." Y"..YWidth.." Z"..SafeZ)
+        else
+            ExecuteMDI("G0 X".."0".." Y"..YWidth.." Z"..SafeZ)
+        end
+         
+        local HighZ = 5
+        ExecuteMDI("G0 Z"..HighZ)
+        ExecuteMDI("G0 X0Y0")
+         
+        file:close()
+    else
+        DisplayMessage("Probe input is not configured")
+        return
+    end
+end
+ 
+function LogCurrentPos(tipHeight)
+    local CurrX = AxisGetPos(Axis.X)
+    local CurrY = AxisGetPos(Axis.Y)
+    local CurrZ = AxisGetPos(Axis.Z)
+     
+    local fmt = "%.5f"
+    file:write(string.format(fmt, CurrX)..","..string.format(fmt, CurrY)..","..string.format(fmt, CurrZ - tipHeight), "\n")
+end</value>
+  </data>
+  <data name="Macro_MXXX" xml:space="preserve">
+    <value>function mxxx()
+	local outputs_count = 8
+                for i = 0, outputs_count  do 
+                    if (PinGetState(Outputs.UserOutput_0 + i)) then
+                        DisplayMessage("Output_"..i.." ON")
+                    else
+                        DisplayMessage("Output_"..i.." OFF")
+                    end
+                end
+end</value>
+  </data>
+  <data name="Macro_AnalogFfo" xml:space="preserve">
+    <value>function handle()
+	
+	-- Фоновая операция для регулировки % рабочей подачи и оборотов
+	-- шпинделя в зависимости от состояния аналоговых входов
+	-- Background operation to adjust the set % of the working feed and 
+	-- spindle speed depending on the state of the analog inputs.
+	
+	-- Фоновая операция не выполняется при работе на Симуляторе
+	-- Background operation is not performed when the Simulator is used.
+	if (not IsRealDeviceConnected()) then
+		return
+	end
+	
+	-- Настройка параметров регулировки рабочей подачи.
+	-- Данные параметры можно изменять.
+	-- Feed Rate Override settings.
+	-- These parameters can be changed.
+	local AnalogInpNumFRO = 0 			-- Номер аналогового входа для регулировки рабочей подачи (см. руководство на контроллер)
+	local MinFRO = 0					-- Минимальное значение рабочей подачи в %. Соответствует минимальному значению аналогового входа.
+	local MaxFRO = 200					-- Максимальное значение рабочей подачи в %. Соответствует максимальному значению аналогового входа.
+	local AnalogInpFROMinValue = 0.005	-- Значение аналогового входа, соответствующее минимальному положению потенциометра (см. вкладку "Диагностика" -&gt; блок "Входные сигналы")
+	local AnalogInpFROMaxValue = 0.9	-- Значение аналогового входа, соответствующее максимальному положению потенциометра (см. вкладку "Диагностика" -&gt; блок "Входные сигналы")
+	
+	-- Настройка параметров регулировки оборотов шпинделя
+	-- Данные параметры можно изменять.
+	-- Spindle Speed Override settings.
+	-- These parameters can be changed.
+	local AnalogInpNumSSO = 1			-- Номер аналогового входа для регулировки рабочей подачи (см. руководство на контроллер)
+	local MinSSO = 0					-- Минимальное значение оборотов шпинделя в %. Соответствует минимальному значению аналогового входа.
+	local MaxSSO = 200					-- Максимальное значение оборотов шпинделя в %. Соответствует максимальному значению аналогового входа.
+	local AnalogInpSSOMinValue = 0.005	-- Значение аналогового входа, соответствующее минимальному положению потенциометра (см. вкладку "Диагностика" -&gt; блок "Входные сигналы")
+	local AnalogInpSSOMaxValue = 0.9	-- Значение аналогового входа, соответствующее максимальному положению потенциометра (см. вкладку "Диагностика" -&gt; блок "Входные сигналы")
+	
+	local AnalogInputsCount = GetAnalogInputsCount()
+	if (AnalogInputsCount == 0) then
+		return
+	end
+	
+	if (AnalogInputsCount &gt; AnalogInpNumFRO) then
+		-- Расчет и установка текущего % рабочей подачи.
+		-- НЕ РЕКОМЕНДУЕТСЯ изменять формулу расчета!
+		-- Calculation and setting of the current % of the working feed.
+		-- IT is NOT RECOMMENDED to change the calculation formula!
+		local AnalogInpFRONormalized = (GetAnalogInput(AnalogInpNumFRO) - AnalogInpFROMinValue) / (AnalogInpFROMaxValue - AnalogInpFROMinValue)
+		SetFeedrateOverridePercent(MinFRO + AnalogInpFRONormalized * (MaxFRO - MinFRO))
+	end
+	
+	if (AnalogInputsCount &gt; AnalogInpNumSSO) then
+		-- Расчет и установка текущего % оборотов шпинделя.
+		-- НЕ РЕКОМЕНДУЕТСЯ изменять формулу расчета!
+		-- Calculation and setting of the current % of the spindle speed.
+		-- IT is NOT RECOMMENDED to change the calculation formula!
+		local AnalogInpSSONormalized = (GetAnalogInput(AnalogInpNumSSO) - AnalogInpSSOMinValue) / (AnalogInpSSOMaxValue - AnalogInpSSOMinValue)
+		SetSpindleSpeedOverridePercent(MinSSO + AnalogInpSSONormalized * (MaxSSO - MinSSO))
+	end
+	
+end</value>
+  </data>
+  <data name="Macro_Spindle" xml:space="preserve">
+	  <value>function handle()
+	local desired_rpm = GetCurSpindleRPM()
+	if (not IsRealDeviceConnected()) then
+		desired_rpm = 0
+	end
+	
+	local value, is_online = ReadModbusRegisterUpdated("SpindleStatus")
+	Sleep(30)
+	local mode_updated = is_online and check_mode(value, desired_rpm)
+	
+	if (prev_rpm == nil or prev_rpm ~= desired_rpm or not mode_updated) then
+		if (send_spindle_control_command(desired_rpm)) then
+			prev_rpm = desired_rpm
+		end
+	end
+end
+
+function send_spindle_control_command(rpm)
+	local mode = get_mode(rpm)
+	
+	local Hz = math.floor(math.abs(rpm) / 60 * 100 + 0.5)
+	
+	local success_1 = WriteModbusRegister("SpindleMode", mode)
+	Sleep(30)
+	local success_2 = WriteModbusRegister("SpindleRPM", Hz)
+	return success_1 and success_2
+end
+
+function get_mode(rpm)
+	local mode = 49152  -- Stop
+	if (rpm &gt; 0) then
+		mode = 50176  -- Forward
+	elseif (rpm &lt; 0) then
+		mode = 50688  -- Reverse
+	end
+	
+	return mode
+end
+
+function check_mode(status, rpm)
+	if (rpm &gt; 0) then
+		return is_bit_assigned(status, 10) and not is_bit_assigned(status, 9)  -- Forward
+	elseif (rpm &lt; 0) then
+		return is_bit_assigned(status, 10) and is_bit_assigned(status, 9)  -- Reverse
+	else
+		return not is_bit_assigned(status, 10)  -- Stop
+	end
+end
+
+function is_bit_assigned(value, index)
+	return value &amp; (1 &lt;&lt; index) ~= 0
+end</value>
+  </data>
+</root>
