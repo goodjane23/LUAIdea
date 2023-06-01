@@ -15,6 +15,7 @@ public partial class LuaFile : ObservableObject
     private string content;
 
     [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(IsChangedIconVisible))]
     private bool isSaved;
 
     [ObservableProperty]
@@ -22,6 +23,8 @@ public partial class LuaFile : ObservableObject
 
     [ObservableProperty]
     private string errors;
+
+    public bool IsChangedIconVisible => !IsSaved;
 
     public Visibility HasErrors()
     {

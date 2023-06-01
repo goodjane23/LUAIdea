@@ -124,11 +124,10 @@
                                             <ColumnDefinition Width="Auto"/>
                                         </Grid.ColumnDefinitions>
 
-                                        <FontIcon Grid.Column="0"
-                                                  VerticalAlignment="Center"
-                                                  FontSize="12"                                                  
-                                                  Visibility="{x:Bind IsFavorite, Mode=OneWay}"
-                                                  Glyph="&#xE735;"/>
+                                        <InfoBadge Visibility="{x:Bind IsChangedIconVisible, Mode=OneWay}"
+                                                   Height="8"
+                                                   Width="8"
+                                                   Style="{StaticResource AttentionIconInfoBadgeStyle}"/>
 
                                         <TextBlock Grid.Column="1"
                                                    VerticalAlignment="Center"

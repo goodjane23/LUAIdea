@@ -140,9 +140,8 @@ public sealed partial class MainPage : Page
     {
         if (sender is not RichEditBox textEditor)
             return;
-
-        var text = string.Empty;
-        textEditor.TextDocument.GetText(TextGetOptions.UseObjectText, out text);
+        
+        textEditor.TextDocument.GetText(TextGetOptions.UseObjectText, out var text);
 
         ViewModel.SelectedTab.Content = text;
         ViewModel.SelectedTab.IsSaved = false;
@@ -156,9 +155,10 @@ public sealed partial class MainPage : Page
         textEditor.Height = tabViewGrid.ActualSize.ToSize().Height - 45;
         currentTextEditor = textEditor;
 
-        var text = ViewModel.SelectedTab?.Content;
+        textEditor.Document.GetText(TextGetOptions.UseObjectText, out var text);
 
-        textEditor?.Document.SetText(TextSetOptions.None, text);
+        if (text != ViewModel.SelectedTab.Content)
+            textEditor.Document.SetText(TextSetOptions.None, ViewModel.SelectedTab.Content);
     }
 
     private void OnCommandPasted()
@@ -218,10 +218,10 @@ public sealed partial class MainPage : Page
 
         CachedFileManager.DeferUpdates(storageFile);
 
-        using var stream = await storageFile.OpenStreamForWriteAsync();
-        using var tw = new StreamWriter(stream);
+        await using var stream = await storageFile.OpenStreamForWriteAsync();
+        await using var tw = new StreamWriter(stream);
 
-        tw.WriteLine(file.Content);
+        await tw.WriteLineAsync(file.Content);
 
         file.Path = storageFile.Path;
         file.Name = storageFile.Name;
