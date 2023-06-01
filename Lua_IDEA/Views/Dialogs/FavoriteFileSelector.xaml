@@ -1,0 +1,38 @@
+<ContentDialog
+    x:Class="Lua_IDEA.Views.Dialogs.FavoriteFileSelector"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Lua_IDEA.Views.Dialogs"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:entities="using:Lua_IDEA.Data.Entities"
+    Style="{StaticResource DefaultContentDialogStyle}"
+    Opened="ContentDialog_Opened"
+    PrimaryButtonCommand="{x:Bind viewModel.SelectFileCommand}"
+    mc:Ignorable="d">
+
+    <Grid>
+        <ProgressRing IsActive="{x:Bind viewModel.GetFavoritesFilesCommand.IsRunning, Mode=OneWay}"/>
+
+        <ListView ItemsSource="{x:Bind viewModel.FavoritePaths}"
+                  SelectedItem="{x:Bind viewModel.SelectedPath, Mode=TwoWay}">
+            <ListView.ContextFlyout>
+                <MenuFlyout Opening="MenuFlyout_Opening">
+                    <MenuFlyoutItem Text="Удалить" Click="MenuFlyoutItem_Click"/>
+                </MenuFlyout>
+            </ListView.ContextFlyout>
+            
+            <ListView.ItemTemplate>
+                <DataTemplate x:DataType="entities:FavoriteFile">
+                    <TextBlock Text="{x:Bind Path}"/>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+
+        <Popup x:Name="ItemPopup" HorizontalOffset="20" VerticalOffset="20">
+            <StackPanel Orientation="Vertical">
+                <TextBlock Text="Удалить из избранного?"/>
+                <Button Content="Удалить"/>
+            </StackPanel>
+        </Popup>
+    </Grid>
+</ContentDialog>
