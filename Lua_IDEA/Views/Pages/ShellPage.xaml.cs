@@ -1,32 +1,47 @@
-// Copyright (c) Microsoft Corporation and Contributors.
-// Licensed under the MIT License.
-
+﻿using Lua_IDEA.Factories;
+using Lua_IDEA.Helpers;
+using Lua_IDEA.Helpers.Extensions;
+using Lua_IDEA.ViewModels;
+using Lua_IDEA.Views.Dialogs;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Controls.Primitives;
-using Microsoft.UI.Xaml.Data;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
-using Microsoft.UI.Xaml.Navigation;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
-
-// To learn more about WinUI, the WinUI project structure,
-// and more about our project templates, see: http://aka.ms/winui-project-info.
+using Windows.System;
 
 namespace Lua_IDEA.Views.Pages;
-/// <summary>
-/// An empty page that can be used on its own or navigated to within a Frame.
-/// </summary>
+
 public sealed partial class ShellPage : Page
 {
+    public ShellViewModel ViewModel { get; }
+
     public ShellPage()
     {
-        this.InitializeComponent();
+        ViewModel = App.GetService<ShellViewModel>();
+
+        InitializeComponent();
+
+        ViewModel.NavigationService.Frame = NavigationFrame;
+
+        App.MainWindow.ExtendsContentIntoTitleBar = true;
+        App.MainWindow.SetTitleBar(AppTitleBar);
+        App.MainWindow.Activated += MainWindow_Activated;
+
+        AppTitleBarText.Text = "AppDisplayName".GetLocalized();
+    }
+
+    private void OnLoaded(object sender, RoutedEventArgs e)
+    {
+        TitleBarHelper.UpdateTitleBar(RequestedTheme);
+    }
+
+    private void MainWindow_Activated(object sender, WindowActivatedEventArgs args)
+    {
+        var resource = args.WindowActivationState is WindowActivationState.Deactivated
+            ? "WindowCaptionForegroundDisabled"
+            : "WindowCaptionForeground";
+
+        AppTitleBarText.Foreground = (SolidColorBrush)App.Current.Resources[resource];
+        App.AppTitlebar = AppTitleBarText as UIElement;
     }
 }

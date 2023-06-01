@@ -9,9 +9,9 @@ public sealed partial class RecentFilesSelector : ContentDialog
 
     public RecentFilesSelector(RecentFilesSelectorViewModel viewModel)
     {
-        this.viewModel = viewModel;
+        InitializeComponent();
 
-        this.InitializeComponent();      
+        this.viewModel = viewModel;
     }
 
     private void ContentDialog_Opened(ContentDialog sender, ContentDialogOpenedEventArgs args)

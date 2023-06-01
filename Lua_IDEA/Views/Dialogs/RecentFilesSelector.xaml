@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <ContentDialog
     x:Class="Lua_IDEA.Views.Dialogs.RecentFilesSelector"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
@@ -6,14 +7,12 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     Style="{StaticResource DefaultContentDialogStyle}"
-    mc:Ignorable="d"
-    Width="400"
-    Height="200"
     Opened="ContentDialog_Opened"
-    PrimaryButtonCommand="{x:Bind viewModel.SelectFileCommand}">
+    PrimaryButtonCommand="{x:Bind viewModel.SelectFileCommand}"
+    mc:Ignorable="d">
 
     <Grid>
-        <ProgressRing IsActive="{x:Bind viewModel.GetRecentPathsCommand.IsRunning}"/>
+        <ProgressRing IsActive="{x:Bind viewModel.GetRecentPathsCommand.IsRunning, Mode=OneWay}"/>
 
         <ListView ItemsSource="{x:Bind viewModel.RecentPaths}"
                   SelectedItem="{x:Bind viewModel.SelectedPath, Mode=TwoWay}"/>
