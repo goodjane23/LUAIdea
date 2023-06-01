@@ -191,7 +191,7 @@
                             <PivotItem Header="Фоновые операции">
                                 <TreeView Margin="0,6,0,0"
                                           CanReorderItems="False"
-                                          ItemsSource="{x:Bind ViewModel.BackgroudOperations}"
+                                          ItemsSource="{x:Bind ViewModel.BackgroundOperations}"
                                           ItemInvoked="TreeView_ItemInvoked">
                                     <TreeView.ItemTemplate>
                                         <DataTemplate x:DataType="entities:CommandCategory">

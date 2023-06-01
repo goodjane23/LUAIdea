@@ -39,6 +39,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Lua_IDEA.Core\Lua_IDEA.Core.csproj" />
+    <ProjectReference Include="..\Lua_IDEA.Data\Lua_IDEA.Data.csproj" />
   </ItemGroup>
   <ItemGroup>
     <None Update="appsettings.json">

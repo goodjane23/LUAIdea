@@ -32,7 +32,7 @@ public partial class MainPageViewModel : ObservableObject, IRecipient<SelectRece
     public ObservableCollection<string> FavoritesMacros { get; set; } = new();
     public ObservableCollection<string> RecentMacros { get; set; } = new();
     public ObservableCollection<CommandCategory> Macros { get; } = new();
-    public ObservableCollection<CommandCategory> BackgroudOperations { get; } = new();
+    public ObservableCollection<CommandCategory> BackgroundOperations { get; } = new();
 
     public INavigationService NavigationService { get; }
 
@@ -163,7 +163,7 @@ public partial class MainPageViewModel : ObservableObject, IRecipient<SelectRece
     private async Task UpdateCommands()
     {
         Macros.Clear();
-        BackgroudOperations.Clear();
+        BackgroundOperations.Clear();
 
         SelectedCommand = null!;
 
@@ -173,7 +173,7 @@ public partial class MainPageViewModel : ObservableObject, IRecipient<SelectRece
             Macros.Add(command);
 
         foreach (var command in result.Where(x => !x.IsMacro))
-            BackgroudOperations.Add(command);
+            BackgroundOperations.Add(command);
     }
 
     [RelayCommand]
@@ -218,7 +218,7 @@ public partial class MainPageViewModel : ObservableObject, IRecipient<SelectRece
             return;
         }
 
-        var saveResult = await SaveRequested?.Invoke(SelectedTab);
+        var saveResult = await SaveRequested?.Invoke(SelectedTab)!;
 
         if (saveResult)
         {

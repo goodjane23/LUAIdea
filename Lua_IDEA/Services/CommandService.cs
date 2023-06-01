@@ -1,10 +1,6 @@
 ﻿using Lua_IDEA.Data;
 using Lua_IDEA.Data.Entities;
 using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http;
-using System.Threading.Tasks;
 
 namespace Lua_IDEA.Services;
 
