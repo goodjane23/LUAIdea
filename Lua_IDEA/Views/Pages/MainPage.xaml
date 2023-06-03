@@ -4,6 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:contols="using:CommunityToolkit.WinUI.UI.Controls"
     xmlns:animatedvisuals="using:Microsoft.UI.Xaml.Controls.AnimatedVisuals" xmlns:models="using:Lua_IDEA.Models" xmlns:entities="using:Lua_IDEA.Data.Entities"
     Loaded="OnLoaded"
     Unloaded="OnUnloaded"
@@ -104,7 +105,8 @@
         <Grid x:Name="tabViewGrid" Grid.Row="1">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="10" x:Name="Gripper"/>
+                <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
             
             <!-- Редактор -->
@@ -162,77 +164,78 @@
             </TabView>
 
             <!-- Панель макросов -->
-            <Grid Grid.Column="1"
-                  Width="450"
+            <contols:GridSplitter Grid.Column="1" 
+                                  ResizeBehavior="PreviousAndNext"
+                                  ResizeDirection="Auto"                                 
+                                  Background="SeaGreen" 
+                                  Width="10"
+                                  Visibility="{x:Bind ViewModel.IsMacrosPanelVisible, Mode=OneWay}">
+               
+            </contols:GridSplitter>
+            <Grid Grid.Column="2"
                   Visibility="{x:Bind ViewModel.IsMacrosPanelVisible, Mode=OneWay}">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*"/>
                     <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
 
                 <Grid Grid.Row="0">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="*"/>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                    </Grid.RowDefinitions>
-
-                    <Grid Grid.Row="0">
-                        <Pivot Title="Список команд">
-                            <PivotItem Header="Макросы">
-                                <TreeView Margin="0,6,0,0"
+                    <Pivot Title="Список команд">
+                        <PivotItem Header="Макросы">
+                            <TreeView Margin="0,6,0,0"
                                           CanReorderItems="False"
                                           ItemsSource="{x:Bind ViewModel.Macros}"
                                           ItemInvoked="TreeView_ItemInvoked">
-                                    <TreeView.ItemTemplate>
-                                        <DataTemplate x:DataType="entities:CommandCategory">
-                                            <TreeViewItem ItemsSource="{Binding Commands}"
+                                <TreeView.ItemTemplate>
+                                    <DataTemplate x:DataType="entities:CommandCategory">
+                                        <TreeViewItem ItemsSource="{Binding Commands}"
                                                           Content="{Binding Name}" 
                                                           DoubleTapped="TreeViewItem_DoubleTapped"/>
-                                        </DataTemplate>
-                                    </TreeView.ItemTemplate>
-                                </TreeView>
-                            </PivotItem>
-                            <PivotItem Header="Фоновые операции">
-                                <TreeView Margin="0,6,0,0"
+                                    </DataTemplate>
+                                </TreeView.ItemTemplate>
+                            </TreeView>
+                        </PivotItem>
+                        <PivotItem Header="Фоновые операции">
+                            <TreeView Margin="0,6,0,0"
                                           CanReorderItems="False"
                                           ItemsSource="{x:Bind ViewModel.BackgroundOperations}"
                                           ItemInvoked="TreeView_ItemInvoked">
-                                    <TreeView.ItemTemplate>
-                                        <DataTemplate x:DataType="entities:CommandCategory">
-                                            <TreeViewItem ItemsSource="{Binding Commands}"
+                                <TreeView.ItemTemplate>
+                                    <DataTemplate x:DataType="entities:CommandCategory">
+                                        <TreeViewItem ItemsSource="{Binding Commands}"
                                                           Content="{Binding Name}" 
                                                           DoubleTapped="TreeViewItem_DoubleTapped"/>
-                                        </DataTemplate>
-                                    </TreeView.ItemTemplate>
-                                </TreeView>
-                            </PivotItem>
-                        </Pivot>
-                    </Grid>
+                                    </DataTemplate>
+                                </TreeView.ItemTemplate>
+                            </TreeView>
+                        </PivotItem>
+                    </Pivot>
+                </Grid>
 
-                    <ProgressRing Grid.Row="0" IsActive="{x:Bind ViewModel.UpdateCommandsCommand.IsRunning, Mode=OneWay}"/>
+                <ProgressRing Grid.Row="0" IsActive="{x:Bind ViewModel.UpdateCommandsCommand.IsRunning, Mode=OneWay}"/>
 
-                    <StackPanel Grid.Row="1" Margin="8,12,8,12">
-                        <TextBlock Text="Описание команды"
+                <StackPanel Grid.Row="1" Margin="8,12,8,12">
+                    <TextBlock Text="Описание команды"
                                    Style="{StaticResource SubtitleTextBlockStyle}"/>
 
-                        <TextBlock Margin="0,8,0,0"
+                    <TextBlock Margin="0,8,0,0"
                                    Text="{x:Bind ViewModel.SelectedCommand.Description, Mode=OneWay}"
                                    TextWrapping="Wrap"/>
-                    </StackPanel>
+                </StackPanel>
 
-                    <Button Grid.Row="2"
-                            Margin="8"
-                            Style="{StaticResource AccentButtonStyle}"
-                            Command="{x:Bind ViewModel.UpdateCommandsCommand}"
-                            HorizontalAlignment="Stretch">
-                        <StackPanel Orientation="Horizontal">
-                            <FontIcon Glyph="&#xE72C;"/>
-                            <TextBlock Margin="8,0,0,0" Text="Обновить команды"/>
-                        </StackPanel>
-                    </Button>
-                </Grid>
+                <Button Grid.Row="2"
+                                    Margin="8"
+                                    Style="{StaticResource AccentButtonStyle}"
+                                    Command="{x:Bind ViewModel.UpdateCommandsCommand}"
+                                    HorizontalAlignment="Stretch">
+                    <StackPanel Orientation="Horizontal">
+                        <FontIcon Glyph="&#xE72C;"/>
+                        <TextBlock Margin="8,0,0,0" Text="Обновить команды"/>
+                    </StackPanel>
+                </Button>
             </Grid>
+
         </Grid>
     </Grid>
 </Page>

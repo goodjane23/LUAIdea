@@ -212,6 +212,8 @@ public partial class MainPageViewModel : ObservableObject, IRecipient<SelectRece
     [RelayCommand]
     private async Task AddToFavorite()
     {
+        if (SelectedTab is null) return;
+
         if (SelectedTab.IsSaved)
         {
             await filesService.AddToFavorite(SelectedTab.Path);
