@@ -105,7 +105,7 @@
         <Grid x:Name="tabViewGrid" Grid.Row="1">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="10" x:Name="Gripper"/>
+                <ColumnDefinition Width="5" x:Name="Gripper"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
             
