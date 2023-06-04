@@ -189,19 +189,20 @@ public sealed partial class MainPage : Page
         };
     }
 
-    private async Task<bool> OnSaveRequested(LuaFile file)
+    private async Task<bool> OnSaveRequested(LuaFile file, bool need)
     {
         var savePicker = new FileSavePicker();
-
-        if (!string.IsNullOrEmpty(file.Path))
+        if (!need)
         {
-            await File.WriteAllTextAsync(file.Path, file.Content);
+            if (!string.IsNullOrEmpty(file.Path))
+            {
+                await File.WriteAllTextAsync(file.Path, file.Content);
 
-            file.IsSaved = true;
+                file.IsSaved = true;
 
-            return true;
+                return true;
+            }
         }
-
         var hWnd = WindowNative.GetWindowHandle(App.MainWindow);
         InitializeWithWindow.Initialize(savePicker, hWnd);
 

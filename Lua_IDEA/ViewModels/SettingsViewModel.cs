@@ -18,6 +18,12 @@ public partial class SettingsViewModel : ObservableRecipient
     [ObservableProperty]
     private string versionDescription;
 
+    [ObservableProperty]
+    private bool saveMacroInPmtx;
+
+    [ObservableProperty]
+    private bool saveBackInPmtx;
+
     public ICommand SwitchThemeCommand { get; }
 
     private readonly IThemeSelectorService themeSelectorService;

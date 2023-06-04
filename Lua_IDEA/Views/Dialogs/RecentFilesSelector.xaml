@@ -6,6 +6,7 @@
     xmlns:local="using:Lua_IDEA.Views.Dialogs"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+     xmlns:entities="using:Lua_IDEA.Data.Entities"
     Style="{StaticResource DefaultContentDialogStyle}"
     Opened="ContentDialog_Opened"
     PrimaryButtonCommand="{x:Bind viewModel.SelectFileCommand}"
@@ -15,6 +16,12 @@
         <ProgressRing IsActive="{x:Bind viewModel.GetRecentPathsCommand.IsRunning, Mode=OneWay}"/>
 
         <ListView ItemsSource="{x:Bind viewModel.RecentPaths}"
-                  SelectedItem="{x:Bind viewModel.SelectedPath, Mode=TwoWay}"/>
+                  SelectedItem="{x:Bind viewModel.SelectedPath, Mode=TwoWay}">
+            <ListView.ItemTemplate>
+                <DataTemplate x:DataType="entities:RecentFile">
+                    <TextBlock Text="{x:Bind Path}"/>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
     </Grid>
 </ContentDialog>

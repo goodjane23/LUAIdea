@@ -5,7 +5,9 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:contols="using:CommunityToolkit.WinUI.UI.Controls"
-    xmlns:animatedvisuals="using:Microsoft.UI.Xaml.Controls.AnimatedVisuals" xmlns:models="using:Lua_IDEA.Models" xmlns:entities="using:Lua_IDEA.Data.Entities"
+    xmlns:animatedvisuals="using:Microsoft.UI.Xaml.Controls.AnimatedVisuals" 
+    xmlns:models="using:Lua_IDEA.Models" 
+    xmlns:entities="using:Lua_IDEA.Data.Entities"
     Loaded="OnLoaded"
     Unloaded="OnUnloaded"
     mc:Ignorable="d">
@@ -183,7 +185,24 @@
                 </Grid.RowDefinitions>
 
                 <Grid Grid.Row="0">
-                    <Pivot Title="Список команд">
+                    <Pivot>
+                        <Pivot.Title>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <Button Grid.Column="0"
+                                            Command="{x:Bind ViewModel.CloseMacroPanelCommand}">
+                                    <FontIcon Glyph="&#xE8BB;" FontSize="8" />
+                                </Button>
+                                <TextBlock 
+                                        Grid.Column="1"
+                                        Margin="12,0,0,0"
+                                        Text="Список команд"/>
+
+                            </Grid>
+                        </Pivot.Title>
                         <PivotItem Header="Макросы">
                             <TreeView Margin="0,6,0,0"
                                           CanReorderItems="False"

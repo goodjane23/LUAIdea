@@ -10,14 +10,13 @@ using WinRT.Interop;
 using CommunityToolkit.Mvvm.Messaging;
 using Lua_IDEA.Messages;
 using Lua_IDEA.Contracts.Services;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace Lua_IDEA.ViewModels;
 
 public partial class MainPageViewModel : ObservableObject, IRecipient<SelectRecentFileMessage>, IRecipient<SelectFavoriteFileMessage>
 {
     public event Action CommandPasted;
-    public event Func<LuaFile, Task<bool>> SaveRequested;
+    public event Func<LuaFile, bool, Task<bool>> SaveRequested;
     public event Func<LuaFile, Task<CloseRequestResult>> CloseRequested;
 
     [ObservableProperty]
@@ -70,7 +69,7 @@ public partial class MainPageViewModel : ObservableObject, IRecipient<SelectRece
         if (SelectedTab is null)
             return;
 
-        await SaveRequested.Invoke(SelectedTab);
+        await SaveRequested.Invoke(SelectedTab, true);
         await filesService.AddToRecent(SelectedTab.Path);
     }
 
@@ -80,9 +79,7 @@ public partial class MainPageViewModel : ObservableObject, IRecipient<SelectRece
         foreach (var tab in Tabs)
         {
             if (!tab.IsSaved)
-            {
                 await SaveFile(tab);
-            }
         }
     }
 
@@ -94,7 +91,7 @@ public partial class MainPageViewModel : ObservableObject, IRecipient<SelectRece
         if (luafile is null || luafile.IsSaved)
             return;
 
-        await SaveRequested.Invoke(luafile);
+        await SaveRequested.Invoke(luafile, false);
         await filesService.AddToRecent(SelectedTab.Path);
     }
 
@@ -137,7 +134,7 @@ public partial class MainPageViewModel : ObservableObject, IRecipient<SelectRece
 
         if (result == CloseRequestResult.Confirmed && !file.IsSaved)
         {
-            var saveResult = await SaveRequested.Invoke(file);
+            var saveResult = await SaveRequested.Invoke(file, false);
 
             if (saveResult)
                 Tabs.Remove(file);
@@ -221,7 +218,7 @@ public partial class MainPageViewModel : ObservableObject, IRecipient<SelectRece
             return;
         }
 
-        var saveResult = await SaveRequested?.Invoke(SelectedTab)!;
+        var saveResult = await SaveRequested?.Invoke(SelectedTab, false)!;
 
         if (saveResult)
         {
@@ -260,6 +257,12 @@ public partial class MainPageViewModel : ObservableObject, IRecipient<SelectRece
         };
 
         Tabs.Add(luaFile);
+    }
+
+    [RelayCommand]
+    private void CloseMacroPanel()
+    {
+        IsMacrosPanelVisible = false;
     }
 
     [RelayCommand]

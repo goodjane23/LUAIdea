@@ -17,7 +17,7 @@ public class ParsingMacroAPIService
         IDbContextFactory<AppDbContext> contextFactory,
         NetworkChecker networkChecker)
     {
-        this.contextFactory = contextFactory;
+         this.contextFactory = contextFactory;
         this.networkChecker = networkChecker;
 
         commandCategories = new Dictionary<string, string>()

@@ -5,14 +5,15 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:helpers="using:Lua_IDEA.Helpers"
-    xmlns:xaml="using:Microsoft.UI.Xaml"
+    xmlns:xaml="using:Microsoft.UI.Xaml"    
     mc:Ignorable="d">
 
     <Page.Resources>
         <helpers:EnumToBooleanConverter x:Key="EnumToBooleanConverter" />
     </Page.Resources>
 
-    <Grid Margin="12">
+    <Grid Margin="12"
+          CanBeScrollAnchor="True">
         <Grid.RowDefinitions>
             <RowDefinition Height="48" />
             <RowDefinition Height="48" />
@@ -87,6 +88,18 @@
                 </StackPanel>
             </StackPanel>
 
+            <StackPanel Margin="{StaticResource SmallTopBottomMargin}">
+                <TextBlock Text="Сохранение" Style="{ThemeResource SubtitleTextBlockStyle}" />
+                
+                <CheckBox 
+                    IsChecked="{x:Bind ViewModel.SaveMacroInPmtx}"
+                    Content="Сохранять файлы макросов сразу в Pumotix" />
+
+                <CheckBox 
+                    IsChecked="{x:Bind ViewModel.SaveBackInPmtx}"
+                    Content="Сохранять файлы фоновых операций сразу в Pumotix" />
+            </StackPanel>
+
             <TextBlock x:Uid="Settings_About" Style="{ThemeResource SubtitleTextBlockStyle}" />
 
             <StackPanel Margin="{StaticResource XSmallTopMargin}">
@@ -97,6 +110,7 @@
                            Style="{ThemeResource BodyTextBlockStyle}" />
                 <HyperlinkButton x:Uid="SettingsPage_PrivacyTermsLink" Margin="{StaticResource SettingsPageHyperlinkButtonMargin}" />
             </StackPanel>
+
         </StackPanel>
     </Grid>
 </Page>
