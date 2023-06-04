@@ -52,7 +52,7 @@ public partial class App : Application
                 services.AddSingleton<IPageService, PageService>();
                 services.AddSingleton<INavigationService, NavigationService>();
                 services.AddSingleton<IFileService, FileService>();
-                services.AddSingleton<CommandService>();
+                services.AddSingleton<ParsingMacroAPIService>();
                 services.AddSingleton<NetworkChecker>();
                 services.AddSingleton<SyntaxChecker>();
                 services.AddSingleton<FilesService>();

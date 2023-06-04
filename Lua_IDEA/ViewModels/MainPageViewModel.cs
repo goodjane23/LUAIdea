@@ -37,12 +37,12 @@ public partial class MainPageViewModel : ObservableObject, IRecipient<SelectRece
 
     public INavigationService NavigationService { get; }
 
-    private readonly CommandService commandService;
+    private readonly ParsingMacroAPIService commandService;
     private readonly SyntaxChecker syntaxChecker;
     private readonly FilesService filesService;
 
     public MainPageViewModel(
-        CommandService commandService,
+        ParsingMacroAPIService commandService,
         SyntaxChecker syntaxChecker,
         FilesService filesService,
         INavigationService navigationService)

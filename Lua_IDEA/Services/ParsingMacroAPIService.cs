@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Lua_IDEA.Services;
 
-public class CommandService
+public class ParsingMacroAPIService
 {    
     private const string BaseUrl = "http://doc.pumotix.ru/pages/viewpage.action?pageId=";
 
@@ -13,7 +13,7 @@ public class CommandService
     private readonly IDbContextFactory<AppDbContext> contextFactory;
     private readonly NetworkChecker networkChecker;
 
-    public CommandService(
+    public ParsingMacroAPIService(
         IDbContextFactory<AppDbContext> contextFactory,
         NetworkChecker networkChecker)
     {
