@@ -106,7 +106,7 @@
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="5" x:Name="Gripper"/>
-                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
             
             <!-- Редактор -->
@@ -168,11 +168,11 @@
                                   ResizeBehavior="PreviousAndNext"
                                   ResizeDirection="Auto"                                 
                                   Background="SeaGreen" 
-                                  Width="10"
-                                  Visibility="{x:Bind ViewModel.IsMacrosPanelVisible, Mode=OneWay}">
-               
-            </contols:GridSplitter>
+                                  Width="5"
+                                  Visibility="{x:Bind ViewModel.IsMacrosPanelVisible, Mode=OneWay}"/>
+
             <Grid Grid.Column="2"
+                  MaxWidth="400"
                   Visibility="{x:Bind ViewModel.IsMacrosPanelVisible, Mode=OneWay}">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*"/>
