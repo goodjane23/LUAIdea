@@ -171,8 +171,7 @@
                                   Width="5"
                                   Visibility="{x:Bind ViewModel.IsMacrosPanelVisible, Mode=OneWay}"/>
 
-            <Grid Grid.Column="2"
-                  MaxWidth="400"
+            <Grid Grid.Column="2"                  
                   Visibility="{x:Bind ViewModel.IsMacrosPanelVisible, Mode=OneWay}">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*"/>
