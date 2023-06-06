@@ -263,4 +263,14 @@ public sealed partial class MainPage : Page
     {
         this.UpdateLayout();
     }
+
+    private void MacroListView_DoubleTapped(object sender, DoubleTappedRoutedEventArgs e)
+    {
+        ViewModel.OpenSelectedMacroCommand.Execute(null);
+    }
+
+    private void BOListView_DoubleTapped(object sender, DoubleTappedRoutedEventArgs e)
+    {
+        ViewModel.OpenSelectedBOpCommand.Execute(null);
+    }
 }

@@ -31,6 +31,12 @@ public partial class MainPageViewModel : ObservableObject, IRecipient<SelectRece
     [ObservableProperty]
     private Command selectedCommand;
 
+    [ObservableProperty]
+    private LuaFile selectedInnerMacro;
+
+    [ObservableProperty]
+    private LuaFile selectedInnerBackgroundOp;
+
     public ObservableCollection<LuaFile> Tabs { get; } = new();
     public ObservableCollection<CommandCategory> Macros { get; } = new();
     public ObservableCollection<CommandCategory> BackgroundOperations { get; } = new();
@@ -226,7 +232,7 @@ public partial class MainPageViewModel : ObservableObject, IRecipient<SelectRece
 
         openPicker.FileTypeFilter.Add(".pm");
         openPicker.FileTypeFilter.Add(".txt");
-        openPicker.FileTypeFilter.Add(".bo");
+        openPicker.FileTypeFilter.Add(".bm");
 
         var storageFile = await openPicker.PickSingleFileAsync();
 
@@ -304,6 +310,11 @@ public partial class MainPageViewModel : ObservableObject, IRecipient<SelectRece
     }
 
     [RelayCommand]
+    private void CloseInnerPanel()
+    {
+        IsInnerMacrosPanelVisible = false;
+    }
+    [RelayCommand]
     private void ShowTestMacro(string macroName)
     {
         var content = Properties.Resources.ResourceManager.GetString(macroName);
@@ -324,4 +335,18 @@ public partial class MainPageViewModel : ObservableObject, IRecipient<SelectRece
         Tabs.Add(testMacro);
         SelectedTab = Tabs.Last();
     }
+
+    [RelayCommand]
+    private void OpenSelectedMacro()
+    {
+        Tabs.Add(SelectedInnerMacro);
+    }
+
+    [RelayCommand]
+    private void OpenSelectedBOp()
+    {
+        Tabs.Add(SelectedInnerBackgroundOp);
+    }
+
+
 }
