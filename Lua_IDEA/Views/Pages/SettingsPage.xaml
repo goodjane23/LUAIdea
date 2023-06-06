@@ -77,27 +77,21 @@
                 <TextBlock Text="Проверка синтаксиса" />
                 
                 <StackPanel Margin="{StaticResource XSmallTopMargin}">
-                    <RadioButton FontSize="15"
-                                 GroupName="Syntax"
-                                 IsChecked="True"
-                                 Content="Включено"/>
-
-                    <RadioButton FontSize="15"
-                                 GroupName="Syntax"
-                                 Content="Выключено"/>
+                    <CheckBox FontSize="15"
+                              Content="Включено"
+                              Command="{x:Bind ViewModel.SwitchSyntaxCheckCommand}"
+                              IsChecked="{x:Bind ViewModel.IsSyntaxCheckEnabled, Mode=TwoWay}"/>
                 </StackPanel>
             </StackPanel>
-
+            
             <StackPanel Margin="{StaticResource SmallTopBottomMargin}">
-                <TextBlock Text="Сохранение" Style="{ThemeResource SubtitleTextBlockStyle}" />
+                <TextBlock Text="Сохранение" />
                 
-                <CheckBox 
-                    IsChecked="{x:Bind ViewModel.SaveMacroInPmtx}"
-                    Content="Сохранять файлы макросов сразу в Pumotix" />
+                <StackPanel Margin="{StaticResource XSmallTopMargin}">
+                    <CheckBox Content="Сохранять файлы макросов сразу в Pumotix" />
 
-                <CheckBox 
-                    IsChecked="{x:Bind ViewModel.SaveBackInPmtx}"
-                    Content="Сохранять файлы фоновых операций сразу в Pumotix" />
+                    <CheckBox Content="Сохранять файлы фоновых операций сразу в Pumotix" />
+                </StackPanel>
             </StackPanel>
 
             <TextBlock x:Uid="Settings_About" Style="{ThemeResource SubtitleTextBlockStyle}" />
@@ -108,7 +102,9 @@
                 <TextBlock x:Uid="Settings_AboutDescription"
                            Margin="{StaticResource XSmallTopMargin}"
                            Style="{ThemeResource BodyTextBlockStyle}" />
-                <HyperlinkButton x:Uid="SettingsPage_PrivacyTermsLink" Margin="{StaticResource SettingsPageHyperlinkButtonMargin}" />
+                
+                <HyperlinkButton x:Uid="SettingsPage_PrivacyTermsLink"
+                                 Margin="{StaticResource SettingsPageHyperlinkButtonMargin}" />
             </StackPanel>
 
         </StackPanel>

@@ -103,7 +103,7 @@ public partial class MainPageViewModel : ObservableObject, IRecipient<SelectRece
             Name = "M",
             Path = "",
             Content = "function M() \r\n\r\n end",
-            IsSaved = false,
+            IsSaved = true,
             IsFavorite = false,
         };
 
@@ -263,6 +263,11 @@ public partial class MainPageViewModel : ObservableObject, IRecipient<SelectRece
     private void CloseMacroPanel()
     {
         IsMacrosPanelVisible = false;
+
+        if (syntaxChecker.IsSyntaxCheckEnabled)
+        {
+            var result = syntaxChecker.CheckSyntax(SelectedTab.Content);
+        }
     }
 
     [RelayCommand]

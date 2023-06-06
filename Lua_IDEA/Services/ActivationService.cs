@@ -1,6 +1,5 @@
 ﻿using Lua_IDEA.Activation;
 using Lua_IDEA.Contracts.Services;
-using Lua_IDEA.Views;
 using Lua_IDEA.Views.Pages;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -12,16 +11,20 @@ public class ActivationService : IActivationService
     private readonly ActivationHandler<LaunchActivatedEventArgs> defaultHandler;
     private readonly IEnumerable<IActivationHandler> activationHandlers;
     private readonly IThemeSelectorService themeSelectorService;
+    private readonly SyntaxChecker syntaxChecker;
+    
     private UIElement? shell = null;
 
     public ActivationService(
         ActivationHandler<LaunchActivatedEventArgs> defaultHandler,
         IEnumerable<IActivationHandler> activationHandlers,
-        IThemeSelectorService themeSelectorService)
+        IThemeSelectorService themeSelectorService,
+        SyntaxChecker syntaxChecker)
     {
         this.defaultHandler = defaultHandler;
         this.activationHandlers = activationHandlers;
         this.themeSelectorService = themeSelectorService;
+        this.syntaxChecker = syntaxChecker;
     }
 
     public async Task ActivateAsync(object activationArgs)
@@ -55,6 +58,7 @@ public class ActivationService : IActivationService
     private async Task InitializeAsync()
     {
         await themeSelectorService.InitializeAsync().ConfigureAwait(false);
+        await syntaxChecker.InitializeAsync().ConfigureAwait(false);
     }
 
     private async Task StartupAsync()

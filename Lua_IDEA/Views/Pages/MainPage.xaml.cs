@@ -49,19 +49,25 @@ public sealed partial class MainPage : Page
 
     private void OnLoaded(object sender, RoutedEventArgs e)
     {
+        ViewModel.UpdateCommandsCommand.Execute(null);
+
         TitleBarHelper.UpdateTitleBar(themeSelectorService.Theme);
 
         KeyboardAccelerators.Add(BuildKeyboardAccelerator(VirtualKey.Left, VirtualKeyModifiers.Menu));
         KeyboardAccelerators.Add(BuildKeyboardAccelerator(VirtualKey.GoBack));
-        
-        ShellMenuBarSettingsButton.AddHandler(UIElement.PointerPressedEvent, new PointerEventHandler(ShellMenuBarSettingsButton_PointerPressed), true);
-        ShellMenuBarSettingsButton.AddHandler(UIElement.PointerReleasedEvent, new PointerEventHandler(ShellMenuBarSettingsButton_PointerReleased), true);
+
+        ShellMenuBarSettingsButton.AddHandler(UIElement.PointerPressedEvent,
+            new PointerEventHandler(ShellMenuBarSettingsButton_PointerPressed), true);
+        ShellMenuBarSettingsButton.AddHandler(UIElement.PointerReleasedEvent,
+            new PointerEventHandler(ShellMenuBarSettingsButton_PointerReleased), true);
     }
 
     private void OnUnloaded(object sender, RoutedEventArgs e)
     {
-        ShellMenuBarSettingsButton.RemoveHandler(UIElement.PointerPressedEvent, (PointerEventHandler)ShellMenuBarSettingsButton_PointerPressed);
-        ShellMenuBarSettingsButton.RemoveHandler(UIElement.PointerReleasedEvent, (PointerEventHandler)ShellMenuBarSettingsButton_PointerReleased);
+        ShellMenuBarSettingsButton.RemoveHandler(UIElement.PointerPressedEvent,
+            (PointerEventHandler)ShellMenuBarSettingsButton_PointerPressed);
+        ShellMenuBarSettingsButton.RemoveHandler(UIElement.PointerReleasedEvent,
+            (PointerEventHandler)ShellMenuBarSettingsButton_PointerReleased);
 
         ViewModel.CommandPasted -= OnCommandPasted;
         ViewModel.SaveRequested -= OnSaveRequested;
@@ -82,7 +88,8 @@ public sealed partial class MainPage : Page
         return keyboardAccelerator;
     }
 
-    private static void OnKeyboardAcceleratorInvoked(KeyboardAccelerator sender, KeyboardAcceleratorInvokedEventArgs args)
+    private static void OnKeyboardAcceleratorInvoked(KeyboardAccelerator sender,
+        KeyboardAcceleratorInvokedEventArgs args)
     {
         var navigationService = App.GetService<INavigationService>();
         var result = navigationService.GoBack();
@@ -140,7 +147,7 @@ public sealed partial class MainPage : Page
     {
         if (sender is not RichEditBox textEditor)
             return;
-        
+
         textEditor.TextDocument.GetText(TextGetOptions.UseObjectText, out var text);
 
         ViewModel.SelectedTab.Content = text;
@@ -189,34 +196,32 @@ public sealed partial class MainPage : Page
         };
     }
 
-    private async Task<bool> OnSaveRequested(LuaFile file, bool need)
+    private async Task<bool> OnSaveRequested(LuaFile file, bool saveAs)
     {
         var savePicker = new FileSavePicker();
-        if (!need)
+
+        if (!string.IsNullOrEmpty(file.Path) && !saveAs)
         {
-            if (!string.IsNullOrEmpty(file.Path))
-            {
-                await File.WriteAllTextAsync(file.Path, file.Content);
+            await File.WriteAllTextAsync(file.Path, file.Content);
 
-                file.IsSaved = true;
+            file.IsSaved = true;
 
-                return true;
-            }
+            return true;
         }
+
         var hWnd = WindowNative.GetWindowHandle(App.MainWindow);
         InitializeWithWindow.Initialize(savePicker, hWnd);
 
         savePicker.SuggestedStartLocation = PickerLocationId.DocumentsLibrary;
         savePicker.FileTypeChoices.Add("Macro File", new List<string>() { ".pm" });
         savePicker.FileTypeChoices.Add("Background Operation", new List<string>() { ".bo" });
-        savePicker.FileTypeChoices.Add("Text File", new List<string>() { ".txt" });
         savePicker.SuggestedFileName = file.Name;
 
         var storageFile = await savePicker.PickSaveFileAsync();
 
         if (storageFile is null)
             return false;
-
+        
         CachedFileManager.DeferUpdates(storageFile);
 
         await using var stream = await storageFile.OpenStreamForWriteAsync();

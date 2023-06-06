@@ -62,6 +62,10 @@
     <Folder Include="Views\Windows\" />
     <Folder Include="Views\Pages\" />
   </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Strings\en-us\Resources.resw" />
+  </ItemGroup>
   
   <PropertyGroup Condition="'$(DisableHasPackageAndPublishMenuAddedByProject)'!='true' and '$(EnableMsixTooling)'=='true'">
     <HasPackageAndPublishMenu>true</HasPackageAndPublishMenu>

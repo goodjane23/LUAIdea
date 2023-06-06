@@ -7,6 +7,7 @@ using Lua_IDEA.Helpers;
 using Lua_IDEA.Helpers.Extensions;
 using Microsoft.UI.Xaml;
 using Windows.ApplicationModel;
+using Lua_IDEA.Services;
 
 namespace Lua_IDEA.ViewModels;
 
@@ -14,6 +15,9 @@ public partial class SettingsViewModel : ObservableRecipient
 {
     [ObservableProperty]
     private ElementTheme elementTheme;
+
+    [ObservableProperty]
+    private bool isSyntaxCheckEnabled;
 
     [ObservableProperty]
     private string versionDescription;
@@ -24,35 +28,44 @@ public partial class SettingsViewModel : ObservableRecipient
     [ObservableProperty]
     private bool saveBackInPmtx;
 
-    public ICommand SwitchThemeCommand { get; }
-
     private readonly IThemeSelectorService themeSelectorService;
     private readonly INavigationService navigationService;
+    private readonly SyntaxChecker syntaxChecker;
 
     public SettingsViewModel(
         IThemeSelectorService themeSelectorService,
-        INavigationService navigationService)
+        INavigationService navigationService,
+        SyntaxChecker syntaxChecker)
     {
         this.themeSelectorService = themeSelectorService;
         this.navigationService = navigationService;
+        this.syntaxChecker = syntaxChecker;
 
-        elementTheme = themeSelectorService.Theme;
-        versionDescription = GetVersionDescription();
-
-        SwitchThemeCommand = new RelayCommand<ElementTheme>(async (param) =>
-        {
-            if (ElementTheme != param)
-            {
-                ElementTheme = param;
-                await this.themeSelectorService.SetThemeAsync(param);
-            }
-        });
+        ElementTheme = themeSelectorService.Theme;
+        IsSyntaxCheckEnabled = syntaxChecker.IsSyntaxCheckEnabled;
+        VersionDescription = GetVersionDescription();
     }
 
     [RelayCommand]
     private void GoBack()
     {
         navigationService.GoBack();
+    }
+
+    [RelayCommand]
+    private async Task SwitchTheme(ElementTheme theme)
+    {
+        if (ElementTheme != theme)
+        {
+            ElementTheme = theme;
+            await themeSelectorService.SetThemeAsync(theme);
+        }
+    }
+
+    [RelayCommand]
+    private async Task SwitchSyntaxCheck()
+    {
+        await syntaxChecker.SetSyntaxChecking(IsSyntaxCheckEnabled);
     }
 
     private static string GetVersionDescription()
