@@ -26,7 +26,11 @@ public partial class MainPageViewModel : ObservableObject, IRecipient<SelectRece
     private bool isMacrosPanelVisible;
 
     [ObservableProperty]
+    private bool isInnerMacrosPanelVisible;
+
+    [ObservableProperty]
     private Command selectedCommand;
+   
 
     public ObservableCollection<LuaFile> Tabs { get; } = new();
     public ObservableCollection<string> FavoritesMacros { get; set; } = new();
@@ -34,21 +38,27 @@ public partial class MainPageViewModel : ObservableObject, IRecipient<SelectRece
     public ObservableCollection<CommandCategory> Macros { get; } = new();
     public ObservableCollection<CommandCategory> BackgroundOperations { get; } = new();
 
+    public ObservableCollection<LuaFile> InnerMacros { get; set; } = new();
+    public ObservableCollection<LuaFile> InnerBO { get; set; } = new();
+
     public INavigationService NavigationService { get; }
 
     private readonly ParsingMacroAPIService commandService;
     private readonly SyntaxChecker syntaxChecker;
     private readonly FilesService filesService;
+    private readonly ExistMacroService existMacroService;
 
     public MainPageViewModel(
         ParsingMacroAPIService commandService,
         SyntaxChecker syntaxChecker,
         FilesService filesService,
+        ExistMacroService existMacroService,
         INavigationService navigationService)
     {
         this.commandService = commandService;
         this.syntaxChecker = syntaxChecker;
         this.filesService = filesService;
+        this.existMacroService = existMacroService;
 
         NavigationService = navigationService;
 
@@ -172,6 +182,18 @@ public partial class MainPageViewModel : ObservableObject, IRecipient<SelectRece
 
         foreach (var command in result.Where(x => !x.IsMacro))
             BackgroundOperations.Add(command);
+    }
+
+    private async Task GetInnerMacros()
+    {
+        var existMacro = await existMacroService.GetInnerMacros();
+        var existBackground = await existMacroService.GetInnerBackgroudOperations();
+
+        foreach (var macro in existMacro)
+            InnerMacros.Add(macro);
+
+        foreach (var backgroundOp in existBackground)
+            InnerBO.Add(backgroundOp);
     }
 
     [RelayCommand]

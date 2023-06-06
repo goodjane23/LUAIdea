@@ -5,26 +5,24 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Windows.Storage;
 
 namespace Lua_IDEA.Services;
 
 public class ExistMacroService
 {
-    private List<LuaFile> totalFiles = new();
+    private readonly string appDataPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+    private readonly string path;
 
     string error;
-    public List<LuaFile> ExistMacros { get; set; } = new();
-    public List<LuaFile> ExistBackground { get; set; } = new();
 
     public ExistMacroService()
     {
-        var appDataPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-        var pm = $@"{appDataPath}\Purelogic\Pumotix\Server\Macros\";
-        FindDirectory(pm);
+        path = $@"{appDataPath}\Purelogic\Pumotix\Server\Macros\";
     }
 
     private async Task FindDirectory(string directory)
-    {
+    {        
         try
         {
             //mainfolder - макросы основные лежат тут и пользовательские то же тут.
@@ -36,11 +34,12 @@ public class ExistMacroService
 
             folders.AddRange(rootDirectoryInfo.GetDirectories().ToList());
             folders.Add(rootDirectoryInfo);
+
             foreach (var folder in folders)
             {
                 await GetFiles(folder);
             }
-            await SortingMacro();
+           
         }
         catch (Exception)
         {
@@ -78,13 +77,17 @@ public class ExistMacroService
                 Errors = error,
             };
 
-            totalFiles.Add(luaFile);
+
         }
     }
 
-    private async Task SortingMacro()
+    public async Task<IEnumerable<LuaFile>> GetInnerMacros()
     {
-        ExistMacros = totalFiles.FindAll(x => x.Name.Contains(".pm"));
-        ExistBackground = totalFiles.FindAll(x => x.Name.Contains(".bm"));
+        return null;
+    }
+
+    public async Task<IEnumerable<LuaFile>> GetInnerBackgroudOperations()
+    {
+        return null;
     }
 }

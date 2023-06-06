@@ -56,6 +56,7 @@ public partial class App : Application
                 services.AddSingleton<NetworkChecker>();
                 services.AddSingleton<SyntaxChecker>();
                 services.AddSingleton<FilesService>();
+                services.AddSingleton<ExistMacroService>();
 
                 // Views
                 services.AddTransient<SettingsPage>();

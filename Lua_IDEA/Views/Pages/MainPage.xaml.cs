@@ -255,4 +255,9 @@ public sealed partial class MainPage : Page
     {
         AnimatedIcon.SetState((UIElement)sender, "Normal");
     }
+
+    private void Button_Click(object sender, RoutedEventArgs e)
+    {
+        this.UpdateLayout();
+    }
 }

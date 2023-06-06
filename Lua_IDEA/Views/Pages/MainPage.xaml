@@ -5,8 +5,8 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:contols="using:CommunityToolkit.WinUI.UI.Controls"
+    xmlns:models="using:Lua_IDEA.Models"
     xmlns:animatedvisuals="using:Microsoft.UI.Xaml.Controls.AnimatedVisuals" 
-    xmlns:models="using:Lua_IDEA.Models" 
     xmlns:entities="using:Lua_IDEA.Data.Entities"
     Loaded="OnLoaded"
     Unloaded="OnUnloaded"
@@ -63,7 +63,7 @@
                 </MenuBarItem>
 
                 <MenuBarItem Title="Показать">
-                    <ToggleMenuFlyoutItem Text="Макросы Pumotix"/>
+                    <ToggleMenuFlyoutItem Text="Макросы Pumotix" IsChecked="{x:Bind ViewModel.IsInnerMacrosPanelVisible, Mode=TwoWay}"/>
                     <ToggleMenuFlyoutItem Text="Панель макросов" IsChecked="{x:Bind ViewModel.IsMacrosPanelVisible, Mode=TwoWay}"/>
                     <MenuFlyoutSeparator/>
                     <MenuFlyoutItem Text="Недавние" Click="ShowRecentDialog"/>
@@ -107,8 +107,8 @@
 
         <Grid x:Name="tabViewGrid" Grid.Row="1">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*" MinWidth="200"/>
-                <ColumnDefinition Width="5"/>
+                <ColumnDefinition Width="*" MinWidth="600"/>
+                <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
 
@@ -166,16 +166,42 @@
                 </TabView.TabItemTemplate>
             </TabView>
 
-            <!-- Панель со справкой -->
-            <contols:GridSplitter Grid.Column="1" 
-                                  ResizeBehavior="PreviousAndNext"
-                                  ResizeDirection="Auto"                                 
-                                  Background="{StaticResource SystemAccentColor}" 
-                                  Width="5"
-                                  Visibility="{x:Bind ViewModel.IsMacrosPanelVisible, Mode=OneWay}"/>
+            <!-- встроенные макросы -->
+            <StackPanel Grid.Column="1"
+                  Visibility="{x:Bind ViewModel.IsInnerMacrosPanelVisible, Mode=OneWay}" >
+                <Pivot>
+                    <Pivot.Title>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
 
+                            <Button Grid.Column="0"
+                                        Command="{x:Bind ViewModel.CloseMacroPanelCommand}"
+                                        Click="Button_Click">
+                                <FontIcon Glyph="&#xE8BB;" FontSize="8" />
+                            </Button>
+
+                            <TextBlock Grid.Column="1"
+                                           Margin="12,0,0,0"
+                                           Text="PUMOTIX"/>
+                        </Grid>
+                    </Pivot.Title>
+                    <PivotItem Header="Макросы">
+                        <!--<ListView
+                            Margin="0,6,0,0"/>-->
+                    </PivotItem>
+                    <PivotItem Header="Фоновые операции">
+                        <!--<ListView
+                            Margin="0,6,0,0"/>-->
+                    </PivotItem>
+                </Pivot>
+            </StackPanel>
+
+            <!-- Панель со справкой -->
             <Grid Grid.Column="2"
-                  Visibility="{x:Bind ViewModel.IsMacrosPanelVisible, Mode=OneWay}">
+                  Visibility="{x:Bind ViewModel.IsMacrosPanelVisible, Mode=OneWay}" >
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*"/>
                     <RowDefinition Height="Auto"/>
@@ -192,7 +218,8 @@
                                 </Grid.ColumnDefinitions>
                                 
                                 <Button Grid.Column="0"
-                                        Command="{x:Bind ViewModel.CloseMacroPanelCommand}">
+                                        Command="{x:Bind ViewModel.CloseMacroPanelCommand}"
+                                        Click="Button_Click">
                                     <FontIcon Glyph="&#xE8BB;" FontSize="8" />
                                 </Button>
                                 
