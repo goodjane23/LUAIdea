@@ -167,7 +167,7 @@
 
             <!-- встроенные макросы -->
             <StackPanel Grid.Column="1"
-                  Visibility="{x:Bind ViewModel.IsInnerMacrosPanelVisible, Mode=OneWay}" >
+                        Visibility="{x:Bind ViewModel.IsInnerMacrosPanelVisible, Mode=OneWay}" >
                 <Pivot>
                     <Pivot.Title>
                         <Grid>
@@ -177,23 +177,37 @@
                             </Grid.ColumnDefinitions>
 
                             <Button Grid.Column="0"
-                                        Command="{x:Bind ViewModel.CloseMacroPanelCommand}"
-                                        Click="Button_Click">
+                                    Command="{x:Bind ViewModel.CloseMacroPanelCommand}"
+                                    Click="Button_Click">
                                 <FontIcon Glyph="&#xE8BB;" FontSize="8" />
                             </Button>
 
                             <TextBlock Grid.Column="1"
-                                           Margin="12,0,0,0"
-                                           Text="PUMOTIX"/>
+                                       Margin="12,0,0,0"
+                                       Text="PUMOTIX"/>
                         </Grid>
                     </Pivot.Title>
+                    
                     <PivotItem Header="Макросы">
-                        <!--<ListView
-                            Margin="0,6,0,0"/>-->
+                        <ListView Margin="0,6,0,0"
+                                  ItemsSource="{x:Bind ViewModel.InnerMacros, Mode=OneWay}">
+                            <ListView.ItemTemplate>
+                                <DataTemplate x:DataType="models:LuaFile">
+                                    <TextBlock Text="{x:Bind Name}"/>
+                                </DataTemplate>
+                            </ListView.ItemTemplate>
+                        </ListView>
                     </PivotItem>
+                    
                     <PivotItem Header="Фоновые операции">
-                        <!--<ListView
-                            Margin="0,6,0,0"/>-->
+                        <ListView Margin="0,6,0,0"
+                                  ItemsSource="{x:Bind ViewModel.InnerBO, Mode=OneWay}">
+                            <ListView.ItemTemplate>
+                                <DataTemplate x:DataType="models:LuaFile">
+                                    <TextBlock Text="{x:Bind Name}"/>
+                                </DataTemplate>
+                            </ListView.ItemTemplate>
+                        </ListView>
                     </PivotItem>
                 </Pivot>
             </StackPanel>
@@ -227,6 +241,7 @@
                                            Text="Список команд"/>
                             </Grid>
                         </Pivot.Title>
+                        
                         <PivotItem Header="Макросы">
                             <TreeView Margin="0,6,0,0"
                                       CanReorderItems="False"
@@ -241,6 +256,7 @@
                                 </TreeView.ItemTemplate>
                             </TreeView>
                         </PivotItem>
+                        
                         <PivotItem Header="Фоновые операции">
                             <TreeView Margin="0,6,0,0"
                                       CanReorderItems="False"

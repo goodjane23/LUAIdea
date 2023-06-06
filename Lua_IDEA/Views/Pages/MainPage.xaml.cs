@@ -50,6 +50,7 @@ public sealed partial class MainPage : Page
     private void OnLoaded(object sender, RoutedEventArgs e)
     {
         ViewModel.UpdateCommandsCommand.Execute(null);
+        ViewModel.GetInnerMacrosCommand.Execute(null);
 
         TitleBarHelper.UpdateTitleBar(themeSelectorService.Theme);
 
@@ -58,6 +59,7 @@ public sealed partial class MainPage : Page
 
         ShellMenuBarSettingsButton.AddHandler(UIElement.PointerPressedEvent,
             new PointerEventHandler(ShellMenuBarSettingsButton_PointerPressed), true);
+        
         ShellMenuBarSettingsButton.AddHandler(UIElement.PointerReleasedEvent,
             new PointerEventHandler(ShellMenuBarSettingsButton_PointerReleased), true);
     }
@@ -66,6 +68,7 @@ public sealed partial class MainPage : Page
     {
         ShellMenuBarSettingsButton.RemoveHandler(UIElement.PointerPressedEvent,
             (PointerEventHandler)ShellMenuBarSettingsButton_PointerPressed);
+        
         ShellMenuBarSettingsButton.RemoveHandler(UIElement.PointerReleasedEvent,
             (PointerEventHandler)ShellMenuBarSettingsButton_PointerReleased);
 
