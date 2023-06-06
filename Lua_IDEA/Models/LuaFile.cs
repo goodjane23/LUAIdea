@@ -19,9 +19,6 @@ public partial class LuaFile : ObservableObject
     private bool isSaved;
 
     [ObservableProperty]
-    private bool isFavorite;
-
-    [ObservableProperty]
     private string errors;
 
     public bool IsChangedIconVisible => !IsSaved;

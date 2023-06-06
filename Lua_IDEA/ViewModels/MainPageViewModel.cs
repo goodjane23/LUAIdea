@@ -30,11 +30,8 @@ public partial class MainPageViewModel : ObservableObject, IRecipient<SelectRece
 
     [ObservableProperty]
     private Command selectedCommand;
-   
 
     public ObservableCollection<LuaFile> Tabs { get; } = new();
-    public ObservableCollection<string> FavoritesMacros { get; set; } = new();
-    public ObservableCollection<string> RecentMacros { get; set; } = new();
     public ObservableCollection<CommandCategory> Macros { get; } = new();
     public ObservableCollection<CommandCategory> BackgroundOperations { get; } = new();
 
@@ -114,7 +111,6 @@ public partial class MainPageViewModel : ObservableObject, IRecipient<SelectRece
             Path = "",
             Content = "function M() \r\n\r\n end",
             IsSaved = true,
-            IsFavorite = false,
         };
 
         Tabs.Add(file);
@@ -184,16 +180,37 @@ public partial class MainPageViewModel : ObservableObject, IRecipient<SelectRece
             BackgroundOperations.Add(command);
     }
 
+    [RelayCommand]
     private async Task GetInnerMacros()
     {
         var existMacro = await existMacroService.GetInnerMacros();
-        var existBackground = await existMacroService.GetInnerBackgroudOperations();
+        var existBackground = await existMacroService.GetInnerBackgroundOperations();
 
         foreach (var macro in existMacro)
-            InnerMacros.Add(macro);
+        {
+            var luafile = new LuaFile()
+            {
+                Name = macro.Name,
+                Path = macro.Path,
+                Content = macro.Content,
+                IsSaved = true
+            };
+            
+            InnerMacros.Add(luafile);
+        }
 
         foreach (var backgroundOp in existBackground)
-            InnerBO.Add(backgroundOp);
+        {
+            var luafile = new LuaFile()
+            {
+                Name = backgroundOp.Name,
+                Path = backgroundOp.Path,
+                Content = backgroundOp.Content,
+                IsSaved = true
+            };
+            
+            InnerBO.Add(luafile);
+        }
     }
 
     [RelayCommand]
@@ -213,7 +230,8 @@ public partial class MainPageViewModel : ObservableObject, IRecipient<SelectRece
 
         var storageFile = await openPicker.PickSingleFileAsync();
 
-        if (storageFile is null) return;
+        if (storageFile is null)
+            return;
 
         var fileContent = await FileIO.ReadTextAsync(storageFile);
 
@@ -236,7 +254,6 @@ public partial class MainPageViewModel : ObservableObject, IRecipient<SelectRece
         if (SelectedTab.IsSaved)
         {
             await filesService.AddToFavorite(SelectedTab.Path);
-            SelectedTab.IsFavorite = true;
             return;
         }
 
@@ -245,7 +262,6 @@ public partial class MainPageViewModel : ObservableObject, IRecipient<SelectRece
         if (saveResult)
         {
             await filesService.AddToFavorite(SelectedTab.Path);
-            SelectedTab.IsFavorite = true;
         }
     }
 
@@ -285,11 +301,6 @@ public partial class MainPageViewModel : ObservableObject, IRecipient<SelectRece
     private void CloseMacroPanel()
     {
         IsMacrosPanelVisible = false;
-
-        if (syntaxChecker.IsSyntaxCheckEnabled)
-        {
-            var result = syntaxChecker.CheckSyntax(SelectedTab.Content);
-        }
     }
 
     [RelayCommand]
@@ -307,7 +318,6 @@ public partial class MainPageViewModel : ObservableObject, IRecipient<SelectRece
         {
             Name = macroName,
             Content = content.Replace("\\n", "\n").Replace("\\r", "\r"),
-            IsFavorite = false,
             IsSaved = true,
         };
 
