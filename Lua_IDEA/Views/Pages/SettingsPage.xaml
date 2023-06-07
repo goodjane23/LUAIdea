@@ -12,8 +12,7 @@
         <helpers:EnumToBooleanConverter x:Key="EnumToBooleanConverter" />
     </Page.Resources>
 
-    <Grid Margin="12"
-          CanBeScrollAnchor="True">
+    <Grid Margin="12">
         <Grid.RowDefinitions>
             <RowDefinition Height="48" />
             <RowDefinition Height="48" />
@@ -26,17 +25,20 @@
 
         <TextBlock Grid.Row="1"
                    Margin="36,0,0,0"
-                   x:Uid="Settings_Title"
-                   Style="{StaticResource PageTitleStyle}" />
+                   Text="Настройки"
+                   Style="{StaticResource PageTitleStyle}"/>
 
-        <StackPanel Grid.Row="2" Margin="36" x:Name="ContentArea">
-            <TextBlock x:Uid="Settings_Personalization" Style="{ThemeResource SubtitleTextBlockStyle}" />
+        <StackPanel Grid.Row="2"
+                    x:Name="ContentArea"
+                    Margin="36" >
+            <TextBlock Text="Внешний вид"
+                       Style="{ThemeResource SubtitleTextBlockStyle}" />
 
             <StackPanel Margin="{StaticResource SmallTopBottomMargin}">
-                <TextBlock x:Uid="Settings_Theme" />
+                <TextBlock Text="Тема"/>
 
                 <StackPanel Margin="{StaticResource XSmallTopMargin}">
-                    <RadioButton x:Uid="Settings_Theme_Light"
+                    <RadioButton Content="Светлая"
                                  Command="{x:Bind ViewModel.SwitchThemeCommand}"
                                  IsChecked="{x:Bind ViewModel.ElementTheme, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter=Light, Mode=OneWay}"
                                  FontSize="15"
@@ -47,7 +49,7 @@
                         </RadioButton.CommandParameter>
                     </RadioButton>
 
-                    <RadioButton x:Uid="Settings_Theme_Dark"
+                    <RadioButton Content="Тёмная"
                                  Command="{x:Bind ViewModel.SwitchThemeCommand}"
                                  IsChecked="{x:Bind ViewModel.ElementTheme, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter=Dark, Mode=OneWay}"
                                  FontSize="15"
@@ -58,7 +60,7 @@
                         </RadioButton.CommandParameter>
                     </RadioButton>
 
-                    <RadioButton x:Uid="Settings_Theme_Default"
+                    <RadioButton Content="Системная"
                                  Command="{x:Bind ViewModel.SwitchThemeCommand}"
                                  IsChecked="{x:Bind ViewModel.ElementTheme, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter=Default, Mode=OneWay}"
                                  FontSize="15"
@@ -71,7 +73,8 @@
                 </StackPanel>
             </StackPanel>
 
-            <TextBlock Text="Редактор" Style="{ThemeResource SubtitleTextBlockStyle}" />
+            <TextBlock Text="Редактор"
+                       Style="{ThemeResource SubtitleTextBlockStyle}" />
 
             <StackPanel Margin="{StaticResource SmallTopBottomMargin}">
                 <TextBlock Text="Проверка синтаксиса" />
@@ -85,28 +88,37 @@
             </StackPanel>
             
             <StackPanel Margin="{StaticResource SmallTopBottomMargin}">
-                <TextBlock Text="Сохранение" />
+                <TextBlock Text="Сохранение"/>
                 
                 <StackPanel Margin="{StaticResource XSmallTopMargin}">
-                    <CheckBox Content="Сохранять файлы макросов сразу в Pumotix" />
+                    <CheckBox Content="Сохранять файлы макросов сразу в Pumotix"/>
 
-                    <CheckBox Content="Сохранять файлы фоновых операций сразу в Pumotix" />
+                    <CheckBox Content="Сохранять файлы фоновых операций сразу в Pumotix"/>
                 </StackPanel>
             </StackPanel>
 
-            <TextBlock x:Uid="Settings_About" Style="{ThemeResource SubtitleTextBlockStyle}" />
+            <TextBlock Text="О Приложении"
+                       Style="{ThemeResource SubtitleTextBlockStyle}" />
 
             <StackPanel Margin="{StaticResource XSmallTopMargin}">
-                <TextBlock Style="{ThemeResource BodyTextBlockStyle}" Text="{x:Bind ViewModel.VersionDescription, Mode=OneWay}" />
+                <TextBlock Style="{ThemeResource BodyTextBlockStyle}"
+                           Text="{x:Bind ViewModel.VersionDescription, Mode=OneWay}" />
 
-                <TextBlock x:Uid="Settings_AboutDescription"
+                <TextBlock Text="Приложение для редактирования Lua скриптов для программы Pumotix"
                            Margin="{StaticResource XSmallTopMargin}"
                            Style="{ThemeResource BodyTextBlockStyle}" />
                 
-                <HyperlinkButton x:Uid="SettingsPage_PrivacyTermsLink"
-                                 Margin="{StaticResource SettingsPageHyperlinkButtonMargin}" />
+                <StackPanel Orientation="Horizontal"
+                            Margin="{StaticResource XSmallTopMargin}">
+                    <HyperlinkButton Content="Pumotix Doc"
+                                     NavigateUri="http://doc.pumotix.ru/"
+                                     Margin="8,4,0,0"/>
+                    
+                    <HyperlinkButton Content="Lua Doc"
+                                     NavigateUri="https://www.lua.org/"
+                                     Margin="8,4,0,0"/>
+                </StackPanel>
             </StackPanel>
-
         </StackPanel>
     </Grid>
 </Page>
