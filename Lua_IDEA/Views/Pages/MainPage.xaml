@@ -150,7 +150,9 @@
                                 <RichEditBox Grid.Row="0"
                                              Margin="4"
                                              TextChanged="textEditor_TextChanged"
+                                             KeyDown="RichEditBox_KeyDown"
                                              Loaded="textEditor_Loaded"
+                                             
                                              IsSpellCheckEnabled="False"
                                              MinHeight="500"/>
 

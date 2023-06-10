@@ -273,4 +273,17 @@ public sealed partial class MainPage : Page
     {
         ViewModel.OpenSelectedBOpCommand.Execute(null);
     }
+
+    private void RichEditBox_KeyDown(object sender, KeyRoutedEventArgs e)
+    {
+        if (e.Key == VirtualKey.Tab)
+        {
+            RichEditBox richEditBox = sender as RichEditBox;
+            if (richEditBox != null)
+            {
+                richEditBox.Document.Selection.TypeText("\t");
+                e.Handled = true;
+            }
+        }
+    }
 }
