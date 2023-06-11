@@ -226,6 +226,7 @@
                 <Button Grid.Row="1"
                         Margin="8"
                         Style="{StaticResource AccentButtonStyle}"
+                        Command="{x:Bind ViewModel.GetInnerMacrosCommand}"
                         HorizontalAlignment="Stretch">
                     <StackPanel Orientation="Horizontal">
                         <FontIcon Glyph="&#xE72C;"/>

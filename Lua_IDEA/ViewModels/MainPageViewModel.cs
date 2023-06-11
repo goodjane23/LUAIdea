@@ -194,7 +194,8 @@ public partial class MainPageViewModel : ObservableObject, IRecipient<SelectRece
     {
         var existMacro = await existMacroService.GetInnerMacros();
         var existBackground = await existMacroService.GetInnerBackgroundOperations();
-
+        InnerMacros.Clear();
+        InnerBO.Clear();
         foreach (var macro in existMacro)
         {
             var luafile = new LuaFile()
