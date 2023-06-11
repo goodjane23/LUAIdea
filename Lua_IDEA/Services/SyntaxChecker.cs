@@ -34,7 +34,7 @@ public class SyntaxChecker
 
 		try
 		{
-			var res = Script.RunString(text);
+            DynValue res = Script.RunString(text);           
         }
 		catch (Exception ex)
 		{

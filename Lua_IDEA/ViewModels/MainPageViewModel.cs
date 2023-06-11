@@ -50,18 +50,21 @@ public partial class MainPageViewModel : ObservableObject, IRecipient<SelectRece
     private readonly SyntaxChecker syntaxChecker;
     private readonly FilesService filesService;
     private readonly ExistMacroService existMacroService;
+    private readonly SettingsViewModel settingsViewModel;
 
     public MainPageViewModel(
         ParsingMacroAPIService commandService,
         SyntaxChecker syntaxChecker,
         FilesService filesService,
         ExistMacroService existMacroService,
+        SettingsViewModel settingsViewModel,
         INavigationService navigationService)
     {
         this.commandService = commandService;
         this.syntaxChecker = syntaxChecker;
         this.filesService = filesService;
         this.existMacroService = existMacroService;
+        this.settingsViewModel = settingsViewModel;
 
         NavigationService = navigationService;
 
@@ -162,7 +165,7 @@ public partial class MainPageViewModel : ObservableObject, IRecipient<SelectRece
         if (SelectedCommand is not Command command)
             return;
 
-        SelectedTab.Content += $"{command.Name}\n";
+        SelectedTab.Content += $"\n{command.Name}\n";
         SelectedTab.IsSaved = false;
         SelectedTab.Errors = syntaxChecker.CheckSyntax(SelectedTab.Content);
 
@@ -348,5 +351,11 @@ public partial class MainPageViewModel : ObservableObject, IRecipient<SelectRece
         Tabs.Add(SelectedInnerBackgroundOp);
     }
 
+    [RelayCommand]
+    private void CheckSyntax()
+    {
+        if (settingsViewModel.IsSyntaxCheckEnabled)
+            SelectedTab.Errors = syntaxChecker.CheckSyntax(SelectedTab.Content);
+    }
 
 }

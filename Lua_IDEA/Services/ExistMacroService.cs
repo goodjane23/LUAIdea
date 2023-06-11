@@ -38,9 +38,9 @@ public class ExistMacroService
 
     public async Task<IEnumerable<PumotixFile>> GetInnerBackgroundOperations()
     {
-        var files = Directory.GetFiles(path);
+        var files = Directory.GetFiles(path+"Background");
         var result = new List<PumotixFile>(files.Length);
-        
+
         foreach (var file in files.Where(x => x.EndsWith(".bm")))
         {
             var fileInfo = new FileInfo(file);

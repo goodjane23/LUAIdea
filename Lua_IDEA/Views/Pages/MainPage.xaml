@@ -151,14 +151,13 @@
                                              Margin="4"
                                              TextChanged="textEditor_TextChanged"
                                              KeyDown="RichEditBox_KeyDown"
-                                             Loaded="textEditor_Loaded"
-                                             
+                                             Loaded="textEditor_Loaded"                                             
                                              IsSpellCheckEnabled="False"
                                              MinHeight="500"/>
 
                                 <TextBlock Grid.Row="1"
                                            Margin="8"
-                                           Visibility="{x:Bind HasErrors(), Mode=OneWay}"
+                                           Visibility="{x:Bind HasErrors, Mode=OneWay}"
                                            Text="{x:Bind Errors,Mode=OneWay}"
                                            VerticalAlignment="Bottom"/>
                             </Grid>

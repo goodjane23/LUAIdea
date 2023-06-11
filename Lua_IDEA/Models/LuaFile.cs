@@ -15,18 +15,22 @@ public partial class LuaFile : ObservableObject
     private string content;
 
     [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(IsChangedIconVisible))]
+    [NotifyPropertyChangedFor(nameof(IsChangedIconVisible))]   
     private bool isSaved;
 
     [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(HasErrors))]
     private string errors;
 
     public bool IsChangedIconVisible => !IsSaved;
 
-    public Visibility HasErrors()
+    public Visibility HasErrors
     {
-        return Errors?.Length > 0
+        get
+        {
+            return Errors?.Length > 0
             ? Visibility.Visible
             : Visibility.Collapsed;
+        }
     }
 }
