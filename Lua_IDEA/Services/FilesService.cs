@@ -1,6 +1,7 @@
 ﻿using Lua_IDEA.Data;
 using Lua_IDEA.Data.Entities;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Cryptography.X509Certificates;
 
 namespace Lua_IDEA.Services;
 
@@ -47,9 +48,16 @@ public class FilesService
 
     public async Task AddToRecent(string path)
     {
+        RecentFile file = new RecentFile { Path = path };
         await using var appDbContext = await contextFactory.CreateDbContextAsync();
 
-        var file = new RecentFile{ Path = path };
+        var recentMacros = await appDbContext.RecentFiles
+           .AsNoTracking()
+           .ToListAsync();
+
+        var isIn = recentMacros.FirstOrDefault(x=> x.Path.Equals(path,StringComparison.OrdinalIgnoreCase));
+
+        if (isIn != null) await RemoveFromRecent(path);
 
         await appDbContext.RecentFiles.AddAsync(file);
         await appDbContext.SaveChangesAsync();

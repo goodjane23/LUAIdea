@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
+using Lua_IDEA.Contracts.Services;
 using Lua_IDEA.Data.Entities;
 using Lua_IDEA.Messages;
 using Lua_IDEA.Services;
@@ -10,14 +11,16 @@ namespace Lua_IDEA.ViewModels;
 
 public partial class RecentFilesSelectorViewModel : ObservableObject
 {
+    public event Action FileIsNotExistEvent;
+
     public ObservableCollection<RecentFile> RecentPaths { get; } = new();
 
     [ObservableProperty]
     private RecentFile selectedPath;
-
     private readonly FilesService filesService;
 
-    public RecentFilesSelectorViewModel(FilesService filesService)
+    public RecentFilesSelectorViewModel(
+        FilesService filesService)
     {
         this.filesService = filesService;
     }
@@ -36,11 +39,12 @@ public partial class RecentFilesSelectorViewModel : ObservableObject
     [RelayCommand]
     private async Task SelectFile()
     {
-        if (string.IsNullOrEmpty(SelectedPath.Path))
+        if (SelectedPath == null || (string.IsNullOrEmpty(SelectedPath.Path)))
             return;
 
         if (!File.Exists(SelectedPath.Path))
         {
+            FileIsNotExistEvent.Invoke();
             await filesService.RemoveFromRecent(SelectedPath.Path);
             return;
         }

@@ -17,7 +17,7 @@ public class FileService : IFileService
                 var json = File.ReadAllText(path);
                 return JsonSerializer.Deserialize<T>(json);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return default(T);
             }

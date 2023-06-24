@@ -22,7 +22,6 @@ public sealed partial class MainPage : Page
     public MainPageViewModel ViewModel { get; }
 
     private RichEditBox currentTextEditor;
-    private int currentCursorPosition;
 
     private readonly DialogFactory<RecentFilesSelector> recentDialogFactory;
     private readonly DialogFactory<FavoriteFileSelector> favoriteDialogFactory;
@@ -159,7 +158,7 @@ public sealed partial class MainPage : Page
         ViewModel.CheckSyntaxCommand.Execute(null);
     }
 
-    private void textEditor_Loaded(object sender, RoutedEventArgs e)
+    private void TextEditorLoaded(object sender, RoutedEventArgs e)
     {
         if (sender is not RichEditBox textEditor)
             return;
@@ -280,7 +279,7 @@ public sealed partial class MainPage : Page
     {        
         if (e.Key == VirtualKey.Tab)
         {
-            RichEditBox richEditBox = sender as RichEditBox;
+            RichEditBox richEditBox = (RichEditBox)sender;
             if (richEditBox != null)
             {
                 richEditBox.Document.Selection.TypeText("\t");

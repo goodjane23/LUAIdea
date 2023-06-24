@@ -8,8 +8,6 @@ public class ExistMacroService
     private readonly string appDataPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
     private readonly string path;
 
-    string error;
-
     public ExistMacroService()
     {
         path = $@"{appDataPath}\Purelogic\Pumotix\Server\Macros\";

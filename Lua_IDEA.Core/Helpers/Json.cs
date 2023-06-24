@@ -12,7 +12,7 @@ public static class Json
             {
                 return JsonSerializer.Deserialize<T>(value);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return default(T);
             }

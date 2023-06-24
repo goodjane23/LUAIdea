@@ -19,7 +19,9 @@
                   SelectedItem="{x:Bind viewModel.SelectedPath, Mode=TwoWay}">
             <ListView.ItemTemplate>
                 <DataTemplate x:DataType="entities:RecentFile">
-                    <TextBlock Text="{x:Bind Path}"/>
+                    <TextBlock Text="{x:Bind Path}"
+                               FlowDirection="RightToLeft"
+                               ToolTipService.ToolTip="{x:Bind Path}"/>
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>

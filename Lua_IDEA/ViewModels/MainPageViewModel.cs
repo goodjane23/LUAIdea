@@ -211,6 +211,8 @@ public partial class MainPageViewModel : ObservableObject, IRecipient<SelectRece
 
         foreach (var backgroundOp in existBackground)
         {
+            if (backgroundOp is null) continue;
+
             var luafile = new LuaFile()
             {
                 Name = backgroundOp.Name,
@@ -358,5 +360,4 @@ public partial class MainPageViewModel : ObservableObject, IRecipient<SelectRece
         if (settingsViewModel.IsSyntaxCheckEnabled)
             SelectedTab.Errors = syntaxChecker.CheckSyntax(SelectedTab.Content);
     }
-
 }

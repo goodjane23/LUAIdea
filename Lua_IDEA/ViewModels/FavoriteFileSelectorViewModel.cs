@@ -10,6 +10,8 @@ namespace Lua_IDEA.ViewModels;
 
 public partial class FavoriteFileSelectorViewModel : ObservableObject
 {
+    public event Action FileIsNotExistEvent;
+
     public ObservableCollection<FavoriteFile> FavoritePaths { get; } = new();
 
     [ObservableProperty]
@@ -47,10 +49,16 @@ public partial class FavoriteFileSelectorViewModel : ObservableObject
     [RelayCommand]
     private async Task SelectFile()
     {
-        if (string.IsNullOrEmpty(SelectedPath.Path))
+        if (SelectedPath == null || (string.IsNullOrEmpty(SelectedPath.Path)))
             return;
 
-        if (File.Exists(SelectedPath.Path)) 
-            WeakReferenceMessenger.Default.Send(new SelectFavoriteFileMessage(SelectedPath.Path));
+        if (!File.Exists(SelectedPath.Path))
+        {
+            FileIsNotExistEvent.Invoke();
+            await filesService.RemoveFromRecent(SelectedPath.Path);
+            return;
+        }
+        
+        WeakReferenceMessenger.Default.Send(new SelectFavoriteFileMessage(SelectedPath.Path));
     }
 }

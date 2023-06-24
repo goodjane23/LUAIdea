@@ -4,7 +4,6 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:contols="using:CommunityToolkit.WinUI.UI.Controls"
     xmlns:models="using:Lua_IDEA.Models"
     xmlns:animatedvisuals="using:Microsoft.UI.Xaml.Controls.AnimatedVisuals" 
     xmlns:entities="using:Lua_IDEA.Data.Entities"
@@ -80,8 +79,6 @@
                             <MenuFlyoutItem Text="Управление шпинделем" Command="{x:Bind ViewModel.ShowTestMacroCommand}" CommandParameter="Macro_Spindle"/>
                         </MenuFlyoutSubItem>
                     </MenuFlyoutSubItem>
-                    <MenuFlyoutSeparator />
-                    <MenuFlyoutItem Text="О Программе"/>
                 </MenuBarItem>
             </MenuBar>
 
@@ -151,7 +148,7 @@
                                              Margin="4"
                                              TextChanged="textEditor_TextChanged"
                                              KeyDown="RichEditBox_KeyDown"
-                                             Loaded="textEditor_Loaded"                                             
+                                             Loaded="TextEditorLoaded"                                             
                                              IsSpellCheckEnabled="False"
                                              MinHeight="500"/>
 
