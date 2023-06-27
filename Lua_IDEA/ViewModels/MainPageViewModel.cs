@@ -13,7 +13,9 @@ using Lua_IDEA.Contracts.Services;
 
 namespace Lua_IDEA.ViewModels;
 
-public partial class MainPageViewModel : ObservableObject, IRecipient<SelectRecentFileMessage>, IRecipient<SelectFavoriteFileMessage>
+public partial class MainPageViewModel : ObservableObject,
+    IRecipient<SelectRecentFileMessage>, 
+    IRecipient<SelectFavoriteFileMessage>
 {
     public event Action CommandPasted;
     public event Func<LuaFile, bool, Task<bool>> SaveRequested;
@@ -291,6 +293,7 @@ public partial class MainPageViewModel : ObservableObject, IRecipient<SelectRece
         };
 
         Tabs.Add(luaFile);
+        SelectedTab = Tabs.Last();
     }
 
     public void Receive(SelectRecentFileMessage message)
@@ -307,6 +310,7 @@ public partial class MainPageViewModel : ObservableObject, IRecipient<SelectRece
         };
 
         Tabs.Add(luaFile);
+        SelectedTab = Tabs.Last();
     }
 
     [RelayCommand]
@@ -346,12 +350,14 @@ public partial class MainPageViewModel : ObservableObject, IRecipient<SelectRece
     private void OpenSelectedMacro()
     {
         Tabs.Add(SelectedInnerMacro);
+        SelectedTab = Tabs.Last();
     }
 
     [RelayCommand]
     private void OpenSelectedBOp()
     {
         Tabs.Add(SelectedInnerBackgroundOp);
+        SelectedTab = Tabs.Last();
     }
 
     [RelayCommand]
